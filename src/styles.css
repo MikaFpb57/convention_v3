@@ -1,6 +1,10 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "flowbite/src/themes/default";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
 
 @plugin "flowbite/plugin";
+@plugin "flowbite-typography";
 @source "../node_modules/flowbite";
 
 @custom-variant dark (&:where(.dark, .dark *));
