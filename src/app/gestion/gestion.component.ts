@@ -200,7 +200,6 @@ export class GestionComponent implements OnInit {
     { id: 'today', label: 'Aujourd\'hui' },
     { id: 'week', label: 'Cette semaine' },
     { id: 'month', label: 'Ce mois-ci' },
-    { id: 'year', label: 'Cette année' },
     { id: 'all', label: 'Tous' }
   ];
 
@@ -239,9 +238,6 @@ export class GestionComponent implements OnInit {
           break;
         case 'month':
           startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-          break;
-        case 'year':
-          startDate = new Date(now.getFullYear(), 0, 1);
           break;
       }
 
