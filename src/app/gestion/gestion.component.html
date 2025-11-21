@@ -57,6 +57,7 @@
                             placeholder="Rechercher..."
                         >
                     </div>
+                    
                 </div>
               </div>
             </div>
@@ -129,6 +130,8 @@
                                   [ngClass]="getEtapeBadgeClass(fiche.etape)">
                                 {{ fiche.etape }}
                             </span>
+                            
+
                         </td>
                         <td class="px-2 py-1 sm:px-6 sm:py-4 whitespace-nowrap hidden sm:table-cell">
                             {{ fiche.date_update | date:'dd/MM/yyyy HH:mm' }}
@@ -161,7 +164,7 @@
                     }
                 </tbody>
             </table>
-            <nav class="flex items-center flex-column flex-wrap md:flex-row justify-between p-4 mb-4" aria-label="Table navigation">
+            <!-- <nav class="flex items-center flex-column flex-wrap md:flex-row justify-between p-4 mb-4" aria-label="Table navigation">
                 <span class="text-sm font-normal text-body mb-4 md:mb-0 block w-full md:inline md:w-auto">
                     Affichage de
                     <span class="font-semibold text-heading">
@@ -218,7 +221,14 @@
                     </li>
                 </ul>
                 }
-            </nav>
+            </nav> -->
+            <comp-pagination
+            [currentPage]="currentPage"
+            [totalPages]="totalPages"
+            [itemsPerPage]="itemsPerPage"
+            [totalItems]="filteredFiches.length"
+            (pageChange)="changePage($event)">
+            </comp-pagination>
         </div>
     </div>
     }

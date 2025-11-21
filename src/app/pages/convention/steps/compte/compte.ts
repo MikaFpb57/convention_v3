@@ -1,16 +1,17 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
 import { ConventionService } from '../../../../services/convention.service';
 import { SireneService } from '../../../../services/sirene.service';
 import { LoggerService } from '../../../../services/logger.service';
 import { CommonModule } from '@angular/common';
+import { UIComponents } from '../../../../components/ui-components';
 
 @Component({
   selector: 'app-compte',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, UIComponents],
   templateUrl: './compte.html',
   styleUrl: './compte.css',
 })
@@ -89,6 +90,17 @@ export class Compte implements OnInit {
         });
       }
     }
+  }
+
+  getControl(fieldName: string): FormControl {
+    const control = this.compteForm.get(fieldName);
+    if (!control) {
+      throw new Error(`Le champ ${fieldName} n'existe pas dans le FormGroup.`);
+    }
+    if (!(control instanceof FormControl)) {
+      throw new Error(`Le champ ${fieldName} n'est pas un FormControl.`);
+    }
+    return control;
   }
 
   onSubmit() {

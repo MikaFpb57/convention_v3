@@ -3,13 +3,14 @@ import { ConventionService } from '../services/convention';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Fiche } from '../models/convention.model';
 import { FormsModule } from '@angular/forms';
+import { UIComponents } from '../components/ui-components';
 
 @Component({
   selector: 'app-gestion',
   templateUrl: './gestion.component.html',
   styleUrls: ['./gestion.component.css'],
   standalone: true,
-  imports: [CommonModule, DatePipe, FormsModule]
+  imports: [CommonModule, DatePipe, FormsModule, UIComponents]
 })
 export class GestionComponent implements OnInit {
   // Make Math available in the template
