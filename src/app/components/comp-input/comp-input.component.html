@@ -1,0 +1,43 @@
+<div [class]="groupClass">
+  <label [hidden]="!label" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+    {{ label }} <span [hidden]="!required">*</span>
+  </label>
+
+  <div class="relative">
+    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+      <ng-content select="[prefix]"></ng-content>
+    </div>
+    <input [type]="type" [placeholder]="placeholder" [required]="required" [disabled]="disabled" [readonly]="readonly"
+      [value]="value()" (input)="handleInput($event)" (blur)="handleBlur($event)"
+      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2 {{ extraClass }}" />
+
+    <div [hidden]="!errorVisible()" class="text-red-600 text-sm mt-0.5">
+      {{ errorMessage }}
+    </div>
+  </div>
+</div>
+<!-- <comp-input
+    groupClass=""
+    formControlName="siret"
+    label="Numéro Siret"
+    [required]="true"
+    id="siret"
+    name="siret"
+    placeholder="12345678901234"
+    extraClass="w-full"
+    [errorMessage]="getControl('siret').touched && getControl('siret').invalid ? 'Siret requis.' : null"
+    (blur)="onSiretBlur()">
+</comp-input> 
+<comp-input
+  label=""
+  placeholder="Rechercher..."
+  [required]="false"
+  groupClass="w-64"
+  extraClass="ps-9 bg-neutral-secondary-medium rounded-md"
+>
+  <svg prefix class="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+  </svg>
+</comp-input>
+
+-->

@@ -1,0 +1,63 @@
+<nav class="flex items-center flex-column flex-wrap md:flex-row justify-between p-4 mb-4" aria-label="Table navigation">
+  <!-- Affichage X-Y sur Z -->
+  <span class="text-sm font-normal text-body mb-4 md:mb-0 block w-full md:inline md:w-auto">
+    Affichage de
+    <span class="font-semibold text-heading">{{ startItem }}-{{ endItem }}</span>
+    sur
+    <span class="font-semibold text-heading">{{ totalItems }}</span>
+  </span>
+
+  @if (totalPages > 1) {
+  <ul class="flex -space-x-px text-sm">
+    <!-- Précédent -->
+    <li>
+      
+      <comp-button
+        label="Précédent"
+        variant="neutral"
+        [disabled]="currentPage === 1"
+        rounded="s"
+        (click)="changePage(currentPage - 1)">
+      </comp-button>
+    </li>
+
+    <!-- Pages -->
+    @for (page of pages; track page) {
+      <li>
+        @if (page === -1) {
+          <span class="flex items-center justify-center text-body px-3 h-9">…</span>
+        } @else if (page === currentPage) {
+          <span class="h-full flex items-center justify-center text-fg-brand bg-brand-softer box-border border border-default-medium font-medium text-sm w-9 h-9">
+            {{ page }}
+          </span>
+        } @else {
+          <comp-button
+            [label]="page"
+            variant="neutral"
+            rounded="none"
+            (click)="changePage(page)">
+          </comp-button>
+        }
+      </li>
+    }
+
+    <!-- Suivant -->
+    <li>
+      <comp-button
+        label="Suivant"
+        variant="neutral"
+        rounded="e"
+        [disabled]="currentPage === totalPages"
+        (click)="changePage(currentPage + 1)">
+      </comp-button>
+    </li>
+  </ul>
+  }
+</nav>
+<!-- <comp-pagination
+            [currentPage]="currentPage"
+            [totalPages]="totalPages"
+            [itemsPerPage]="itemsPerPage"
+            [totalItems]="filteredFiches.length"
+            (pageChange)="changePage($event)">
+            </comp-pagination> -->

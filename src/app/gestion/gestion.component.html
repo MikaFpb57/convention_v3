@@ -57,6 +57,7 @@
                             placeholder="Rechercher..."
                         >
                     </div>
+                    
                 </div>
               </div>
             </div>
@@ -129,6 +130,8 @@
                                   [ngClass]="getEtapeBadgeClass(fiche.etape)">
                                 {{ fiche.etape }}
                             </span>
+                            
+
                         </td>
                         <td class="px-2 py-1 sm:px-6 sm:py-4 whitespace-nowrap hidden sm:table-cell">
                             {{ fiche.date_update | date:'dd/MM/yyyy HH:mm' }}
