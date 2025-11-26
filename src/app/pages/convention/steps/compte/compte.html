@@ -28,7 +28,7 @@
                 extraClass="w-full"
                 [errorMessage]="getControl('siret').touched && getControl('siret').invalid ? 'Siret requis.' : null"
                 (blur)="onSiretBlur()">
-            </comp-input> 
+            </comp-input>
             <comp-input
                 formControlName="tvaIntra"
                 label="Numéro de TVA Intracommunautaire"
@@ -50,7 +50,7 @@
                 extraClass="w-full"
                 [errorMessage]="getControl('nomSociete').touched && getControl('nomSociete').invalid ? 'Nom requis.' : null"
                 >
-            </comp-input> 
+            </comp-input>
 
         <!-- Adresse -->
         <comp-input
@@ -63,7 +63,7 @@
                 extraClass="w-full"
                 [errorMessage]="getControl('adresse').touched && getControl('adresse').invalid ? 'Adresse requis.' : null"
                 >
-            </comp-input> 
+        </comp-input>
 
         <!-- CP / Ville -->
         <div class="grid gap-4 mb-3 md:grid-cols-2">
@@ -76,7 +76,7 @@
                 extraClass="w-full"
                 [errorMessage]="getControl('codePostal').touched && getControl('codePostal').invalid ? 'Nom requis.' : null"
                 >
-            </comp-input> 
+            </comp-input>
             <comp-input
                 formControlName="ville"
                 label="Ville"
@@ -86,7 +86,7 @@
                 extraClass="w-full"
                 [errorMessage]="getControl('ville').touched && getControl('ville').invalid ? 'Ville requise.' : null"
                 >
-            </comp-input> 
+            </comp-input>
         </div>
 
         <!-- Code NAF / Activité -->
