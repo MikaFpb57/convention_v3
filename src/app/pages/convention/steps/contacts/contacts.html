@@ -1,1 +1,86 @@
-<p>contacts works!</p>
+<div class="relative">
+    <!-- Spinner Overlay -->
+    @if (isLoading()) {
+    <comp-loader></comp-loader>
+    }
+
+    <!-- Error Alert -->
+    @if (errorMessage()) {
+    <comp-alert-error [message]="errorMessage()"></comp-alert-error>
+    }
+
+    <form [formGroup]="contactsForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        <comp-h1-gd textGradient="Contacts" textNormal="de la société"></comp-h1-gd>
+
+        <div formArrayName="contacts" class="space-y-6">
+            @for (contact of contacts.controls; track $index; let i = $index) {
+            <div [formGroupName]="i" class="p-4 border border-gray-300 rounded-lg dark:border-gray-600 relative">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Contact {{ i + 1 }}</h3>
+                    @if (contacts.length > 1) {
+                    <comp-button label="Supprimer" variant="danger" type="button" (click)="removeContact(i)">
+                    </comp-button>
+                    }
+                </div>
+
+                <!-- Nom / Prénom -->
+                <div class="grid gap-4 mb-3 md:grid-cols-3">
+                    <comp-input formControlName="nom" label="Nom" [required]="true" [id]="'nom_' + i"
+                        extraClass="w-full"
+                        [errorMessage]="getControl(i, 'nom').touched && getControl(i, 'nom').invalid ? 'Nom requis.' : null">
+                    </comp-input>
+                    <comp-input formControlName="prenom" label="Prénom" [required]="true" [id]="'prenom_' + i"
+                        extraClass="w-full"
+                        [errorMessage]="getControl(i, 'prenom').touched && getControl(i, 'prenom').invalid ? 'Prénom requis.' : null">
+                    </comp-input>
+                    <comp-input groupClass="mb-3" formControlName="fonction" label="Fonction" [required]="true"
+                      [id]="'fonction_' + i" extraClass="w-full"
+                      [errorMessage]="getControl(i, 'fonction').touched && getControl(i, 'fonction').invalid ? 'Fonction requise.' : null">
+                  </comp-input>
+                </div>
+
+                <!-- Adresse -->
+                <div class="grid gap-4 mb-3 md:grid-cols-1">
+                    <comp-input formControlName="adresse" label="Adresse" [required]="true" [id]="'adresse_' + i"
+                        extraClass="w-full"
+                        [errorMessage]="getControl(i, 'adresse').touched && getControl(i, 'adresse').invalid ? 'Adresse requise.' : null">
+                    </comp-input>
+                </div>
+                <div class="grid gap-4 mb-3 md:grid-cols-2">
+                    <comp-input formControlName="codePostal" label="Code postal" [required]="true"
+                        [id]="'codePostal_' + i" extraClass="w-full"
+                        [errorMessage]="getControl(i, 'codePostal').touched && getControl(i, 'codePostal').invalid ? 'Code postal requis.' : null">
+                    </comp-input>
+                    <comp-input formControlName="ville" label="Ville" [required]="true" [id]="'ville_' + i"
+                        extraClass="w-full"
+                        [errorMessage]="getControl(i, 'ville').touched && getControl(i, 'ville').invalid ? 'Ville requise.' : null">
+                    </comp-input>
+                </div>
+
+                <!-- Email / Téléphone -->
+                <div class="grid gap-4 mb-3 md:grid-cols-2">
+                    <comp-input formControlName="email" label="Email" [required]="true" [id]="'email_' + i"
+                        extraClass="w-full"
+                        [errorMessage]="getControl(i, 'email').touched && getControl(i, 'email').invalid ? 'Email valide requis.' : null">
+                    </comp-input>
+                    <comp-input formControlName="telephone" label="Téléphone" [required]="true" [id]="'telephone_' + i"
+                        extraClass="w-full"
+                        [errorMessage]="getControl(i, 'telephone').touched && getControl(i, 'telephone').invalid ? 'Téléphone requis.' : null">
+                    </comp-input>
+                </div>
+            </div>
+            }
+        </div>
+
+        <div class="flex justify-between mt-4">
+            <comp-button label="Ajouter un contact" variant="neutral" type="button" (click)="addContact()">
+            </comp-button>
+            <div class="flex gap-2">
+                <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
+                </comp-button>
+                <comp-button label="Suivant" variant="primary" type="submit">
+                </comp-button>
+            </div>
+        </div>
+    </form>
+</div>

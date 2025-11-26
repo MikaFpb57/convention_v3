@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
@@ -103,10 +103,12 @@ export class Compte implements OnInit {
     return control;
   }
 
+  @Output() next = new EventEmitter<void>();
+
   onSubmit() {
     if (this.compteForm.valid) {
       this.conventionService.updateCompte(this.compteForm.value);
-      this.router.navigate(['/convention/contacts']);
+      this.next.emit();
     } else {
       this.compteForm.markAllAsTouched();
     }

@@ -1,1 +1,55 @@
-<p>facturation works!</p>
+<div class="relative">
+    <!-- Spinner Overlay -->
+    @if (isLoading()) {
+    <comp-loader></comp-loader>
+    }
+
+    <!-- Error Alert -->
+    @if (errorMessage()) {
+    <comp-alert-error [message]="errorMessage()"></comp-alert-error>
+    }
+
+    <form [formGroup]="facturationForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        <comp-h1-gd textGradient="Facturation" textNormal="et paiement"></comp-h1-gd>
+
+        <!-- Adresse de facturation -->
+        <comp-input groupClass="mb-3" formControlName="adresseFacturation" label="Adresse de facturation"
+            id="adresseFacturation" name="adresseFacturation" placeholder="Si différente de l'adresse principale"
+            extraClass="w-full">
+        </comp-input>
+
+        <!-- CP / Ville -->
+        <div class="grid gap-4 mb-3 md:grid-cols-2">
+            <comp-input formControlName="codePostalFacturation" label="Code postal" id="codePostalFacturation"
+                name="codePostalFacturation" extraClass="w-full">
+            </comp-input>
+            <comp-input formControlName="villeFacturation" label="Ville" id="villeFacturation" name="villeFacturation"
+                extraClass="w-full">
+            </comp-input>
+        </div>
+
+        <!-- Email de facturation -->
+        <comp-input groupClass="mb-3" formControlName="emailFacturation" label="Email de facturation"
+            id="emailFacturation" name="emailFacturation" type="email" placeholder="Si différent de l'email principal"
+            extraClass="w-full"
+            [errorMessage]="getControl('emailFacturation').touched && getControl('emailFacturation').invalid ? 'Email invalide.' : null">
+        </comp-input>
+
+        <!-- Délai / Mode de paiement -->
+        <div class="grid gap-4 mb-3 md:grid-cols-2">
+            <comp-input formControlName="delaiPaiement" label="Délai de paiement" id="delaiPaiement"
+                name="delaiPaiement" placeholder="Ex: 30 jours" extraClass="w-full">
+            </comp-input>
+            <comp-input formControlName="modePaiement" label="Mode de paiement" id="modePaiement" name="modePaiement"
+                placeholder="Ex: Virement, Chèque" extraClass="w-full">
+            </comp-input>
+        </div>
+
+        <div class="flex justify-end mt-4 gap-2">
+            <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
+            </comp-button>
+            <comp-button label="Suivant" variant="primary" type="submit">
+            </comp-button>
+        </div>
+    </form>
+</div>

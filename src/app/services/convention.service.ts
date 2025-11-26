@@ -1,5 +1,5 @@
 import { Injectable, signal, effect } from '@angular/core';
-import { ConventionData, CompteData } from '../models/convention.interface';
+import { ConventionData, CompteData, ContactsData, FacturationData, InfosData, ProceduresData } from '../models/convention.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -42,5 +42,49 @@ export class ConventionService {
 
     getCompte(): CompteData | undefined {
         return this.conventionSignal().compte;
+    }
+
+    updateContacts(data: ContactsData) {
+        this.conventionSignal.update(current => ({
+            ...current,
+            contacts: data
+        }));
+    }
+
+    getContacts(): ContactsData | undefined {
+        return this.conventionSignal().contacts;
+    }
+
+    updateFacturation(data: FacturationData) {
+        this.conventionSignal.update(current => ({
+            ...current,
+            facturation: data
+        }));
+    }
+
+    getFacturation(): FacturationData | undefined {
+        return this.conventionSignal().facturation;
+    }
+
+    updateInfos(data: InfosData) {
+        this.conventionSignal.update(current => ({
+            ...current,
+            infos: data
+        }));
+    }
+
+    getInfos(): InfosData | undefined {
+        return this.conventionSignal().infos;
+    }
+
+    updateProcedures(data: ProceduresData) {
+        this.conventionSignal.update(current => ({
+            ...current,
+            procedures: data
+        }));
+    }
+
+    getProcedures(): ProceduresData | undefined {
+        return this.conventionSignal().procedures;
     }
 }

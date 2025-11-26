@@ -1,1 +1,52 @@
-<p>infos works!</p>
+<div class="relative">
+    <!-- Spinner Overlay -->
+    @if (isLoading()) {
+    <comp-loader></comp-loader>
+    }
+
+    <!-- Error Alert -->
+    @if (errorMessage()) {
+    <comp-alert-error [message]="errorMessage()"></comp-alert-error>
+    }
+
+    <form [formGroup]="infosForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        <comp-h1-gd textGradient="Informations" textNormal="complémentaires"></comp-h1-gd>
+
+        <!-- Effectif / Chiffre d'affaires -->
+        <div class="grid gap-4 mb-3 md:grid-cols-2">
+            <comp-input formControlName="effectif" label="Effectif" id="effectif" name="effectif"
+                placeholder="Nombre de salariés" extraClass="w-full">
+            </comp-input>
+            <comp-input formControlName="chiffreAffaires" label="Chiffre d'affaires" id="chiffreAffaires"
+                name="chiffreAffaires" placeholder="En euros" extraClass="w-full">
+            </comp-input>
+        </div>
+
+        <!-- Date création / Forme juridique -->
+        <div class="grid gap-4 mb-3 md:grid-cols-2">
+            <comp-input formControlName="dateCreation" label="Date de création" id="dateCreation" name="dateCreation"
+                type="date" extraClass="w-full">
+            </comp-input>
+            <comp-input formControlName="formeJuridique" label="Forme juridique" id="formeJuridique"
+                name="formeJuridique" placeholder="Ex: SARL, SAS, SA" extraClass="w-full">
+            </comp-input>
+        </div>
+
+        <!-- Capital / RCS -->
+        <div class="grid gap-4 mb-3 md:grid-cols-2">
+            <comp-input formControlName="capital" label="Capital social" id="capital" name="capital"
+                placeholder="En euros" extraClass="w-full">
+            </comp-input>
+            <comp-input formControlName="rcs" label="RCS" id="rcs" name="rcs" placeholder="Numéro RCS"
+                extraClass="w-full">
+            </comp-input>
+        </div>
+
+        <div class="flex justify-end mt-4 gap-2">
+            <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
+            </comp-button>
+            <comp-button label="Suivant" variant="primary" type="submit">
+            </comp-button>
+        </div>
+    </form>
+</div>
