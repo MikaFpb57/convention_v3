@@ -19,7 +19,17 @@ export class Facturation implements OnInit {
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
 
+  gestionOptions = [
+    { value: 'majmail', label: '0% centralisé - Envoi par mail par le centre', demat: 0 },
+    { value: 'majpapier', label: '0% centralisé - Envoi papier par le centre', demat: 0 },
+    { value: 'maj50', label: '50% centralisé - EDI pour la partie assurancielle (HT) + centre', demat:1 },
+    { value: 'maj5050', label: '100% centralisé - EDI pour la partie assurancielle (HT) + MAJNET', demat:1 },
+    { value: 'maj100', label: '100% centralisé - Un seul régleur pour la totalité de la facture', demat:1 }
+  ];
+
   facturationForm: FormGroup = this.fb.group({
+    demat: [0],
+    mode_gest: ['', Validators.required],
     adresseFacturation: [''],
     codePostalFacturation: [''],
     villeFacturation: [''],
@@ -53,6 +63,15 @@ export class Facturation implements OnInit {
       throw new Error(`Le champ ${fieldName} n'est pas un FormControl.`);
     }
     return control;
+  }
+
+  onToggleChange(fieldName: string, event: any) {
+    const value = event.target.checked ? 1 : 0;
+    this.facturationForm.get(fieldName)?.setValue(value);
+  }
+  getFilteredGestionOptions() {
+    const dematValue = this.facturationForm.get('demat')?.value || 0;
+    return this.gestionOptions.filter(option => option.demat === Number(dematValue));
   }
 
   onSubmit() {

@@ -59,9 +59,16 @@
 
         <!-- Rayon / Filiales -->
         <div class="grid gap-4 mb-3 md:grid-cols-2">
-            <comp-input formControlName="rayonAction" label="Rayon d'action" id="rayonAction" name="rayonAction"
-                extraClass="w-full">
-            </comp-input>
+            <div>
+              <label for="rayonAction" class="block text-sm font-medium text-heading mb-1">Rayon d'action</label>
+                <select formControlName="rayonAction" id="rayonAction" name="rayonAction"
+                  class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
+                  <option disabled selected>-- Rayon d'action --</option>
+                  @for (option of rayonActionOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+            </div>
             <comp-input formControlName="filiales" label="Filiales" id="filiales" name="filiales" extraClass="w-full">
             </comp-input>
         </div>
@@ -69,8 +76,6 @@
         <div class="flex justify-end mt-4 gap-2">
             <div class="flex gap-2">
                 <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
-                </comp-button>
-                <comp-button label="Suivant" variant="primary" type="submit">
                 </comp-button>
             </div>
         </div>

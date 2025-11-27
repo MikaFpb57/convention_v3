@@ -25,6 +25,12 @@ export class Compte implements OnInit {
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
 
+  rayonActionOptions = [
+    { value: 'departement', label: 'Départemental' },
+    { value: 'region', label: 'Régional' },
+    { value: 'france', label: 'National' }
+  ];
+
   compteForm: FormGroup = this.fb.group({
     siret: ['', Validators.required],
     tvaIntra: [''],
@@ -34,7 +40,7 @@ export class Compte implements OnInit {
     ville: ['', Validators.required],
     codeNaf: [''],
     activitePrincipale: [''],
-    rayonAction: [''],
+    rayonAction: ['', Validators.required],
     filiales: ['']
   });
 

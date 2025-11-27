@@ -1,5 +1,6 @@
-import { Component, ElementRef, QueryList, ViewChildren, signal, inject, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, QueryList, ViewChildren, signal, inject, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, ViewportScroller } from '@angular/common';
+import { initTooltips } from 'flowbite';
 import { Compte } from '../steps/compte/compte';
 import { Contacts } from '../steps/contacts/contacts';
 import { Facturation } from '../steps/facturation/facturation';
@@ -14,6 +15,7 @@ import { UIComponents } from '../../../components/ui-components';
   imports: [CommonModule, Compte, Contacts, Facturation, Infos, Procedures, UIComponents],
   templateUrl: './stepper.html',
   styleUrl: './stepper.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Stepper implements AfterViewInit {
   private viewportScroller = inject(ViewportScroller);
@@ -36,6 +38,11 @@ export class Stepper implements AfterViewInit {
       initFlowbite();
     }, 100);
 
+    // Réinitialiser les tooltips avec délai pour laisser le temps au DOM de se construire
+    setTimeout(() => {
+      initTooltips();
+    }, 200);
+
     this.observeSections();
   }
 
@@ -47,7 +54,7 @@ export class Stepper implements AfterViewInit {
   private observeSections() {
     const options = {
       root: null,
-      rootMargin: '-50% 0px -50% 0px', // Trigger when section is in the middle of viewport
+      rootMargin: '-50% 0px -50% 0px',
       threshold: 0
     };
 

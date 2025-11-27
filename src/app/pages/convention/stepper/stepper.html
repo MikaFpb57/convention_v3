@@ -3,11 +3,19 @@
     <div data-dial-init class="fixed end-6 top-20 group z-50">
         <div id="speed-dial-menu-text-outside-button" class="flex flex-col items-center hidden mb-4 space-y-2">
             @for (step of steps; track step.id; let i = $index) {
-            <button type="button" (click)="scrollTo(step.id)"
-                [ngClass]="activeStep() === step.id ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-700 hover:bg-gray-800'"
-                class="relative w-[52px] h-[52px] text-white rounded-full border border-gray-600 shadow-sm dark:border-gray-600 focus:ring-4 focus:ring-gray-400 focus:outline-none dark:focus:ring-gray-400 transition-all">
-                <i [class]="step.icon" class="text-lg"></i>
-            </button>
+              <button type="button" (click)="scrollTo(step.id)"
+                  [attr.data-tooltip-target]="'tooltip-' + i"
+                  [attr.data-tooltip-placement]="'left'"
+                  [ngClass]="activeStep() === step.id ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-700 hover:bg-gray-800'"
+                  class="relative w-[52px] h-[52px] text-white rounded-full border border-gray-600 shadow-sm dark:border-gray-600 focus:ring-4 focus:ring-gray-400 focus:outline-none dark:focus:ring-gray-400 transition-all">
+                  <i [class]="step.icon" class="text-lg"></i>
+              </button>
+
+              <div [id]="'tooltip-' + i" role="tooltip"
+                  class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-dark rounded-base shadow-xs opacity-0 tooltip">
+                {{ step.label || 'Tooltip' }}
+                <div class="tooltip-arrow" data-popper-arrow></div>
+              </div>
             }
         </div>
         <comp-button label="+" variant="primary" type="button" rounded="full" size="lg"
@@ -25,10 +33,10 @@
             </div>
         </section>
 
-        <section #stepSection id="contacts" class="scroll-mt-24">
+        <section #stepSection id="infos" class="scroll-mt-24">
             <div
                 class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
-                <app-contacts (next)="scrollTo('facturation')"></app-contacts>
+                <app-infos (next)="scrollTo('procedures')"></app-infos>
             </div>
         </section>
 
@@ -39,10 +47,10 @@
             </div>
         </section>
 
-        <section #stepSection id="infos" class="scroll-mt-24">
+        <section #stepSection id="contacts" class="scroll-mt-24">
             <div
                 class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
-                <app-infos (next)="scrollTo('procedures')"></app-infos>
+                <app-contacts (next)="scrollTo('facturation')"></app-contacts>
             </div>
         </section>
 
