@@ -1,0 +1,16 @@
+<div class="upload-zone" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+  <div class="upload-inner">
+    <p class="muted">Glisser-déposer vos fichiers ici ou</p>
+    <label class="browse-label">
+      Parcourir
+      <input type="file" [accept]="accept" multiple (change)="onFileInput($event)" />
+    </label>
+  </div>
+  <div class="upload-list">
+    <comp-file-gallery
+      [files]="files"
+      (removed)="removeFile($event)"
+      (download)="onDownload($event)">
+    </comp-file-gallery>
+  </div>
+</div>

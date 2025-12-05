@@ -40,7 +40,7 @@
         </div>
 
         <!-- Nom Société -->
-        <comp-input
+            <comp-input
                 groupClass="mb-3"
                 formControlName="nomSociete"
                 label="Nom de la société"
@@ -53,7 +53,7 @@
             </comp-input> 
 
         <!-- Adresse -->
-        <comp-input
+            <comp-input
                 groupClass="mb-3"
                 formControlName="adresse"
                 label="Adresse"
@@ -137,6 +137,13 @@
                 variant="primary"
                 type="submit">
             </comp-button>
+        </div>
+        <div class="container p-4">
+            <comp-file-upload 
+                (filesAdded)="onFilesAdded($event)" 
+                [initialFiles]="files"
+                >
+            </comp-file-upload>
         </div>
     </form>
 </div>

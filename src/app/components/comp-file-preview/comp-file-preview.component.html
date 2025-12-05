@@ -1,0 +1,25 @@
+@if (file) {
+  <div class="fp-backdrop" (click)="close.emit()"></div>
+
+  <div class="fp-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    <button class="fp-close" (click)="close.emit()">✕</button>
+    @if (file.type.startsWith('image/')) {
+      <img [src]="file.url" class="fp-img" alt="{{ file.name }}" />
+    } @else if (file.type === 'application/pdf') {
+      <iframe [src]="safeUrl" class="fp-frame"></iframe>
+    } @else if (
+      file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+      file.type === 'application/msword' ||                                                      
+      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||      
+      file.type === 'application/vnd.ms-excel'                                                  
+    ) {
+      <iframe [src]="officeUrl" class="fp-frame"></iframe>
+    }  @else {
+      <div class="fp-generic">
+        <div class="fp-icon">{{ file.name.split('.').pop()?.toUpperCase() }}</div>
+        <div>{{ file.name }}</div>
+        <a [href]="file.url" download="{{ file.name }}" class="btn">Télécharger</a>
+      </div>
+    }
+  </div>
+}
