@@ -1,0 +1,70 @@
+<div [class]="'relative ' + extraClass">
+    <label [hidden]="!label" class="block mb-1 text-sm font-medium text-heading">
+        {{ label }} <span [hidden]="!required">*</span>
+    </label>
+
+    <div class="relative">
+        <input type="text" [placeholder]="placeholder" [required]="required" [disabled]="disabled"
+            [value]="inputValue()" (input)="handleInput($event)" (blur)="handleBlur($event)" (focus)="handleFocus()"
+            (keydown)="handleKeyDown($event)"
+            class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9"
+            autocomplete="off" />
+
+        <!-- Spinner de chargement -->
+        @if (isLoading()) {
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <svg class="animate-spin h-4 w-4 text-brand" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+            </svg>
+        </div>
+        }
+
+        <!-- Dropdown list -->
+        @if (isOpen() && filteredOptions().length > 0) {
+        <div
+            class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+            <ul class="py-1">
+                @for (option of filteredOptions(); track option.value; let i = $index) {
+                <li (click)="selectOption(option)" [class]="'px-4 py-2 cursor-pointer transition-colors ' + 
+                (i === selectedIndex() 
+                  ? 'bg-brand text-white' 
+                  : 'hover:bg-neutral-secondary-medium text-heading')">
+                    <div class="font-medium">{{ option.label }}</div>
+                    @if (option.subtitle) {
+                    <div [class]="'text-xs ' + (i === selectedIndex() ? 'text-white/80' : 'text-body')">
+                        {{ option.subtitle }}
+                    </div>
+                    }
+                </li>
+                }
+            </ul>
+        </div>
+        }
+
+        <!-- Aucun résultat trouvé -->
+        @if (isOpen() && inputValue().length >= minChars && filteredOptions().length === 0 && !isLoading()) {
+        <div class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
+            <div class="px-4 py-3 text-sm text-body">
+                Aucun résultat trouvé
+            </div>
+        </div>
+        }
+
+        <!-- Indication de saisie minimum -->
+        @if (inputValue().length > 0 && inputValue().length < minChars) { <div class="text-xs text-body mt-1">
+            Saisissez au moins {{ minChars }} caractères pour rechercher
+    </div>
+    }
+
+    <!-- Message d'erreur -->
+    @if (errorVisible() && errorMessage) {
+    <div class="text-red-600 text-sm mt-0.5">
+        {{ errorMessage }}
+    </div>
+    }
+</div>
+</div>

@@ -24,9 +24,9 @@ export class Stepper implements AfterViewInit {
 
   steps = [
     { id: 'compte', label: 'Compte', icon: 'fa-solid fa-building' },
-    { id: 'contacts', label: 'Contacts', icon: 'fa-solid fa-users' },
-    { id: 'facturation', label: 'Facturation', icon: 'fa-solid fa-file-invoice' },
     { id: 'infos', label: 'Infos', icon: 'fa-solid fa-info-circle' },
+    { id: 'facturation', label: 'Facturation', icon: 'fa-solid fa-file-invoice' },
+    { id: 'contacts', label: 'Contacts', icon: 'fa-solid fa-users' },
     { id: 'procedures', label: 'Procédures', icon: 'fa-solid fa-cogs' }
   ];
 

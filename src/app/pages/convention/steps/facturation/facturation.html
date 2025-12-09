@@ -1,74 +1,113 @@
 <div class="relative">
-    <!-- Spinner Overlay -->
-    @if (isLoading()) {
-    <comp-loader></comp-loader>
-    }
+  <!-- Spinner Overlay -->
+  @if (isLoading()) {
+  <comp-loader></comp-loader>
+  }
 
-    <!-- Error Alert -->
-    @if (errorMessage()) {
-    <comp-alert-error [message]="errorMessage()"></comp-alert-error>
-    }
+  <!-- Error Alert -->
+  @if (errorMessage()) {
+  <comp-alert-error [message]="errorMessage()"></comp-alert-error>
+  }
 
-    <form [formGroup]="facturationForm" (ngSubmit)="onSubmit()" class="space-y-4">
-        <comp-h1-gd textGradient="Facturation" textNormal="et paiement"></comp-h1-gd>
+  <form [formGroup]="facturationForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <comp-h1-gd textGradient="Facturation" textNormal="et paiement"></comp-h1-gd>
 
-        <!-- Dématérialisation / Mode de gestion -->
-        <div class="grid gap-4 mb-4 md:grid-cols-2">
-          <label class="inline-flex items-center cursor-pointer">
-            <input type="checkbox" formControlName="demat" id="demat" class="sr-only peer"
-              (change)="onToggleChange('demat', $event)"
-            />
-            <div class="relative w-11 h-6 bg-neutral-quaternary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-soft dark:peer-focus:ring-brand-soft rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
-            <span class="select-none ms-3 text-sm font-medium text-heading">Dématérialisation ?</span>
-          </label>
-          <div>
-            <label for="mode_gest" class="block text-sm font-medium text-heading mb-1">Mode de gestion</label>
-            <select formControlName="mode_gest" id="mode_gest" name="mode_gest"
-              class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
-              <option disabled selected>-- Type de gestion --</option>
-              @for (option of getFilteredGestionOptions(); track option.value) {
-                <option [value]="option.value">{{ option.label }}</option>
-              }
-            </select>
-          </div>
+    <!-- Dématérialisation / Mode de gestion -->
+    <div class="grid gap-4 mb-4 md:grid-cols-2">
+      <label class="inline-flex items-center cursor-pointer">
+        <input type="checkbox" formControlName="demat" id="demat" class="sr-only peer"
+          (change)="onToggleChange('demat', $event)" />
+        <div
+          class="relative w-11 h-6 bg-neutral-quaternary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-soft dark:peer-focus:ring-brand-soft rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand">
         </div>
+        <span class="select-none ms-3 text-sm font-medium text-heading">Dématérialisation ?</span>
+      </label>
+      <div>
+        <label for="mode_gest" class="block text-sm font-medium text-heading mb-1">Mode de gestion</label>
+        <select formControlName="mode_gest" id="mode_gest" name="mode_gest"
+          class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
+          <option disabled selected>-- Type de gestion --</option>
+          @for (option of getFilteredGestionOptions(); track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
 
-        <!-- Adresse de facturation -->
-        <comp-input groupClass="mb-3" formControlName="adresseFacturation" label="Adresse de facturation"
-            id="adresseFacturation" name="adresseFacturation" placeholder="Si différente de l'adresse principale"
-            extraClass="w-full">
+    <!-- Adresse de facturation avec autocomplétion -->
+    <comp-autocomplete groupClass="mb-3" formControlName="adresseFacturation" label="Adresse de facturation"
+      id="adresseFacturation" name="adresseFacturation" placeholder="Ex: 15 rue du Faub ... (ou saisie manuelle)"
+      extraClass="w-full" [minChars]="3" [options]="adresseOptions" (search)="onSearchAdresse($event)"
+      (optionSelected)="onAdresseSelected($event)">
+    </comp-autocomplete>
+
+    <!-- CP / Ville -->
+    <div class="grid gap-4 mb-3 md:grid-cols-2">
+      <comp-input formControlName="codePostalFacturation" label="Code postal" id="codePostalFacturation"
+        name="codePostalFacturation" extraClass="w-full">
+      </comp-input>
+
+      <div>
+        <label for="villeFacturation" class="block text-sm font-medium text-heading mb-1">
+          Ville
+          @if (isLoadingVilles()) {
+          <span class="text-xs text-body ml-2">(Chargement...)</span>
+          }
+        </label>
+
+        @if (villesDisponibles().length > 1) {
+        <!-- Plusieurs villes disponibles : afficher un select -->
+        <select formControlName="villeFacturation" id="villeFacturation" name="villeFacturation"
+          class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
+          <option value="" disabled selected>-- Sélectionner une ville --</option>
+          @for (commune of villesDisponibles(); track commune.code) {
+          <option [value]="commune.nom">{{ commune.nom }}</option>
+          }
+        </select>
+        } @else {
+        <!-- Une seule ville ou aucune : afficher un input -->
+        <comp-input formControlName="villeFacturation" id="villeFacturation" name="villeFacturation"
+          [placeholder]="villesDisponibles().length === 0 ? 'Saisissez d\'abord un code postal' : ''"
+          extraClass="w-full">
         </comp-input>
+        }
+      </div>
+    </div>
 
-        <!-- CP / Ville -->
-        <div class="grid gap-4 mb-3 md:grid-cols-2">
-            <comp-input formControlName="codePostalFacturation" label="Code postal" id="codePostalFacturation"
-                name="codePostalFacturation" extraClass="w-full">
-            </comp-input>
-            <comp-input formControlName="villeFacturation" label="Ville" id="villeFacturation" name="villeFacturation"
-                extraClass="w-full">
-            </comp-input>
-        </div>
+    <!-- Email de facturation -->
+    <comp-input groupClass="mb-3" formControlName="emailFacturation" label="Email de facturation" id="emailFacturation"
+      name="emailFacturation" placeholder="Si différent de l'email principal" extraClass="w-full"
+      [errorMessage]="getControl('emailFacturation').touched && getControl('emailFacturation').invalid ? 'Email invalide.' : null">
+    </comp-input>
 
-        <!-- Email de facturation -->
-        <comp-input groupClass="mb-3" formControlName="emailFacturation" label="Email de facturation"
-            id="emailFacturation" name="emailFacturation" placeholder="Si différent de l'email principal"
-            extraClass="w-full"
-            [errorMessage]="getControl('emailFacturation').touched && getControl('emailFacturation').invalid ? 'Email invalide.' : null">
-        </comp-input>
+    <!-- Délai / Mode de paiement -->
+    <div class="grid gap-4 mb-3 md:grid-cols-2">
+      <div>
+        <label for="delaiPaiement" class="block text-sm font-medium text-heading mb-1">Délai de paiement</label>
+        <select formControlName="delaiPaiement" id="delaiPaiement" name="delaiPaiement"
+          class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
+          <option value="" disabled selected>-- Choisir le délai --</option>
+          @for (option of delaiPaiementOptions(); track option.id_type) {
+          <option [value]="option.id_type">{{ option.libelle_type }}</option>
+          }
+        </select>
+      </div>
 
-        <!-- Délai / Mode de paiement -->
-        <div class="grid gap-4 mb-3 md:grid-cols-2">
-            <comp-input formControlName="delaiPaiement" label="Délai de paiement" id="delaiPaiement"
-                name="delaiPaiement" placeholder="Ex: 30 jours" extraClass="w-full">
-            </comp-input>
-            <comp-input formControlName="modePaiement" label="Mode de paiement" id="modePaiement" name="modePaiement"
-                placeholder="Ex: Virement, Chèque" extraClass="w-full">
-            </comp-input>
-        </div>
+      <div>
+        <label for="modePaiement" class="block text-sm font-medium text-heading mb-1">Mode de paiement</label>
+        <select formControlName="modePaiement" id="modePaiement" name="modePaiement"
+          class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
+          <option value="" disabled selected>-- Choisir le mode --</option>
+          @for (option of modePaiementOptions(); track option.id_type) {
+          <option [value]="option.id_type">{{ option.libelle_type }}</option>
+          }
+        </select>
+      </div>
+    </div>
 
-        <div class="flex justify-end mt-4 gap-2">
-            <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
-            </comp-button>
-        </div>
-    </form>
+    <div class="flex justify-end mt-4 gap-2">
+      <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
+      </comp-button>
+    </div>
+  </form>
 </div>

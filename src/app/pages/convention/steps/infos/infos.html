@@ -1,112 +1,116 @@
 <div class="relative">
-    <!-- Spinner Overlay -->
-    @if (isLoading()) {
-    <comp-loader></comp-loader>
-    }
+  <!-- Spinner Overlay -->
+  @if (isLoading()) {
+  <comp-loader></comp-loader>
+  }
 
-    <!-- Error Alert -->
-    @if (errorMessage()) {
-    <comp-alert-error [message]="errorMessage()"></comp-alert-error>
-    }
+  <!-- Error Alert -->
+  @if (errorMessage()) {
+  <comp-alert-error [message]="errorMessage()"></comp-alert-error>
+  }
 
-    <form [formGroup]="infosForm" (ngSubmit)="onSubmit()" class="space-y-4">
-        <comp-h1-gd textGradient="Informations" textNormal="complémentaires"></comp-h1-gd>
+  <form [formGroup]="infosForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <comp-h1-gd textGradient="Informations" textNormal="complémentaires"></comp-h1-gd>
 
-        <!-- Assurance et courtage -->
-        <div class="grid gap-4 mb-4 md:grid-cols-2">
-          <label class="inline-flex items-center cursor-pointer">
-            <input type="checkbox" formControlName="assureBdg" id="assureBdg" class="sr-only peer"
-              (change)="onToggleChange('assureBdg', $event)"
-            />
-            <div class="relative w-11 h-6 bg-neutral-quaternary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-soft dark:peer-focus:ring-brand-soft rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
-            <span class="select-none ms-3 text-sm font-medium text-heading">Assuré BDG ?</span>
-          </label>
-
-          <label class="inline-flex items-center cursor-pointer">
-            <input type="checkbox" formControlName="recuperationTva" id="recuperationTva" class="sr-only peer"
-              (change)="onToggleChange('recuperationTva', $event)"
-            />
-            <div class="relative w-11 h-6 bg-neutral-quaternary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-soft dark:peer-focus:ring-brand-soft rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
-            <span class="select-none ms-3 text-sm font-medium text-heading">Récupération de TVA ?</span>
-          </label>
+    <!-- Assurance et courtage -->
+    <div class="grid gap-4 mb-4 md:grid-cols-2">
+      <label class="inline-flex items-center cursor-pointer">
+        <input type="checkbox" formControlName="assureBdg" id="assureBdg" class="sr-only peer"
+          (change)="onToggleChange('assureBdg', $event)" />
+        <div
+          class="relative w-11 h-6 bg-neutral-quaternary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-soft dark:peer-focus:ring-brand-soft rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand">
         </div>
+        <span class="select-none ms-3 text-sm font-medium text-heading">Assuré BDG ?</span>
+      </label>
 
-        <!-- Assurance / Courtier -->
-        <div class="grid gap-4 mb-3 md:grid-cols-2">
-            <comp-input formControlName="assurance" label="Assurance" id="assurance" name="assurance"
-                placeholder="Nom de l'Assurance" extraClass="w-full">
-            </comp-input>
-            <comp-input formControlName="courtier" label="Courtier" id="courtier" name="courtier"
-                placeholder="Nom du Courtier" extraClass="w-full">
-            </comp-input>
+      <label class="inline-flex items-center cursor-pointer">
+        <input type="checkbox" formControlName="recuperationTva" id="recuperationTva" class="sr-only peer"
+          (change)="onToggleChange('recuperationTva', $event)" />
+        <div
+          class="relative w-11 h-6 bg-neutral-quaternary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-soft dark:peer-focus:ring-brand-soft rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand">
         </div>
+        <span class="select-none ms-3 text-sm font-medium text-heading">Récupération de TVA ?</span>
+      </label>
+    </div>
 
-        <!-- Loueur / Tarifs -->
-        <div class="grid gap-4 mb-3 md:grid-cols-2">
-            <comp-input formControlName="loueur" label="Loueur" id="loueur" name="loueur"
-                placeholder="Nom du Loueur" extraClass="w-full">
-            </comp-input>
-            <div>
-              <label for="tarif" class="block text-sm font-medium text-heading mb-1">Tarif applicable</label>
-                <select formControlName="tarif" id="tarif" name="tarif"
-                  class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
-                  <option disabled selected>-- Choisir le tarif --</option>
-                  @for (option of tarifsOptions; track option.value) {
-                    <option [value]="option.value">{{ option.label }}</option>
-                  }
-                </select>
-            </div>
-        </div>
-        <!-- Parc automobile -->
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-heading mb-2">Parc automobile</label>
+    <!-- Assurance / Courtier -->
+    <div class="grid gap-4 mb-3 md:grid-cols-2">
+      <comp-autocomplete formControlName="assurance" label="Assurance" id="assurance" name="assurance"
+        placeholder="Nom de l'Assurance" extraClass="w-full" [minChars]="3" [options]="assuranceOptions"
+        (search)="onSearchAssurance($event)">
+      </comp-autocomplete>
+      <comp-autocomplete formControlName="courtier" label="Courtier" id="courtier" name="courtier"
+        placeholder="Nom du Courtier" extraClass="w-full" [minChars]="3" [options]="courtierOptions"
+        (search)="onSearchCourtier($event)">
+      </comp-autocomplete>
+    </div>
 
-          <div class="relative overflow-x-auto shadow-lg rounded-md">
-            <table class="w-full text-sm text-left text-body border-b-0">
-              <thead class="text-xs uppercase bg-neutral-secondary-medium">
-                <tr>
-                  <th class="px-4 py-2">Véhicule légers (VL /VU)</th>
-                  <th class="px-4 py-2">Poids lourds</th>
-                  <th class="px-4 py-2">Transport en commun</th>
-                  <th class="px-4 py-2">Travaux publics</th>
-                  <th class="px-4 py-2">Agricole</th>
-                  <th class="px-4 py-2">Camping car</th>
-                  <th class="px-4 py-2">TOTAL</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="bg-white border-b-0">
-                  <td class="px-4 py-2">
-                    <comp-input formControlName="nb_vu_vl" id="nb_vu_vl" extraClass="w-24"></comp-input>
-                  </td>
-                  <td class="px-4 py-2">
-                    <comp-input formControlName="nb_pl" id="nb_pl" extraClass="w-24"></comp-input>
-                  </td>
-                  <td class="px-4 py-2">
-                    <comp-input formControlName="nb_bus" id="nb_bus" extraClass="w-24"></comp-input>
-                  </td>
-                  <td class="px-4 py-2">
-                    <comp-input formControlName="nb_tp" id="nb_tp" extraClass="w-24"></comp-input>
-                  </td>
-                  <td class="px-4 py-2">
-                    <comp-input formControlName="nb_agri" id="nb_agri" extraClass="w-24"></comp-input>
-                  </td>
-                  <td class="px-4 py-2">
-                    <comp-input formControlName="nb_ca" id="nb_ca" extraClass="w-24"></comp-input>
-                  </td>
-                  <td class="px-4 py-2">
-                    <comp-input formControlName="nb_total" id="nb_total" extraClass="w-24" ></comp-input>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="flex justify-end mt-4 gap-2">
-            <div class="flex gap-2">
-                <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
-                </comp-button>
-            </div>
-        </div>
-    </form>
+    <!-- Loueur / Tarifs -->
+    <div class="grid gap-4 mb-3 md:grid-cols-2">
+      <comp-autocomplete formControlName="loueur" label="Loueur" id="loueur" name="loueur" placeholder="Nom du Loueur"
+        extraClass="w-full" [minChars]="3" [options]="loueurOptions" (search)="onSearchLoueur($event)">
+      </comp-autocomplete>
+      <div>
+        <label for="tarif" class="block text-sm font-medium text-heading mb-1">Tarif applicable</label>
+        <select formControlName="tarif" id="tarif" name="tarif"
+          class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
+          <option disabled selected>-- Choisir le tarif --</option>
+          @for (option of tarifsOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+    <!-- Parc automobile -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-heading mb-2">Parc automobile</label>
+
+      <div class="relative overflow-x-auto shadow-lg rounded-md">
+        <table class="w-full text-sm text-left text-body border-b-0">
+          <thead class="text-xs uppercase bg-neutral-secondary-medium">
+            <tr>
+              <th class="px-4 py-2">VP / VU</th>
+              <th class="px-4 py-2">Poids lourds</th>
+              <th class="px-4 py-2">Bus</th>
+              <th class="px-4 py-2">Travaux publics</th>
+              <th class="px-4 py-2">Agricole</th>
+              <th class="px-4 py-2">Camping car</th>
+              <th class="px-4 py-2">TOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bg-white border-b-0">
+              <td class="px-4 py-2">
+                <comp-input formControlName="nb_vu_vl" id="nb_vu_vl" extraClass="w-24"></comp-input>
+              </td>
+              <td class="px-4 py-2">
+                <comp-input formControlName="nb_pl" id="nb_pl" extraClass="w-24"></comp-input>
+              </td>
+              <td class="px-4 py-2">
+                <comp-input formControlName="nb_bus" id="nb_bus" extraClass="w-24"></comp-input>
+              </td>
+              <td class="px-4 py-2">
+                <comp-input formControlName="nb_tp" id="nb_tp" extraClass="w-24"></comp-input>
+              </td>
+              <td class="px-4 py-2">
+                <comp-input formControlName="nb_agri" id="nb_agri" extraClass="w-24"></comp-input>
+              </td>
+              <td class="px-4 py-2">
+                <comp-input formControlName="nb_ca" id="nb_ca" extraClass="w-24"></comp-input>
+              </td>
+              <td class="px-4 py-2">
+                <comp-input formControlName="nb_total" id="nb_total" extraClass="w-24"></comp-input>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="flex justify-end mt-4 gap-2">
+      <div class="flex gap-2">
+        <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
+        </comp-button>
+      </div>
+    </div>
+  </form>
 </div>

@@ -1,9 +1,11 @@
 import { Component, inject, OnInit, signal, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
+import { ConventionService as ConventionApiService, EntitesResponse, Entite } from '../../../../services/convention';
 import { ConventionService } from '../../../../services/convention.service';
 import { CommonModule } from '@angular/common';
 import { UIComponents } from '../../../../components/ui-components';
+import { AutocompleteOption } from '../../../../components/comp-autocomplete/comp-autocomplete.component';
 
 @Component({
   selector: 'app-infos',
@@ -15,9 +17,15 @@ import { UIComponents } from '../../../../components/ui-components';
 export class Infos implements OnInit {
   private fb = inject(FormBuilder);
   private conventionService = inject(ConventionService);
+  private conventionApiService = inject(ConventionApiService);
 
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
+
+  // Options pour les autocompletes
+  assuranceOptions = signal<AutocompleteOption[]>([]);
+  courtierOptions = signal<AutocompleteOption[]>([]);
+  loueurOptions = signal<AutocompleteOption[]>([]);
 
   tarifsOptions = [
     { value: 'L', label: 'Liberté' },
@@ -90,6 +98,69 @@ export class Infos implements OnInit {
   onToggleChange(fieldName: string, event: any) {
     const value = event.target.checked ? 1 : 0;
     this.infosForm.get(fieldName)?.setValue(value);
+  }
+
+  /**
+   * Recherche des assurances
+   */
+  onSearchAssurance(searchTerm: string) {
+    this.conventionApiService.getListeByType('Assurance').subscribe({
+      next: (response: EntitesResponse) => {
+        this.assuranceOptions.set(
+          response.entites.map((entite: Entite) => ({
+            value: entite.as_num,
+            label: entite.as_nom,
+            subtitle: entite.groupe
+          }))
+        );
+      },
+      error: (err: any) => {
+        console.error('Erreur lors de la recherche des assurances:', err);
+        this.assuranceOptions.set([]);
+      }
+    });
+  }
+
+  /**
+   * Recherche des courtiers
+   */
+  onSearchCourtier(searchTerm: string) {
+    this.conventionApiService.getListeByType('Courtier').subscribe({
+      next: (response: EntitesResponse) => {
+        this.courtierOptions.set(
+          response.entites.map((entite: Entite) => ({
+            value: entite.as_num,
+            label: entite.as_nom,
+            subtitle: entite.groupe
+          }))
+        );
+      },
+      error: (err: any) => {
+        console.error('Erreur lors de la recherche des courtiers:', err);
+        this.courtierOptions.set([]);
+      }
+    });
+  }
+
+  /**
+   * Recherche des loueurs
+   */
+  onSearchLoueur(searchTerm: string) {
+    this.conventionApiService.getListeByType('Loueur').subscribe({
+      next: (response: EntitesResponse) => {
+        this.loueurOptions.set(
+          response.entites.map((entite: Entite) => ({
+            value: entite.as_num,
+            label: entite.as_nom,
+            subtitle: entite.groupe
+          }))
+        );
+      },
+      error: (err: any) => {
+        console.error('Erreur lors de la recherche des loueurs:', err);
+        this.loueurOptions.set([]);
+      }
+    });
   }
 
   onSubmit() {
