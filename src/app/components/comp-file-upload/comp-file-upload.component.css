@@ -1,0 +1,5 @@
+.upload-zone { border:2px dashed #d1d5db; padding:16px; border-radius:8px; background:#fff; }
+.upload-inner { display:flex; gap:12px; align-items:center; justify-content:center; padding:18px; }
+.browse-label { background:#1d4ed8; color:white; padding:8px 12px; border-radius:6px; cursor:pointer; }
+.upload-list { margin-top:12px; }
+.upload-zone input[type=file] { display:none; }

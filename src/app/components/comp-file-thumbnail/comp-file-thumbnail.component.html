@@ -1,0 +1,40 @@
+<div class="file-card" (click)="open.emit()">
+  @if (isImage) {
+    <img [src]="item.url" class="thumb-img" alt="{{ item.name }}" />
+  } 
+  @else if (isPdf) {
+    <div class="thumb-pdf">
+      <object
+        [data]="safeUrl"
+        type="application/pdf"
+        title="PDF Viewer">
+        <iframe
+          [src]="safeUrl"
+          style="border: none"
+          title="Fallback PDF Viewer">
+        </iframe>
+      </object>
+    </div>
+  } 
+  @else if (isOffice) {
+    <div class="thumb-office">
+      <iframe [src]="officeUrl" frameborder="0"></iframe>
+    </div>
+  } 
+  @else {
+    <div class="thumb-generic">
+      <div class="icon">{{ preview.getIconFromType(item.type) }}</div>
+    </div>
+  }
+
+  <div class="file-name" title="{{ item.name }}">{{ item.name }}</div>
+  <div class="file-meta">{{ (item.size/1000) | number:'1.0-0' }} KB</div>
+
+  @if (showActions) {
+    <div class="file-actions">
+      <button type="button" (click)="$event.stopPropagation(); open.emit()" title="Aperçu"><i class="fa fa-search"></i></button>
+      <button type="button" (click)="$event.stopPropagation(); download.emit()" title="Télécharger"><i class="fa fa-cloud-arrow-down"></i></button>
+      <button type="button" (click)="$event.stopPropagation(); delete.emit()" title="Supprimer"><i class="fa fa-trash-can"></i></button>
+    </div>
+  }
+</div>

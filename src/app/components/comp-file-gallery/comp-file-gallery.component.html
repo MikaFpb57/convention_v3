@@ -1,0 +1,16 @@
+<div class="gallery-grid" cdkDropList (cdkDropListDropped)="drop($event)">
+  @for (item of files; track item.id) {
+    <div cdkDrag class="gallery-item">
+      <comp-file-thumbnail
+        [item]="item"
+        (open)="openPreview(item)"
+        (download)="onDownload(item)"
+        (delete)="onDelete(item)">
+      </comp-file-thumbnail>
+    </div>
+  }
+</div>
+
+@if (preview) {
+  <comp-file-preview [file]="preview" (close)="closePreview()"></comp-file-preview>
+}
