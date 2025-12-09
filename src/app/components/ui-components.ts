@@ -1,4 +1,5 @@
 import { CompAlertErrorComponent } from './comp-alert-error/comp-alert-error.component';
+import { CompAutocompleteComponent } from './comp-autocomplete/comp-autocomplete.component';
 import { CompBadgeComponent } from './comp-badge/comp-badge.component';
 import { CompButtonComponent } from './comp-button/comp-button.component';
 import { CompH1GdComponent } from './comp-h1-gd/comp-h1-gd.component';
@@ -10,6 +11,7 @@ export const UIComponents = [
   CompLoaderComponent,
   CompAlertErrorComponent,
   CompInputComponent,
+  CompAutocompleteComponent,
   CompH1GdComponent,
   CompButtonComponent,
   CompBadgeComponent,

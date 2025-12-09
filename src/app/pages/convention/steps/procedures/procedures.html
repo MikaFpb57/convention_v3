@@ -1,1 +1,51 @@
-<p>procedures works!</p>
+<div class="relative">
+    <!-- Spinner Overlay -->
+    @if (isLoading()) {
+    <comp-loader></comp-loader>
+    }
+
+    <!-- Error Alert -->
+    @if (errorMessage()) {
+    <comp-alert-error [message]="errorMessage()"></comp-alert-error>
+    }
+
+    <form [formGroup]="proceduresForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        <comp-h1-gd textGradient="Procédures" textNormal="et certifications"></comp-h1-gd>
+
+        <!-- Checkboxes -->
+        <div class="mb-4">
+            <label class="flex items-center space-x-3 mb-3">
+                <input type="checkbox" formControlName="procedureQualite"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <span class="text-sm font-medium text-gray-900 dark:text-gray-300">
+                    Procédure qualité en place
+                </span>
+            </label>
+
+            <label class="flex items-center space-x-3">
+                <input type="checkbox" formControlName="documentUnique"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <span class="text-sm font-medium text-gray-900 dark:text-gray-300">
+                    Document unique d'évaluation des risques (DUER)
+                </span>
+            </label>
+        </div>
+
+        <!-- Certifications -->
+        <comp-input groupClass="mb-3" formControlName="certifications" label="Certifications" id="certifications"
+            name="certifications" placeholder="Ex: ISO 9001, ISO 14001, etc." extraClass="w-full">
+        </comp-input>
+
+        <!-- Assurances -->
+        <comp-input groupClass="mb-3" formControlName="assurances" label="Assurances" id="assurances" name="assurances"
+            placeholder="Responsabilité civile, décennale, etc." extraClass="w-full">
+        </comp-input>
+
+        <div class="flex justify-end mt-4 gap-2">
+            <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
+            </comp-button>
+            <comp-button label="Terminer" variant="primary" type="submit">
+            </comp-button>
+        </div>
+    </form>
+</div>

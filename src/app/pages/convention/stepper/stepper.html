@@ -1,25 +1,64 @@
 <div class="p-4 sm:ml-64 mt-14">
-    <div class="p-4 border-1 border-default border-dashed rounded-base mb-6">
-        <!-- Stepper Header -->
-        <ol class="flex items-center w-full mb-4 sm:mb-6">
-            @for (step of steps; track step.path; let last = $last; let i = $index) {
-            <li class="flex w-full items-center"
-                [ngClass]="{'after:content-[\'\'] after:w-full after:h-1 after:border-b after:border-gray-100 after:border-4 after:inline-block dark:after:border-gray-700': !last}">
+    <!-- Speed Dial Navigation -->
+    <div data-dial-init class="fixed end-6 top-20 group z-50">
+        <div id="speed-dial-menu-text-outside-button" class="flex flex-col items-center hidden mb-4 space-y-2">
+            @for (step of steps; track step.id; let i = $index) {
+              <button type="button" (click)="scrollTo(step.id)"
+                  [attr.data-tooltip-target]="'tooltip-' + i"
+                  [attr.data-tooltip-placement]="'left'"
+                  [ngClass]="activeStep() === step.id ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-700 hover:bg-gray-800'"
+                  class="relative w-[52px] h-[52px] text-white rounded-full border border-gray-600 shadow-sm dark:border-gray-600 focus:ring-4 focus:ring-gray-400 focus:outline-none dark:focus:ring-gray-400 transition-all">
+                  <i [class]="step.icon" class="text-lg"></i>
+              </button>
 
-                <a [routerLink]="[step.path]" routerLinkActive #rla="routerLinkActive"
-                    class="flex items-center justify-center w-10 h-10 rounded-full shrink-0 ring-0 ring-white dark:ring-gray-900 sm:ring-8"
-                    [ngClass]="rla.isActive ? 'bg-blue-100 dark:bg-blue-800' : 'bg-gray-100 dark:bg-gray-700'">
-                    <i [class]="step.icon"
-                        [ngClass]="rla.isActive ? 'text-blue-600 dark:text-blue-300' : 'text-gray-500 dark:text-gray-100'"></i>
-                </a>
-            </li>
+              <div [id]="'tooltip-' + i" role="tooltip"
+                  class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-dark rounded-base shadow-xs opacity-0 tooltip">
+                {{ step.label || 'Tooltip' }}
+                <div class="tooltip-arrow" data-popper-arrow></div>
+              </div>
             }
-        </ol>
-
-        <!-- Content Area -->
-        <div
-            class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
-            <router-outlet></router-outlet>
         </div>
+        <comp-button label="+" variant="primary" type="button" rounded="full" size="lg"
+            extraClass="w-14 h-14 !p-0 text-2xl" data-dial-toggle="speed-dial-menu-text-outside-button"
+            aria-controls="speed-dial-menu-text-outside-button" aria-expanded="false">
+        </comp-button>
+    </div>
+
+    <!-- Content Area -->
+    <div class="space-y-8 pb-32">
+        <section #stepSection id="compte" class="scroll-mt-24">
+            <div
+                class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+                <app-compte (next)="scrollTo('contacts')"></app-compte>
+            </div>
+        </section>
+
+        <section #stepSection id="infos" class="scroll-mt-24">
+            <div
+                class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+                <app-infos (next)="scrollTo('procedures')"></app-infos>
+            </div>
+        </section>
+
+        <section #stepSection id="facturation" class="scroll-mt-24">
+            <div
+                class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+                <app-facturation (next)="scrollTo('infos')"></app-facturation>
+            </div>
+        </section>
+
+        <section #stepSection id="contacts" class="scroll-mt-24">
+            <div
+                class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+                <app-contacts (next)="scrollTo('facturation')"></app-contacts>
+            </div>
+        </section>
+
+        <section #stepSection id="procedures" class="scroll-mt-24">
+            <div
+                class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+                <app-procedures></app-procedures>
+            </div>
+        </section>
     </div>
 </div>

@@ -10,133 +10,74 @@
     }
 
     <form [formGroup]="compteForm" (ngSubmit)="onSubmit()" class="space-y-4">
-        <comp-h1-gd
-            textGradient="Informations"
-            textNormal="sur la société"
-        ></comp-h1-gd>
+        <comp-h1-gd textGradient="Informations" textNormal="sur la société"></comp-h1-gd>
 
         <!-- Siret / TVA Intra -->
         <div class="grid gap-4 mb-3 md:grid-cols-2">
-            <comp-input
-                groupClass=""
-                formControlName="siret"
-                label="Numéro Siret"
-                [required]="true"
-                id="siret"
-                name="siret"
-                placeholder="12345678901234"
-                extraClass="w-full"
+            <comp-input groupClass="" formControlName="siret" label="Numéro Siret" [required]="true" id="siret"
+                name="siret" placeholder="12345678901234" extraClass="w-full"
                 [errorMessage]="getControl('siret').touched && getControl('siret').invalid ? 'Siret requis.' : null"
                 (blur)="onSiretBlur()">
-            </comp-input> 
-            <comp-input
-                formControlName="tvaIntra"
-                label="Numéro de TVA Intracommunautaire"
-                [required]="true"
-                id="tvaIntra"
-                name="tvaIntra"
-                extraClass="w-full">
+            </comp-input>
+            <comp-input formControlName="tvaIntra" label="Numéro de TVA Intracommunautaire" [required]="true"
+                id="tvaIntra" name="tvaIntra" extraClass="w-full">
             </comp-input>
         </div>
 
         <!-- Nom Société -->
-        <comp-input
-                groupClass="mb-3"
-                formControlName="nomSociete"
-                label="Nom de la société"
-                [required]="true"
-                id="nomSociete"
-                name="nomSociete"
-                extraClass="w-full"
-                [errorMessage]="getControl('nomSociete').touched && getControl('nomSociete').invalid ? 'Nom requis.' : null"
-                >
-            </comp-input> 
+        <comp-input groupClass="mb-3" formControlName="nomSociete" label="Nom de la société" [required]="true"
+            id="nomSociete" name="nomSociete" extraClass="w-full"
+            [errorMessage]="getControl('nomSociete').touched && getControl('nomSociete').invalid ? 'Nom requis.' : null">
+        </comp-input>
 
         <!-- Adresse -->
-        <comp-input
-                groupClass="mb-3"
-                formControlName="adresse"
-                label="Adresse"
-                [required]="true"
-                id="adresse"
-                name="adresse"
-                extraClass="w-full"
-                [errorMessage]="getControl('adresse').touched && getControl('adresse').invalid ? 'Adresse requis.' : null"
-                >
-            </comp-input> 
+        <comp-input groupClass="mb-3" formControlName="adresse" label="Adresse" [required]="true" id="adresse"
+            name="adresse" extraClass="w-full"
+            [errorMessage]="getControl('adresse').touched && getControl('adresse').invalid ? 'Adresse requis.' : null">
+        </comp-input>
 
         <!-- CP / Ville -->
         <div class="grid gap-4 mb-3 md:grid-cols-2">
-            <comp-input
-                formControlName="codePostal"
-                label="Code postal"
-                [required]="true"
-                id="codePostal"
-                name="codePostal"
+            <comp-input formControlName="codePostal" label="Code postal" [required]="true" id="codePostal"
+                name="codePostal" extraClass="w-full"
+                [errorMessage]="getControl('codePostal').touched && getControl('codePostal').invalid ? 'Nom requis.' : null">
+            </comp-input>
+            <comp-input formControlName="ville" label="Ville" [required]="true" id="ville" name="ville"
                 extraClass="w-full"
-                [errorMessage]="getControl('codePostal').touched && getControl('codePostal').invalid ? 'Nom requis.' : null"
-                >
-            </comp-input> 
-            <comp-input
-                formControlName="ville"
-                label="Ville"
-                [required]="true"
-                id="ville"
-                name="ville"
-                extraClass="w-full"
-                [errorMessage]="getControl('ville').touched && getControl('ville').invalid ? 'Ville requise.' : null"
-                >
-            </comp-input> 
+                [errorMessage]="getControl('ville').touched && getControl('ville').invalid ? 'Ville requise.' : null">
+            </comp-input>
         </div>
 
         <!-- Code NAF / Activité -->
         <div class="grid gap-4 mb-3 md:grid-cols-2">
-            <comp-input
-                formControlName="codeNaf"
-                label="Code NAF"
-                id="codeNaf"
-                name="codeNaf"
-                extraClass="w-full">
+            <comp-input formControlName="codeNaf" label="Code NAF" id="codeNaf" name="codeNaf" extraClass="w-full">
             </comp-input>
-            <comp-input
-                formControlName="activitePrincipale"
-                label="Activité principale"
-                id="activitePrincipale"
-                name="activitePrincipale"
-                extraClass="w-full">
+            <comp-input formControlName="activitePrincipale" label="Activité principale" id="activitePrincipale"
+                name="activitePrincipale" extraClass="w-full">
             </comp-input>
         </div>
 
         <!-- Rayon / Filiales -->
         <div class="grid gap-4 mb-3 md:grid-cols-2">
-            <comp-input
-                formControlName="rayonAction"
-                label="Rayon d'action"
-                id="rayonAction"
-                name="rayonAction"
-                extraClass="w-full">
-            </comp-input>
-            <comp-input
-                formControlName="filiales"
-                label="Filiales"
-                id="filiales"
-                name="filiales"
-                extraClass="w-full">
+            <div>
+              <label for="rayonAction" class="block text-sm font-medium text-heading mb-1">Rayon d'action</label>
+                <select formControlName="rayonAction" id="rayonAction" name="rayonAction"
+                  class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
+                  <option disabled selected>-- Rayon d'action --</option>
+                  @for (option of rayonActionOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+            </div>
+            <comp-input formControlName="filiales" label="Filiales" id="filiales" name="filiales" extraClass="w-full">
             </comp-input>
         </div>
 
         <div class="flex justify-end mt-4 gap-2">
-            <comp-button
-                label="Effacer"
-                variant="danger"
-                type="button"
-                (click)="onClear()">
-            </comp-button>
-            <comp-button
-                label="Suivant"
-                variant="primary"
-                type="submit">
-            </comp-button>
+            <div class="flex gap-2">
+                <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
+                </comp-button>
+            </div>
         </div>
     </form>
 </div>

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
@@ -25,6 +25,12 @@ export class Compte implements OnInit {
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
 
+  rayonActionOptions = [
+    { value: 'departement', label: 'Départemental' },
+    { value: 'region', label: 'Régional' },
+    { value: 'france', label: 'National' }
+  ];
+
   compteForm: FormGroup = this.fb.group({
     siret: ['', Validators.required],
     tvaIntra: [''],
@@ -34,7 +40,7 @@ export class Compte implements OnInit {
     ville: ['', Validators.required],
     codeNaf: [''],
     activitePrincipale: [''],
-    rayonAction: [''],
+    rayonAction: ['', Validators.required],
     filiales: ['']
   });
 
@@ -103,10 +109,12 @@ export class Compte implements OnInit {
     return control;
   }
 
+  @Output() next = new EventEmitter<void>();
+
   onSubmit() {
     if (this.compteForm.valid) {
       this.conventionService.updateCompte(this.compteForm.value);
-      this.router.navigate(['/convention/contacts']);
+      this.next.emit();
     } else {
       this.compteForm.markAllAsTouched();
     }

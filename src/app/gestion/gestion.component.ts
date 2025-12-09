@@ -28,7 +28,7 @@ export class GestionComponent implements OnInit {
 
   // Etapes
   etapeFilter: string = '';
-  etapeClasses: {[key: string]: string} = {
+  etapeClasses: { [key: string]: string } = {
     'Compte': 'bg-purple-100 text-purple-800',
     'Facturation': 'bg-yellow-100 text-yellow-800',
     'Processus': 'bg-green-100 text-green-800',
@@ -37,7 +37,7 @@ export class GestionComponent implements OnInit {
     'En Attente': 'bg-red-100 text-red-800'
   };
 
-  constructor(private conventionService: ConventionService) {}
+  constructor(private conventionService: ConventionService) { }
 
   ngOnInit() {
     this.loadConventions();
@@ -77,7 +77,7 @@ export class GestionComponent implements OnInit {
 
   // Calcul du nombre total de pages
   get totalPages(): number {
-    return Math.ceil(this.fiches.length / this.itemsPerPage);
+    return Math.ceil(this.filteredFiches.length / this.itemsPerPage);
   }
 
   // Génération de la liste des pages pour la pagination

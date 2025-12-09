@@ -3,6 +3,33 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ConventionData } from '../models/convention.model';
 
+export type TypeCompte = 'Flotte' | 'Assurance' | 'Courtier' | 'Apporteur d\'affaire' | 'Loueur';
+
+export interface Entite {
+  as_num: string;
+  as_nom: string;
+  groupe: string;
+}
+
+export interface EntitesResponse {
+  type_cpt: TypeCompte;
+  total: number;
+  entites: Entite[];
+}
+
+export type TypeMatrix = 'delaipaie' | 'freq_envoi' | 'gestion_fa' | 'lieu_paie' | 'mode_pec' | 'type_relance' | 'mode_paie';
+
+export interface MatrixValue {
+  id_type: number;
+  libelle_type: string;
+}
+
+export interface MatrixResponse {
+  type: TypeMatrix;
+  total: number;
+  values: MatrixValue[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -57,5 +84,38 @@ export class ConventionService {
       .set('id', id);
 
     return this.http.delete<void>(`${this.API_URL}/delete`, { params });
+  }
+
+  /**
+   * Récupère les entités par type de compte
+   * @param typeCpt Type de compte (Flotte, Assurance, Courtier, Apporteur d'affaire, Loueur)
+   * @returns Observable contenant la liste des entités du type demandé
+   */
+  getListeByType(typeCpt: TypeCompte): Observable<EntitesResponse> {
+    const params = new HttpParams()
+      .set('crypted', this.CRYPTED_TOKEN)
+      .set('type_cpt', typeCpt);
+
+    return this.http.get<EntitesResponse>(`${this.API_URL}/tools/entites_types`, { params });
+  }
+
+  /**
+   * Récupère les listes de valeurs typées (matrix)
+   * @param type Type de liste (delaipaie, freq_envoi, gestion_fa, lieu_paie, mode_pec, type_relance, mode_paie)
+   * @returns Observable contenant la liste des valeurs du type demandé
+   * 
+   * @example
+   * // Récupérer les modes de paiement
+   * getListeMatrix('mode_paie').subscribe(response => {
+   *   console.log(response.values);
+   *   // [{ id_type: 1, libelle_type: "Virement" }, ...]
+   * });
+   */
+  getListeMatrix(type: TypeMatrix): Observable<MatrixResponse> {
+    const params = new HttpParams()
+      .set('crypted', this.CRYPTED_TOKEN)
+      .set('type', type);
+
+    return this.http.get<MatrixResponse>(`${this.API_URL}/tools/types_matrix`, { params });
   }
 }
