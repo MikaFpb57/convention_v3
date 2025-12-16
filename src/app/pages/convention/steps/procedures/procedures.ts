@@ -4,11 +4,12 @@ import { debounceTime } from 'rxjs/operators';
 import { ConventionService } from '../../../../services/convention.service';
 import { CommonModule } from '@angular/common';
 import { UIComponents } from '../../../../components/ui-components';
+import { QuillModule } from 'ngx-quill';
 
 @Component({
   selector: 'app-procedures',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, UIComponents],
+  imports: [ReactiveFormsModule, CommonModule, UIComponents, QuillModule],
   templateUrl: './procedures.html',
   styleUrl: './procedures.css',
 })
@@ -19,12 +20,54 @@ export class Procedures implements OnInit {
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
 
+  // Configuration Quill pour HTML propre
+  quillModules = {
+    toolbar: [
+      ['bold', 'italic', 'underline'],        // Formatage de texte
+      [{ 'color': [] }],                      // Couleur du texte
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],  // Listes
+      [{ 'header': [1, 2, 3, false] }]        // Titres
+    ]
+  };
+
+  // Options pour les selects multiples
+  typePriseEnChargeOptions = [
+    { id: 1, label: 'Acceptation tacite' },
+    { id: 2, label: 'Accord téléphonique' },
+    { id: 3, label: 'Accord Mail' },
+    { id: 4, label: 'Validation devis (Contact PEC obligatoire)' },
+    { id: 5, label: 'Bon de commande (Contact PEC non obligatoire)' },
+    { id: 6, label: 'Procédure assurancielle' },
+    { id: 7, label: 'Procédure loueur' }
+  ];
+
+  auDepartConducteurOptions = [
+    { id: 1, label: 'Conducteur : Copie de la DSPC' },
+    { id: 2, label: 'Conducteur : Copie de la facture' },
+    { id: 3, label: 'Facture avec DSPC' },
+    { id: 4, label: 'Accompagnée du bon de commande' },
+    { id: 5, label: 'Accompagnée de la carte grise' },
+    { id: 6, label: 'Accompagnée du mémo' }
+  ];
+
+  surFactureOptions = [
+    { id: 1, label: 'Nom de la personne ayant donné l\'accord' },
+    { id: 2, label: 'Numéro du bon de commande' },
+    { id: 3, label: 'Nom du conducteur' }
+  ];
+
   proceduresForm: FormGroup = this.fb.group({
-    procedureQualite: [false],
-    certifications: [''],
-    assurances: [''],
-    documentUnique: [false]
+    typePriseEnCharge: [[]],
+    auDepartConducteur: [[]],
+    surFacture: [[]],
+    proceduresParticulieres: [''],
+    visiblePartenaire: [false]
   });
+
+  // Signals pour le récapitulatif (mis à jour manuellement)
+  selectedTypePriseEnCharge = signal<{ id: number; label: string }[]>([]);
+  selectedAuDepartConducteur = signal<{ id: number; label: string }[]>([]);
+  selectedSurFacture = signal<{ id: number; label: string }[]>([]);
 
   @Output() next = new EventEmitter<void>();
 
@@ -32,6 +75,8 @@ export class Procedures implements OnInit {
     const data = this.conventionService.getProcedures();
     if (data) {
       this.proceduresForm.patchValue(data);
+      // Mettre à jour les signals après le chargement
+      this.updateRecapSignals();
     }
 
     // Save changes to service (and thus localStorage) automatically
@@ -40,6 +85,49 @@ export class Procedures implements OnInit {
     ).subscribe(value => {
       this.conventionService.updateProcedures(value);
     });
+  }
+
+  // Méthode pour mettre à jour tous les signals de récapitulatif
+  private updateRecapSignals() {
+    const typePriseEnCharge = this.proceduresForm.get('typePriseEnCharge')?.value || [];
+    this.selectedTypePriseEnCharge.set(
+      this.typePriseEnChargeOptions.filter(opt => typePriseEnCharge.includes(opt.id))
+    );
+
+    const auDepartConducteur = this.proceduresForm.get('auDepartConducteur')?.value || [];
+    this.selectedAuDepartConducteur.set(
+      this.auDepartConducteurOptions.filter(opt => auDepartConducteur.includes(opt.id))
+    );
+
+    const surFacture = this.proceduresForm.get('surFacture')?.value || [];
+    this.selectedSurFacture.set(
+      this.surFactureOptions.filter(opt => surFacture.includes(opt.id))
+    );
+  }
+
+  // Gestion des selects multiples
+  toggleSelection(controlName: string, optionId: number) {
+    const control = this.proceduresForm.get(controlName);
+    if (!control) return;
+
+    const currentValue: number[] = control.value || [];
+    const index = currentValue.indexOf(optionId);
+
+    if (index > -1) {
+      // Déjà sélectionné, on le retire
+      control.setValue(currentValue.filter(id => id !== optionId));
+    } else {
+      // Pas sélectionné, on l'ajoute
+      control.setValue([...currentValue, optionId]);
+    }
+
+    // Mettre à jour le récapitulatif immédiatement
+    this.updateRecapSignals();
+  }
+
+  isSelected(controlName: string, optionId: number): boolean {
+    const value = this.proceduresForm.get(controlName)?.value || [];
+    return value.includes(optionId);
   }
 
   getControl(fieldName: string): FormControl {
@@ -56,7 +144,6 @@ export class Procedures implements OnInit {
   onSubmit() {
     if (this.proceduresForm.valid) {
       this.conventionService.updateProcedures(this.proceduresForm.value);
-      // Last step - could navigate to signature or show completion message
       this.next.emit();
     } else {
       this.proceduresForm.markAllAsTouched();
@@ -64,6 +151,12 @@ export class Procedures implements OnInit {
   }
 
   onClear() {
-    this.proceduresForm.reset();
+    this.proceduresForm.reset({
+      typePriseEnCharge: [],
+      auDepartConducteur: [],
+      surFacture: [],
+      proceduresParticulieres: '',
+      visiblePartenaire: false
+    });
   }
 }

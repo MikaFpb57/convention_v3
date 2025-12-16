@@ -10,41 +10,161 @@
     }
 
     <form [formGroup]="proceduresForm" (ngSubmit)="onSubmit()" class="space-y-4">
-        <comp-h1-gd textGradient="Procédures" textNormal="et certifications"></comp-h1-gd>
+        <comp-h1-gd textGradient="Procédure à adapter" textNormal="selon fonctionnement"></comp-h1-gd>
 
-        <!-- Checkboxes -->
-        <div class="mb-4">
-            <label class="flex items-center space-x-3 mb-3">
-                <input type="checkbox" formControlName="procedureQualite"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                <span class="text-sm font-medium text-gray-900 dark:text-gray-300">
-                    Procédure qualité en place
-                </span>
-            </label>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="space-y-6">
+                <!-- Type de prise en charge -->
+                <div class="bg-neutral-secondary-soft border border-default-medium rounded-lg p-4">
+                    <label class="block text-sm font-medium text-heading mb-3">
+                        Type de prise en charge
+                        <span class="text-xs text-body ml-1">(Sélection multiple possible)</span>
+                    </label>
+                    <div class="space-y-2">
+                        @for (option of typePriseEnChargeOptions; track option.id) {
+                        <label
+                            class="flex items-center space-x-3 p-2 rounded-md hover:bg-neutral-tertiary-soft cursor-pointer transition-colors">
+                            <input type="checkbox" [checked]="isSelected('typePriseEnCharge', option.id)"
+                                (change)="toggleSelection('typePriseEnCharge', option.id)"
+                                class="w-4 h-4 text-brand bg-neutral-secondary-medium border-default-medium rounded focus:ring-brand focus:ring-2">
+                            <span class="text-sm text-heading">{{ option.label }}</span>
+                        </label>
+                        }
+                    </div>
+                </div>
 
-            <label class="flex items-center space-x-3">
-                <input type="checkbox" formControlName="documentUnique"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                <span class="text-sm font-medium text-gray-900 dark:text-gray-300">
-                    Document unique d'évaluation des risques (DUER)
-                </span>
-            </label>
+                <!-- Au départ du conducteur -->
+                <div class="bg-neutral-secondary-soft border border-default-medium rounded-lg p-4">
+                    <label class="block text-sm font-medium text-heading mb-3">
+                        Au départ du conducteur
+                        <span class="text-xs text-body ml-1">(Sélection multiple possible)</span>
+                    </label>
+                    <div class="space-y-2">
+                        @for (option of auDepartConducteurOptions; track option.id) {
+                        <label
+                            class="flex items-center space-x-3 p-2 rounded-md hover:bg-neutral-tertiary-soft cursor-pointer transition-colors">
+                            <input type="checkbox" [checked]="isSelected('auDepartConducteur', option.id)"
+                                (change)="toggleSelection('auDepartConducteur', option.id)"
+                                class="w-4 h-4 text-brand bg-neutral-secondary-medium border-default-medium rounded focus:ring-brand focus:ring-2">
+                            <span class="text-sm text-heading">{{ option.label }}</span>
+                        </label>
+                        }
+                    </div>
+                </div>
+
+                <!-- Sur la facture -->
+                <div
+                    class="bg-neutral-secondary-soft border border-default-medium rounded-lg p-4 border-l-4 border-l-red-500">
+                    <label class="block text-sm font-medium text-heading mb-3">
+                        <span class="text-red-600 font-semibold">IMPORTANT !</span> Ce qui doit figurer sur la facture
+                    </label>
+                    <div class="space-y-2">
+                        @for (option of surFactureOptions; track option.id) {
+                        <label
+                            class="flex items-center space-x-3 p-2 rounded-md hover:bg-neutral-tertiary-soft cursor-pointer transition-colors">
+                            <input type="checkbox" [checked]="isSelected('surFacture', option.id)"
+                                (change)="toggleSelection('surFacture', option.id)"
+                                class="w-4 h-4 text-brand bg-neutral-secondary-medium border-default-medium rounded focus:ring-brand focus:ring-2">
+                            <span class="text-sm text-heading">{{ option.label }}</span>
+                        </label>
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Colonne droite : Récapitulatif -->
+            <div class="bg-neutral-secondary-soft border border-default-medium rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-heading mb-4 flex items-center gap-2">
+                    <i class="fa-regular fa-circle-check text-brand text-xl"></i>
+                    Vérification des choix
+                </h3>
+
+                <!-- Type de prise en charge -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-semibold text-brand mb-2">Type de prise en charge</h4>
+                    @if (selectedTypePriseEnCharge().length > 0) {
+                    <ul class="space-y-1">
+                        @for (item of selectedTypePriseEnCharge(); track item.id) {
+                        <li class="text-sm text-body flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-green-500 text-sm mt-0.5"></i>
+                            {{ item.label }}
+                        </li>
+                        }
+                    </ul>
+                    } @else {
+                    <p class="text-sm text-body italic">Aucune sélection</p>
+                    }
+                </div>
+
+                <!-- Envoi de facture -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-semibold text-brand mb-2">Envoi de facture</h4>
+                    @if (selectedAuDepartConducteur().length > 0) {
+                    <ul class="space-y-1">
+                        @for (item of selectedAuDepartConducteur(); track item.id) {
+                        <li class="text-sm text-body flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-green-500 text-sm mt-0.5"></i>
+                            {{ item.label }}
+                        </li>
+                        }
+                    </ul>
+                    } @else {
+                    <p class="text-sm text-body italic">Aucune sélection</p>
+                    }
+                </div>
+
+                <!-- Sur la facture -->
+                <div>
+                    <h4 class="text-sm font-semibold text-brand mb-2">Sur la facture</h4>
+                    @if (selectedSurFacture().length > 0) {
+                    <ul class="space-y-1">
+                        @for (item of selectedSurFacture(); track item.id) {
+                        <li class="text-sm text-body flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-green-500 text-sm mt-0.5"></i>
+                            {{ item.label }}
+                        </li>
+                        }
+                    </ul>
+                    } @else {
+                    <p class="text-sm text-body italic">Aucune sélection</p>
+                    }
+                </div>
+            </div>
+
         </div>
 
-        <!-- Certifications -->
-        <comp-input groupClass="mb-3" formControlName="certifications" label="Certifications" id="certifications"
-            name="certifications" placeholder="Ex: ISO 9001, ISO 14001, etc." extraClass="w-full">
-        </comp-input>
+        <!-- Procédures particulières avec Quill Editor -->
+        <div class="mt-8 pt-6 border-t border-default-medium">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-heading">Procédures particulières</h3>
 
-        <!-- Assurances -->
-        <comp-input groupClass="mb-3" formControlName="assurances" label="Assurances" id="assurances" name="assurances"
-            placeholder="Responsabilité civile, décennale, etc." extraClass="w-full">
-        </comp-input>
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="checkbox" formControlName="visiblePartenaire" class="sr-only peer">
+                    <div
+                        class="relative w-11 h-6 bg-neutral-quaternary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-soft rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand">
+                    </div>
+                    <span class="ms-3 text-sm font-medium text-heading">Visible du partenaire</span>
+                </label>
+            </div>
+
+            <!-- Éditeur Quill -->
+            <quill-editor theme="snow" formControlName="proceduresParticulieres" [modules]="quillModules"
+                [styles]="{height: '250px'}" class="block w-full bg-white rounded-lg"
+                placeholder="Décrivez les procédures particulières à mettre en place...">
+            </quill-editor>
+
+            <p class="mt-2 text-xs text-body flex items-start gap-1">
+                <i class="fa-solid fa-circle-info text-body text-xs mt-0.5"></i>
+                <span>Ces procédures seront visibles du partenaire si le switch est activé. Utilisez la barre
+                    d'outils
+                    pour formater votre texte.
+                </span>
+            </p>
+        </div>
 
         <div class="flex justify-end mt-4 gap-2">
             <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
-            </comp-button>
-            <comp-button label="Terminer" variant="primary" type="submit">
             </comp-button>
         </div>
     </form>

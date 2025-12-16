@@ -34,12 +34,28 @@
       </div>
     </div>
 
+    <!-- Emails démat (affichés uniquement si dématérialisation cochée) -->
+    @if (facturationForm.get('demat')?.value === 1) {
+    <div class="grid gap-4 mb-3 md:grid-cols-2">
+      <comp-input formControlName="email_demat" label="Email dématérialisation" id="email_demat" name="email_demat"
+        placeholder="Email pour dématérialisation" extraClass="w-full"
+        [errorMessage]="getControl('email_demat').touched && getControl('email_demat').invalid ? 'Email invalide.' : null">
+      </comp-input>
+      <comp-input formControlName="email_demat_2" label="Backup dématérialisation" id="email_demat_2"
+        name="email_demat_2" placeholder="Backup pour dématérialisation" extraClass="w-full"
+        [errorMessage]="getControl('email_demat_2').touched && getControl('email_demat_2').invalid ? 'Email invalide.' : null">
+      </comp-input>
+    </div>
+    }
+
     <!-- Adresse de facturation avec autocomplétion -->
-    <comp-autocomplete groupClass="mb-3" formControlName="adresseFacturation" label="Adresse de facturation"
-      id="adresseFacturation" name="adresseFacturation" placeholder="Ex: 15 rue du Faub ... (ou saisie manuelle)"
-      extraClass="w-full" [minChars]="3" [options]="adresseOptions" (search)="onSearchAdresse($event)"
-      (optionSelected)="onAdresseSelected($event)">
-    </comp-autocomplete>
+    <div class="grid gap-4 mb-3 md:grid-cols-1">
+      <comp-autocomplete groupClass="mb-3" formControlName="adresseFacturation" label="Adresse de facturation"
+        id="adresseFacturation" name="adresseFacturation" placeholder="Ex: 15 rue du Faub ... (ou saisie manuelle)"
+        extraClass="w-full" [minChars]="3" [options]="adresseOptions" (search)="onSearchAdresse($event)"
+        (optionSelected)="onAdresseSelected($event)">
+      </comp-autocomplete>
+    </div>
 
     <!-- CP / Ville -->
     <div class="grid gap-4 mb-3 md:grid-cols-2">
@@ -76,7 +92,7 @@
 
     <!-- Email de facturation -->
     <comp-input groupClass="mb-3" formControlName="emailFacturation" label="Email de facturation" id="emailFacturation"
-      name="emailFacturation" placeholder="Si différent de l'email principal" extraClass="w-full"
+      name="emailFacturation" placeholder="Pour envoi des factures" extraClass="w-full"
       [errorMessage]="getControl('emailFacturation').touched && getControl('emailFacturation').invalid ? 'Email invalide.' : null">
     </comp-input>
 
@@ -99,6 +115,32 @@
           class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
           <option value="" disabled selected>-- Choisir le mode --</option>
           @for (option of modePaiementOptions(); track option.id_type) {
+          <option [value]="option.id_type">{{ option.libelle_type }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Délais de règlement / Fréquence de transmission -->
+    <div class="grid gap-4 mb-3 md:grid-cols-2">
+      <div>
+        <label for="delaiReglement" class="block text-sm font-medium text-heading mb-1">Mode de règlement</label>
+        <select formControlName="delaiReglement" id="delaiReglement" name="delaiReglement"
+          class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
+          <option value="" disabled selected>-- Choisir le mode --</option>
+          @for (option of delaiReglementOptions(); track option.id_type) {
+          <option [value]="option.id_type">{{ option.libelle_type }}</option>
+          }
+        </select>
+      </div>
+
+      <div>
+        <label for="freqTransmission" class="block text-sm font-medium text-heading mb-1">Fréquence de
+          transmission</label>
+        <select formControlName="freqTransmission" id="freqTransmission" name="freqTransmission"
+          class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
+          <option value="" disabled selected>-- Choisir la fréquence --</option>
+          @for (option of freqTransmissionOptions(); track option.id_type) {
           <option [value]="option.id_type">{{ option.libelle_type }}</option>
           }
         </select>

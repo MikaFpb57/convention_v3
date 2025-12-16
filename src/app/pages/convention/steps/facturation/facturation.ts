@@ -36,6 +36,8 @@ export class Facturation implements OnInit {
   // Signals pour les listes Matrix
   delaiPaiementOptions = signal<MatrixValue[]>([]);
   modePaiementOptions = signal<MatrixValue[]>([]);
+  delaiReglementOptions = signal<MatrixValue[]>([]);
+  freqTransmissionOptions = signal<MatrixValue[]>([]);
 
   gestionOptions = [
     { value: 'majmail', label: '0% centralisé - Envoi par mail par le centre', demat: 0 },
@@ -48,12 +50,16 @@ export class Facturation implements OnInit {
   facturationForm: FormGroup = this.fb.group({
     demat: [0],
     mode_gest: ['', Validators.required],
+    email_demat: ['', Validators.email],
+    email_demat_2: ['', Validators.email],
     adresseFacturation: [''],
     codePostalFacturation: [''],
     villeFacturation: [''],
     emailFacturation: ['', Validators.email],
     delaiPaiement: [''],
-    modePaiement: ['']
+    modePaiement: [''],
+    delaiReglement: [''],
+    freqTransmission: ['']
   });
 
   @Output() next = new EventEmitter<void>();
@@ -67,6 +73,8 @@ export class Facturation implements OnInit {
     // Charger les listes Matrix
     this.loadDelaiPaiementOptions();
     this.loadModePaiementOptions();
+    this.loadDelaiReglementOptions();
+    this.loadFreqTransmissionOptions();
 
     // Save changes to service (and thus localStorage) automatically
     this.facturationForm.valueChanges.pipe(
@@ -165,6 +173,36 @@ export class Facturation implements OnInit {
       error: (err: any) => {
         console.error('Erreur lors du chargement des modes de paiement:', err);
         this.modePaiementOptions.set([]);
+      }
+    });
+  }
+
+  /**
+   * Charge les options de délai de règlement depuis l'API
+   */
+  loadDelaiReglementOptions() {
+    this.conventionApiService.getListeMatrix('mode_paie').subscribe({
+      next: (response) => {
+        this.delaiReglementOptions.set(response.values);
+      },
+      error: (err: any) => {
+        console.error('Erreur lors du chargement des délais de règlement:', err);
+        this.delaiReglementOptions.set([]);
+      }
+    });
+  }
+
+  /**
+   * Charge les options de fréquence de transmission depuis l'API
+   */
+  loadFreqTransmissionOptions() {
+    this.conventionApiService.getListeMatrix('freq_envoi').subscribe({
+      next: (response) => {
+        this.freqTransmissionOptions.set(response.values);
+      },
+      error: (err: any) => {
+        console.error('Erreur lors du chargement des fréquences de transmission:', err);
+        this.freqTransmissionOptions.set([]);
       }
     });
   }

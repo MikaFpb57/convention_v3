@@ -1,11 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { UIComponents } from '../ui-components';
+import { CommonModule } from '@angular/common';
+import { CompButtonComponent } from '../comp-button/comp-button.component';
 
 @Component({
   selector: 'comp-pagination',
   standalone: true,
   templateUrl: './comp-pagination.component.html',
-  imports:[UIComponents]
+  imports: [CommonModule, CompButtonComponent]
 })
 export class CompPaginationComponent {
 
