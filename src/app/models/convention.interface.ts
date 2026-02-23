@@ -9,6 +9,7 @@ export interface CompteData {
   activitePrincipale?: string;
   rayonAction?: string;
   filiales?: string;
+  logo?: string;
 }
 
 export interface ContactData {
@@ -17,10 +18,21 @@ export interface ContactData {
   fonction: string;
   email: string;
   telephone: string;
+  adresse: string;
+  codePostal: string;
+  ville: string;
+}
+
+export interface ContactPair {
+  primary: ContactData;
+  backup: ContactData;
 }
 
 export interface ContactsData {
-  contacts: ContactData[];
+  commercial: ContactPair;
+  relance: ContactPair;
+  priseEnCharge: ContactPair;
+  comptabilite: ContactPair;
 }
 
 export interface FacturationData {

@@ -9,78 +9,168 @@
     <comp-alert-error [message]="errorMessage()"></comp-alert-error>
     }
 
-    <form [formGroup]="contactsForm" (ngSubmit)="onSubmit()" class="space-y-4">
-        <comp-h1-gd textGradient="Contacts" textNormal="de la société"></comp-h1-gd>
+    <form [formGroup]="contactsForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <comp-h1-gd textGradient="Contacts" textNormal="de la convention"></comp-h1-gd>
 
-        <div formArrayName="contacts" class="space-y-6">
-            @for (contact of contacts.controls; track $index; let i = $index) {
-            <div [formGroupName]="i" class="p-4 border border-gray-300 rounded-lg dark:border-gray-600 relative">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Contact {{ i + 1 }}</h3>
-                    @if (contacts.length > 1) {
-                    <comp-button label="Supprimer" variant="danger" type="button" (click)="removeContact(i)">
-                    </comp-button>
-                    }
-                </div>
-
-                <!-- Nom / Prénom -->
-                <div class="grid gap-4 mb-3 md:grid-cols-3">
-                    <comp-input formControlName="nom" label="Nom" [required]="true" [id]="'nom_' + i"
-                        extraClass="w-full"
-                        [errorMessage]="getControl(i, 'nom').touched && getControl(i, 'nom').invalid ? 'Nom requis.' : null">
-                    </comp-input>
-                    <comp-input formControlName="prenom" label="Prénom" [required]="true" [id]="'prenom_' + i"
-                        extraClass="w-full"
-                        [errorMessage]="getControl(i, 'prenom').touched && getControl(i, 'prenom').invalid ? 'Prénom requis.' : null">
-                    </comp-input>
-                    <comp-input groupClass="mb-3" formControlName="fonction" label="Fonction" [required]="true"
-                      [id]="'fonction_' + i" extraClass="w-full"
-                      [errorMessage]="getControl(i, 'fonction').touched && getControl(i, 'fonction').invalid ? 'Fonction requise.' : null">
-                  </comp-input>
-                </div>
-
-                <!-- Adresse -->
-                <div class="grid gap-4 mb-3 md:grid-cols-1">
-                    <comp-input formControlName="adresse" label="Adresse" [required]="true" [id]="'adresse_' + i"
-                        extraClass="w-full"
-                        [errorMessage]="getControl(i, 'adresse').touched && getControl(i, 'adresse').invalid ? 'Adresse requise.' : null">
-                    </comp-input>
-                </div>
-                <div class="grid gap-4 mb-3 md:grid-cols-2">
-                    <comp-input formControlName="codePostal" label="Code postal" [required]="true"
-                        [id]="'codePostal_' + i" extraClass="w-full"
-                        [errorMessage]="getControl(i, 'codePostal').touched && getControl(i, 'codePostal').invalid ? 'Code postal requis.' : null">
-                    </comp-input>
-                    <comp-input formControlName="ville" label="Ville" [required]="true" [id]="'ville_' + i"
-                        extraClass="w-full"
-                        [errorMessage]="getControl(i, 'ville').touched && getControl(i, 'ville').invalid ? 'Ville requise.' : null">
-                    </comp-input>
-                </div>
-
-                <!-- Email / Téléphone -->
-                <div class="grid gap-4 mb-3 md:grid-cols-2">
-                    <comp-input formControlName="email" label="Email" [required]="true" [id]="'email_' + i"
-                        extraClass="w-full"
-                        [errorMessage]="getControl(i, 'email').touched && getControl(i, 'email').invalid ? 'Email valide requis.' : null">
-                    </comp-input>
-                    <comp-input formControlName="telephone" label="Téléphone" [required]="true" [id]="'telephone_' + i"
-                        extraClass="w-full"
-                        [errorMessage]="getControl(i, 'telephone').touched && getControl(i, 'telephone').invalid ? 'Téléphone requis.' : null">
-                    </comp-input>
-                </div>
-            </div>
-            }
+        <!-- Tabs Container -->
+        <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="contactTabs"
+                data-tabs-toggle="#contactTabsContent" role="tablist">
+                <li class="me-2" role="presentation">
+                    <button class="inline-block p-4 border-b-2 rounded-t-lg transition-all duration-300"
+                        id="commercial-tab" data-tabs-target="#commercial" type="button" role="tab"
+                        aria-controls="commercial" aria-selected="true">
+                        <i class="fa-solid fa-briefcase me-2"></i>Commercial
+                    </button>
+                </li>
+                <li class="me-2" role="presentation">
+                    <button
+                        class="inline-block p-4 border-b-2 rounded-t-lg border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 transition-all duration-300"
+                        id="relance-tab" data-tabs-target="#relance" type="button" role="tab" aria-controls="relance"
+                        aria-selected="false">
+                        <i class="fa-solid fa-clock-rotate-left me-2"></i>Relance
+                    </button>
+                </li>
+                <li class="me-2" role="presentation">
+                    <button
+                        class="inline-block p-4 border-b-2 rounded-t-lg border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 transition-all duration-300"
+                        id="priseEnCharge-tab" data-tabs-target="#priseEnCharge" type="button" role="tab"
+                        aria-controls="priseEnCharge" aria-selected="false">
+                        <i class="fa-solid fa-hand-holding-heart me-2"></i>Prise en Charge
+                    </button>
+                </li>
+                <li class="me-2" role="presentation">
+                    <button
+                        class="inline-block p-4 border-b-2 rounded-t-lg border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 transition-all duration-300"
+                        id="comptabilite-tab" data-tabs-target="#comptabilite" type="button" role="tab"
+                        aria-controls="comptabilite" aria-selected="false">
+                        <i class="fa-solid fa-file-invoice-dollar me-2"></i>Comptabilité
+                    </button>
+                </li>
+            </ul>
         </div>
 
-        <div class="flex justify-between mt-4">
-            <comp-button label="Ajouter un contact" variant="neutral" type="button" (click)="addContact()">
+        <!-- Tabs Content -->
+        <div id="contactTabsContent">
+            <ng-container
+                *ngTemplateOutlet="contactSection; context: { $implicit: 'commercial', label: 'Commercial' }"></ng-container>
+            <ng-container
+                *ngTemplateOutlet="contactSection; context: { $implicit: 'relance', label: 'Relance' }"></ng-container>
+            <ng-container
+                *ngTemplateOutlet="contactSection; context: { $implicit: 'priseEnCharge', label: 'Prise en Charge' }"></ng-container>
+            <ng-container
+                *ngTemplateOutlet="contactSection; context: { $implicit: 'comptabilite', label: 'Comptabilité' }"></ng-container>
+        </div>
+
+        <!-- Reusable Contact Section Template -->
+        <ng-template #contactSection let-type let-label="label">
+            <div class="hidden p-4 rounded-lg bg-gray-50/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50"
+                [id]="type" role="tabpanel" [attr.aria-labelledby]="type + '-tab'">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                    <!-- Primary Contact Column -->
+                    <div [formGroupName]="type" class="space-y-4">
+                        <div formGroupName="primary"
+                            class="p-6 rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-blue-100 dark:border-blue-900/30 transition-all duration-500 hover:shadow-blue-500/10">
+
+                            <div class="flex justify-between items-center mb-6">
+                                <h3
+                                    class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                                    {{ label }} Principal
+                                </h3>
+                                <div class="flex gap-2">
+                                    @if (type !== 'commercial') {
+                                    <button type="button" (click)="duplicateCommercialTo(type)"
+                                        class="text-[10px] uppercase tracking-wider bg-indigo-50 hover:bg-indigo-100 hover:text-indigo-700 border border-indigo-200 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/40 dark:text-indigo-400 px-2 py-1 rounded-lg transition-all flex items-center gap-1 font-black shadow-sm">
+                                        <i class="fa-solid fa-user-tie"></i> Copier Commercial
+                                    </button>
+                                    } @else {
+                                    <span
+                                        class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                                        Source
+                                    </span>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="grid grid-cols-2 gap-4 mt-2">
+                                    <comp-input formControlName="nom" label="Nom" [id]="type + '_p_nom'"></comp-input>
+                                    <comp-input formControlName="prenom" label="Prénom"
+                                        [id]="type + '_p_prenom'"></comp-input>
+                                </div>
+                                <comp-input formControlName="fonction" label="Fonction"
+                                    [id]="type + '_p_fonction'"></comp-input>
+                                <div class="grid grid-cols-2 gap-4 mt-2">
+                                    <comp-input formControlName="email" label="Email"
+                                        [id]="type + '_p_email'"></comp-input>
+                                    <comp-input formControlName="telephone" label="Téléphone"
+                                        [id]="type + '_p_phone'"></comp-input>
+                                </div>
+                                <comp-input formControlName="adresse" label="Adresse"
+                                    [id]="type + '_p_addr'"></comp-input>
+                                <div class="grid grid-cols-2 gap-4 mt-2">
+                                    <comp-input formControlName="codePostal" label="Code Postal"
+                                        [id]="type + '_p_cp'"></comp-input>
+                                    <comp-input formControlName="ville" label="Ville"
+                                        [id]="type + '_p_ville'"></comp-input>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Backup Contact Column -->
+                    <div [formGroupName]="type" class="space-y-4">
+                        <div formGroupName="backup"
+                            class="p-6 rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-100 dark:border-gray-800 transition-all duration-500">
+
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-xl font-bold text-gray-700 dark:text-gray-300">
+                                    {{ label }} Backup
+                                </h3>
+                                <button type="button" (click)="duplicateToBackup(type)"
+                                    class="text-[10px] uppercase tracking-wider bg-blue-50 hover:bg-blue-100 hover:text-blue-700 border border-blue-200 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 dark:text-blue-400 px-2 py-1 rounded-lg transition-all flex items-center gap-1 font-black shadow-sm">
+                                    <i class="fa-solid fa-copy"></i> Copier Principal
+                                </button>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="grid grid-cols-2 gap-4 mt-2">
+                                    <comp-input formControlName="nom" label="Nom" [id]="type + '_b_nom'"></comp-input>
+                                    <comp-input formControlName="prenom" label="Prénom"
+                                        [id]="type + '_b_prenom'"></comp-input>
+                                </div>
+                                <comp-input formControlName="fonction" label="Fonction"
+                                    [id]="type + '_b_fonction'"></comp-input>
+                                <div class="grid grid-cols-2 gap-4 mt-2">
+                                    <comp-input formControlName="email" label="Email"
+                                        [id]="type + '_b_email'"></comp-input>
+                                    <comp-input formControlName="telephone" label="Téléphone"
+                                        [id]="type + '_b_phone'"></comp-input>
+                                </div>
+                                <comp-input formControlName="adresse" label="Adresse"
+                                    [id]="type + '_b_addr'"></comp-input>
+                                <div class="grid grid-cols-2 gap-4 mt-2">
+                                    <comp-input formControlName="codePostal" label="Code Postal"
+                                        [id]="type + '_b_cp'"></comp-input>
+                                    <comp-input formControlName="ville" label="Ville"
+                                        [id]="type + '_b_ville'"></comp-input>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </ng-template>
+
+        <!-- Bottom Actions -->
+        <div class="flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
+            <comp-button label="Réinitialiser" variant="neutral" type="button" (click)="onClear()">
             </comp-button>
-            <div class="flex gap-2">
-                <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
-                </comp-button>
-                <comp-button label="Suivant" variant="primary" type="submit">
-                </comp-button>
-            </div>
+            <comp-button label="Continuer" variant="primary" type="submit">
+            </comp-button>
         </div>
+
     </form>
 </div>

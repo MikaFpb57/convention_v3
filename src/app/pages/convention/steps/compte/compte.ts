@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, Output, EventEmitter } from '@angular/core';
+import { Component, inject, OnInit, signal, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
@@ -22,6 +22,7 @@ export class Compte implements OnInit {
   private conventionService = inject(ConventionService);
   private sireneService = inject(SireneService);
   private logger = inject(LoggerService);
+  private cdr = inject(ChangeDetectorRef);
 
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
@@ -42,8 +43,27 @@ export class Compte implements OnInit {
     codeNaf: [''],
     activitePrincipale: [''],
     rayonAction: ['', Validators.required],
-    filiales: ['']
+    filiales: [''],
+    logo: ['']
   });
+
+  onLogoChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        this.compteForm.patchValue({ logo: base64 });
+        this.cdr.detectChanges();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeLogo() {
+    this.compteForm.patchValue({ logo: '' });
+  }
 
   ngOnInit() {
     const data = this.conventionService.getCompte();
@@ -126,71 +146,71 @@ export class Compte implements OnInit {
     this.compteForm.reset();
   }
   files: FileItem[] = [
-  {
-    id: '1',
-    url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/2024-03-13 Extrait KBIS - OMNI CAEN.pdf',
-    type: 'application/pdf',
-    size: 679970, // bytes
-    name: '2024-03-13 Extrait KBIS - OMNI CAEN.pdf',
-  },
-  {
-    id: '2',
-    url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/CG _ CV OMNIPESAGE.pdf',
-    type: 'application/pdf',
-    size: 562610,
-    name: 'CG _ CV OMNIPESAGE.pdf',
-  },
-  {
-    id: '3',
-    url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/Convention_partenaire_30167096400073.pdf',
-    type: 'application/pdf',
-    size: 1220000,
-    name: 'Convention_partenaire_30167096400073.pdf',
-  },
-  {
-    id: '4',
-    url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/Fiche client.docx',
-    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    size: 129770,
-    name: 'Fiche client.docx',
-  },
-  {
-    id: '5',
-    url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/Liste et coordonnées AGENCES_OMNIPESAGE_ind1.0.pdf',
-    type: 'application/pdf',
-    size: 329190,
-    name: 'Liste et coordonnées AGENCES_OMNIPESAGE_ind1.0.pdf',
-  },
-  {
-    id: '6',
-    url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/RIB OMNIPESAGE.pdf',
-    type: 'application/pdf',
-    size: 285440,
-    name: 'RIB OMNIPESAGE.pdf',
-  },
-  {
-    id: '7',
-    url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/convention simplifiée omnipesage.pdf',
-    type: 'application/pdf',
-    size: 869220,
-    name: 'convention simplifiée omnipesage.pdf',
-  },
-  {
-    id: '8',
-    url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/coordonnées agences.xlsx',
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    size: 17030,
-    name: 'coordonnées agences.xlsx',
-  },
-  {
-    id: '9',
-    url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/doc06532820240430112040.pdf',
-    type: 'application/pdf',
-    size: 242470,
-    name: 'doc06532820240430112040.pdf',
-  },
-];
-;
+    {
+      id: '1',
+      url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/2024-03-13 Extrait KBIS - OMNI CAEN.pdf',
+      type: 'application/pdf',
+      size: 679970, // bytes
+      name: '2024-03-13 Extrait KBIS - OMNI CAEN.pdf',
+    },
+    {
+      id: '2',
+      url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/CG _ CV OMNIPESAGE.pdf',
+      type: 'application/pdf',
+      size: 562610,
+      name: 'CG _ CV OMNIPESAGE.pdf',
+    },
+    {
+      id: '3',
+      url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/Convention_partenaire_30167096400073.pdf',
+      type: 'application/pdf',
+      size: 1220000,
+      name: 'Convention_partenaire_30167096400073.pdf',
+    },
+    {
+      id: '4',
+      url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/Fiche client.docx',
+      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      size: 129770,
+      name: 'Fiche client.docx',
+    },
+    {
+      id: '5',
+      url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/Liste et coordonnées AGENCES_OMNIPESAGE_ind1.0.pdf',
+      type: 'application/pdf',
+      size: 329190,
+      name: 'Liste et coordonnées AGENCES_OMNIPESAGE_ind1.0.pdf',
+    },
+    {
+      id: '6',
+      url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/RIB OMNIPESAGE.pdf',
+      type: 'application/pdf',
+      size: 285440,
+      name: 'RIB OMNIPESAGE.pdf',
+    },
+    {
+      id: '7',
+      url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/convention simplifiée omnipesage.pdf',
+      type: 'application/pdf',
+      size: 869220,
+      name: 'convention simplifiée omnipesage.pdf',
+    },
+    {
+      id: '8',
+      url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/coordonnées agences.xlsx',
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      size: 17030,
+      name: 'coordonnées agences.xlsx',
+    },
+    {
+      id: '9',
+      url: 'https://extranet.franceparebrise.fr/Convention/upload/dossiers_partenaires/30167096400073/doc06532820240430112040.pdf',
+      type: 'application/pdf',
+      size: 242470,
+      name: 'doc06532820240430112040.pdf',
+    },
+  ];
+  ;
 
   onFilesAdded(items: FileItem[]) {
     this.files.push(...items);

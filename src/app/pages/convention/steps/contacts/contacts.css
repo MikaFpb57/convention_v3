@@ -1,0 +1,34 @@
+/* Glassmorphism effects */
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Tabs styling */
+#contactTabs button[aria-selected="true"] {
+  border-color: #2563eb; /* blue-600 */
+  color: #2563eb;
+}
+
+#contactTabs button[aria-selected="false"] {
+  border-color: transparent;
+  color: #6b7280; /* gray-500 */
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Custom scrollbar for tab content */
+#contactTabsContent {
+  scrollbar-width: thin;
+  scrollbar-color: #e5e7eb transparent;
+}
+
+/* Hover effects for cards */
+.hover\:shadow-blue-500\/10:hover {
+  box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.1), 0 8px 10px -6px rgba(37, 99, 235, 0.1);
+}

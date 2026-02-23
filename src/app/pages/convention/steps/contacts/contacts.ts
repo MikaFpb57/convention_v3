@@ -1,9 +1,11 @@
-import { Component, inject, OnInit, signal, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { Component, inject, OnInit, signal, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { ConventionService } from '../../../../services/convention.service';
 import { CommonModule } from '@angular/common';
 import { UIComponents } from '../../../../components/ui-components';
+import { ContactsData } from '../../../../models/convention.interface';
+import { initFlowbite } from 'flowbite';
 
 @Component({
   selector: 'app-contacts',
@@ -12,7 +14,7 @@ import { UIComponents } from '../../../../components/ui-components';
   templateUrl: './contacts.html',
   styleUrl: './contacts.css',
 })
-export class Contacts implements OnInit {
+export class Contacts implements OnInit, AfterViewInit {
   private fb = inject(FormBuilder);
   private conventionService = inject(ConventionService);
 
@@ -20,62 +22,72 @@ export class Contacts implements OnInit {
   errorMessage = signal<string | null>(null);
 
   contactsForm: FormGroup = this.fb.group({
-    contacts: this.fb.array([])
+    commercial: this.createContactPair(),
+    relance: this.createContactPair(),
+    priseEnCharge: this.createContactPair(),
+    comptabilite: this.createContactPair()
   });
 
   @Output() next = new EventEmitter<void>();
 
   ngOnInit() {
     const data = this.conventionService.getContacts();
-    if (data && data.contacts && data.contacts.length > 0) {
-      data.contacts.forEach(contact => {
-        this.addContact(contact);
-      });
-    } else {
-      // Add at least one contact by default
-      this.addContact();
+    if (data) {
+      this.contactsForm.patchValue(data);
     }
 
     // Save changes to service (and thus localStorage) automatically
     this.contactsForm.valueChanges.pipe(
       debounceTime(300)
     ).subscribe(value => {
-      this.conventionService.updateContacts(value);
+      this.conventionService.updateContacts(value as ContactsData);
     });
   }
 
-  get contacts(): FormArray {
-    return this.contactsForm.get('contacts') as FormArray;
+  ngAfterViewInit() {
+    initFlowbite();
   }
 
-  addContact(contact?: any) {
-    const contactGroup = this.fb.group({
-      nom: [contact?.nom || '', Validators.required],
-      prenom: [contact?.prenom || '', Validators.required],
-      fonction: [contact?.fonction || '', Validators.required],
-      email: [contact?.email || '', [Validators.required, Validators.email]],
-      telephone: [contact?.telephone || '', Validators.required],
-      adresse: [contact?.adresse || '', Validators.required],
-      codePostal: [contact?.codePostal || '', Validators.required],
-      ville: [contact?.ville || '', Validators.required]
+  createContactPair(): FormGroup {
+    return this.fb.group({
+      primary: this.createContactGroup(),
+      backup: this.createContactGroup()
     });
-
-    this.contacts.push(contactGroup);
   }
 
-  removeContact(index: number) {
-    this.contacts.removeAt(index);
+  createContactGroup(contact?: any): FormGroup {
+    return this.fb.group({
+      nom: [contact?.nom || ''],
+      prenom: [contact?.prenom || ''],
+      fonction: [contact?.fonction || ''],
+      email: [contact?.email || '', [Validators.email]],
+      telephone: [contact?.telephone || ''],
+      adresse: [contact?.adresse || ''],
+      codePostal: [contact?.codePostal || ''],
+      ville: [contact?.ville || '']
+    });
   }
 
-  getControl(index: number, fieldName: string): FormControl {
-    const control = this.contacts.at(index).get(fieldName);
+  getControl(type: string, target: 'primary' | 'backup', fieldName: string): FormControl {
+    const control = this.contactsForm.get(`${type}.${target}.${fieldName}`);
     if (!control) {
-      throw new Error(`Le champ ${fieldName} n'existe pas dans le FormGroup.`);
+      throw new Error(`Le champ ${type}.${target}.${fieldName} n'existe pas.`);
     }
-    if (!(control instanceof FormControl)) {
-      throw new Error(`Le champ ${fieldName} n'est pas un FormControl.`);
+    return control as FormControl;
+  }
+
+  duplicateToBackup(type: string) {
+    const primaryValue = this.contactsForm.get(`${type}.primary`)?.value;
+    if (primaryValue) {
+      this.contactsForm.get(`${type}.backup`)?.patchValue(primaryValue);
     }
-    return control;
+  }
+
+  duplicateCommercialTo(type: string) {
+    const commercialPrimary = this.contactsForm.get('commercial.primary')?.value;
+    if (commercialPrimary) {
+      this.contactsForm.get(`${type}.primary`)?.patchValue(commercialPrimary);
+    }
   }
 
   onSubmit() {
@@ -88,7 +100,6 @@ export class Contacts implements OnInit {
   }
 
   onClear() {
-    this.contacts.clear();
-    this.addContact();
+    this.contactsForm.reset();
   }
 }
