@@ -9,6 +9,10 @@ export class ConventionService {
     private conventionSignal = signal<ConventionData>({});
 
     readonly convention = this.conventionSignal.asReadonly();
+    readonly isEditMode = signal<boolean>(false);
+    readonly isReadOnly = signal<boolean>(false);
+    readonly etape = signal<string | null>(null);
+    readonly currentId = signal<string | null>(null);
 
     constructor() {
         // Load from localStorage on init
@@ -21,14 +25,55 @@ export class ConventionService {
             }
         }
 
-        // Save to localStorage on change
+        // Save to localStorage on change (only if not in edit mode)
         effect(() => {
             const data = this.conventionSignal();
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+            if (!this.isEditMode()) {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+            }
         });
     }
 
+    startEditMode(id: string, preview?: ConventionData, etape?: string) {
+        this.isEditMode.set(true);
+        this.currentId.set(id);
+        this.etape.set(etape ?? null);
+        this.isReadOnly.set(this.isConsultationEtape(etape));
+        this.conventionSignal.set(preview ?? {});
+    }
+
+    setEditMode(id: string, data: ConventionData, etape?: string) {
+        this.isEditMode.set(true);
+        this.currentId.set(id);
+        this.etape.set(etape ?? null);
+        this.isReadOnly.set(this.isConsultationEtape(etape));
+        this.conventionSignal.set(data);
+    }
+
+    isConsultationEtape(etape?: string | null): boolean {
+        return etape === 'Signé' || etape === 'En Attente';
+    }
+
+    resetNewMode() {
+        this.isEditMode.set(false);
+        this.isReadOnly.set(false);
+        this.etape.set(null);
+        this.currentId.set(null);
+        // Reload from localStorage
+        const savedData = localStorage.getItem(this.STORAGE_KEY);
+        if (savedData) {
+            this.conventionSignal.set(JSON.parse(savedData));
+        } else {
+            this.conventionSignal.set({});
+        }
+    }
+
+    private guardWrite(): boolean {
+        return !this.isReadOnly();
+    }
+
     updateCompte(data: CompteData) {
+        if (!this.guardWrite()) return;
         this.conventionSignal.update(current => ({
             ...current,
             compte: data
@@ -45,6 +90,7 @@ export class ConventionService {
     }
 
     updateContacts(data: ContactsData) {
+        if (!this.guardWrite()) return;
         this.conventionSignal.update(current => ({
             ...current,
             contacts: data
@@ -56,6 +102,7 @@ export class ConventionService {
     }
 
     updateFacturation(data: FacturationData) {
+        if (!this.guardWrite()) return;
         this.conventionSignal.update(current => ({
             ...current,
             facturation: data
@@ -67,6 +114,7 @@ export class ConventionService {
     }
 
     updateInfos(data: InfosData) {
+        if (!this.guardWrite()) return;
         this.conventionSignal.update(current => ({
             ...current,
             infos: data
@@ -78,6 +126,7 @@ export class ConventionService {
     }
 
     updateProcedures(data: ProceduresData) {
+        if (!this.guardWrite()) return;
         this.conventionSignal.update(current => ({
             ...current,
             procedures: data

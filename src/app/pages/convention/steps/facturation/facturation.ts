@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, Output, EventEmitter } from '@angular/core';
+import { Component, inject, OnInit, signal, Output, EventEmitter, effect } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { ConventionService } from '../../../../services/convention.service';
@@ -7,6 +7,7 @@ import { GeoApiService, Commune, AddressSuggestion } from '../../../../services/
 import { CommonModule } from '@angular/common';
 import { UIComponents } from '../../../../components/ui-components';
 import { AutocompleteOption } from '../../../../components/comp-autocomplete/comp-autocomplete.component';
+import { bindReadOnlyForm } from '../../../../utils/form-readonly';
 
 @Component({
   selector: 'app-facturation',
@@ -23,6 +24,7 @@ export class Facturation implements OnInit {
 
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
+  isReadOnly = this.conventionService.isReadOnly;
 
   // Signals pour l'autocomplétion d'adresse
   adresseOptions = signal<AutocompleteOption[]>([]);
@@ -64,12 +66,17 @@ export class Facturation implements OnInit {
 
   @Output() next = new EventEmitter<void>();
 
-  ngOnInit() {
-    const data = this.conventionService.getFacturation();
-    if (data) {
-      this.facturationForm.patchValue(data);
-    }
+  constructor() {
+    bindReadOnlyForm(this.facturationForm, () => this.conventionService.isReadOnly());
+    effect(() => {
+      const data = this.conventionService.getFacturation();
+      if (data) {
+        this.facturationForm.patchValue(data, { emitEvent: false });
+      }
+    });
+  }
 
+  ngOnInit() {
     // Charger les listes Matrix
     this.loadDelaiPaiementOptions();
     this.loadModePaiementOptions();

@@ -106,11 +106,13 @@
         </table>
       </div>
     </div>
+    @if (!isReadOnly()) {
     <div class="flex justify-end mt-4 gap-2">
       <div class="flex gap-2">
         <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
         </comp-button>
       </div>
     </div>
+    }
   </form>
 </div>

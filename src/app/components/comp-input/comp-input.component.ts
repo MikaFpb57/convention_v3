@@ -24,6 +24,7 @@ export class CompInputComponent implements ControlValueAccessor {
   @Input() disabled = false;
   @Input() readonly = false;
   @Input() extraClass = '';
+  @Input() hasSuffix = false;
   @Input() errorMessage: string | null = null;
 
   @Output() blur = new EventEmitter<FocusEvent>();

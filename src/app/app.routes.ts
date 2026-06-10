@@ -8,5 +8,9 @@ export const routes: Routes = [
     {
         path: 'convention',
         component: Stepper
+    },
+    {
+        path: 'convention/:id',
+        component: Stepper
     }
 ];

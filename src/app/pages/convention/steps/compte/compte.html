@@ -24,28 +24,91 @@
             </comp-input>
         </div>
 
-        <!-- Nom Société -->
-        <comp-input groupClass="mb-3" formControlName="nomSociete" label="Nom de la société" [required]="true"
-            id="nomSociete" name="nomSociete" extraClass="w-full"
-            [errorMessage]="getControl('nomSociete').touched && getControl('nomSociete').invalid ? 'Nom requis.' : null">
-        </comp-input>
+        <!-- Nom Société + recherche IA -->
+        <div class="relative mb-3" (keydown)="onSocieteKeyDown($event)">
+            <comp-input groupClass="" formControlName="nomSociete" label="Nom de la société" [required]="true"
+                id="nomSociete" name="nomSociete" extraClass="w-full" [hasSuffix]="true"
+                [errorMessage]="getControl('nomSociete').touched && getControl('nomSociete').invalid ? 'Nom requis.' : null">
+                <button suffix type="button" (click)="onSearchSocieteClick()"
+                    class="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
+                    title="Rechercher l'entreprise" [disabled]="isLoadingSociete()">
+                    @if (isLoadingSociete()) {
+                    <svg class="animate-spin h-4 w-4 text-brand" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    } @else {
+                    <i class="fa-solid fa-wand-magic-sparkles text-brand"></i>
+                    }
+                </button>
+            </comp-input>
 
-        <!-- Adresse -->
-        <comp-input groupClass="mb-3" formControlName="adresse" label="Adresse" [required]="true" id="adresse"
-            name="adresse" extraClass="w-full"
-            [errorMessage]="getControl('adresse').touched && getControl('adresse').invalid ? 'Adresse requis.' : null">
-        </comp-input>
+            @if (societeSearchError()) {
+            <p class="text-sm text-red-600 mt-1">{{ societeSearchError() }}</p>
+            }
+
+            @if (showSocieteResults() && societeSuggestions().length > 0) {
+            <div
+                class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto">
+                <ul class="py-1">
+                    @for (suggestion of societeSuggestions(); track suggestion.siret; let i = $index) {
+                    <li (mousedown)="onSocieteSelected(suggestion)"
+                        [class]="'px-4 py-2 cursor-pointer transition-colors ' +
+                            (i === societeSelectedIndex()
+                              ? 'bg-brand text-white'
+                              : 'hover:bg-neutral-secondary-medium text-heading')">
+                        <div class="font-medium">{{ suggestion.label }}</div>
+                        <div
+                            [class]="'text-xs ' + (i === societeSelectedIndex() ? 'text-white/80' : 'text-body')">
+                            {{ suggestion.subtitle }}
+                        </div>
+                    </li>
+                    }
+                </ul>
+            </div>
+            }
+        </div>
+
+        <!-- Adresse avec autocomplétion BAN -->
+        <comp-autocomplete groupClass="mb-3" formControlName="adresse" label="Adresse" [required]="true"
+            id="adresse" name="adresse" placeholder="Ex: 15 rue du Faubourg..." extraClass="w-full"
+            [minChars]="3" [serverSide]="true" [options]="adresseOptions"
+            [errorMessage]="getControl('adresse').touched && getControl('adresse').invalid ? 'Adresse requis.' : null"
+            (search)="onSearchAdresse($event)" (optionSelected)="onAdresseSelected($event)">
+        </comp-autocomplete>
 
         <!-- CP / Ville -->
         <div class="grid gap-4 mb-3 md:grid-cols-2">
             <comp-input formControlName="codePostal" label="Code postal" [required]="true" id="codePostal"
-                name="codePostal" extraClass="w-full"
-                [errorMessage]="getControl('codePostal').touched && getControl('codePostal').invalid ? 'Nom requis.' : null">
+                name="codePostal" placeholder="75001" extraClass="w-full"
+                [errorMessage]="getControl('codePostal').touched && getControl('codePostal').invalid ? 'Code postal requis.' : null">
             </comp-input>
-            <comp-input formControlName="ville" label="Ville" [required]="true" id="ville" name="ville"
-                extraClass="w-full"
-                [errorMessage]="getControl('ville').touched && getControl('ville').invalid ? 'Ville requise.' : null">
-            </comp-input>
+
+            <div>
+                <label for="ville" class="block text-sm font-medium text-heading mb-1">
+                    Ville <span>*</span>
+                    @if (isLoadingVilles()) {
+                    <span class="text-xs text-body ml-2 font-normal">(Chargement...)</span>
+                    }
+                </label>
+
+                @if (villesDisponibles().length > 1) {
+                <comp-autocomplete formControlName="ville" id="ville" name="ville"
+                    placeholder="Filtrer ou sélectionner une ville" extraClass="w-full" [minChars]="0"
+                    [serverSide]="true" [options]="villeOptions" (search)="onSearchVille($event)"
+                    [errorMessage]="getControl('ville').touched && getControl('ville').invalid ? 'Ville requise.' : null">
+                </comp-autocomplete>
+                } @else {
+                <comp-input formControlName="ville" id="ville" name="ville" extraClass="w-full"
+                    [placeholder]="villesDisponibles().length === 0 && !compteForm.get('codePostal')?.value ? 'Saisissez d\'abord un code postal' : ''"
+                    [errorMessage]="getControl('ville').touched && getControl('ville').invalid ? 'Ville requise.' : null">
+                </comp-input>
+                }
+            </div>
         </div>
 
         <!-- Code NAF / Activité -->
@@ -119,11 +182,17 @@
             </div>
         </div>
 
-        <div class="flex justify-end mt-4 gap-2">
+        @if (!isReadOnly()) {
+        <div class="flex justify-between mt-4 gap-2">
             <div class="flex gap-2">
                 <comp-button label="Effacer" variant="danger" type="button" (click)="onClear()">
                 </comp-button>
             </div>
+            <div class="flex gap-2">
+                <comp-button [label]="isEditMode() ? 'Mettre à jour' : 'Suivant'" variant="primary" type="submit">
+                </comp-button>
+            </div>
         </div>
+        }
     </form>
 </div>

@@ -1,10 +1,11 @@
-import { Component, inject, OnInit, signal, Output, EventEmitter } from '@angular/core';
+import { Component, inject, OnInit, signal, Output, EventEmitter, effect } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { ConventionService } from '../../../../services/convention.service';
 import { CommonModule } from '@angular/common';
 import { UIComponents } from '../../../../components/ui-components';
 import { QuillModule } from 'ngx-quill';
+import { bindReadOnlyForm } from '../../../../utils/form-readonly';
 
 @Component({
   selector: 'app-procedures',
@@ -19,6 +20,7 @@ export class Procedures implements OnInit {
 
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
+  isReadOnly = this.conventionService.isReadOnly;
 
   // Configuration Quill pour HTML propre
   quillModules = {
@@ -71,14 +73,18 @@ export class Procedures implements OnInit {
 
   @Output() next = new EventEmitter<void>();
 
-  ngOnInit() {
-    const data = this.conventionService.getProcedures();
-    if (data) {
-      this.proceduresForm.patchValue(data);
-      // Mettre à jour les signals après le chargement
-      this.updateRecapSignals();
-    }
+  constructor() {
+    bindReadOnlyForm(this.proceduresForm, () => this.conventionService.isReadOnly());
+    effect(() => {
+      const data = this.conventionService.getProcedures();
+      if (data) {
+        this.proceduresForm.patchValue(data, { emitEvent: false });
+        this.updateRecapSignals();
+      }
+    });
+  }
 
+  ngOnInit() {
     // Save changes to service (and thus localStorage) automatically
     this.proceduresForm.valueChanges.pipe(
       debounceTime(300)
@@ -107,6 +113,7 @@ export class Procedures implements OnInit {
 
   // Gestion des selects multiples
   toggleSelection(controlName: string, optionId: number) {
+    if (this.isReadOnly()) return;
     const control = this.proceduresForm.get(controlName);
     if (!control) return;
 

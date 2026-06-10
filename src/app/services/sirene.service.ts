@@ -35,7 +35,7 @@ export class SireneService {
 
     private mapResponse(data: any, originalSiret: string): any {
         return {
-            siret: originalSiret, // The API returns siren, so we keep the input siret
+            siret: originalSiret, 
             tvaIntra: data.tva,
             nomSociete: data.societe,
             adresse: data.adresse,

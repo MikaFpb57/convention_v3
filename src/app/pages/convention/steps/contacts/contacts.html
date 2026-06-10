@@ -164,13 +164,14 @@
             </div>
         </ng-template>
 
-        <!-- Bottom Actions -->
+        @if (!isReadOnly()) {
         <div class="flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
             <comp-button label="Réinitialiser" variant="neutral" type="button" (click)="onClear()">
             </comp-button>
             <comp-button label="Continuer" variant="primary" type="submit">
             </comp-button>
         </div>
+        }
 
     </form>
 </div>

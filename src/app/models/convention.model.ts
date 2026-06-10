@@ -1,4 +1,4 @@
-export interface ConventionData {
+export interface ConventionApiResponse {
   utilisateur: string;
   siege: boolean;
   total: number;
@@ -6,6 +6,7 @@ export interface ConventionData {
 }
 
 export interface Fiche {
+  [key: string]: unknown;
   ID: string;
   entite: string;
   adresse: string;

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { Component, inject, OnInit, signal, Output, EventEmitter, AfterViewInit, effect } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { ConventionService } from '../../../../services/convention.service';
@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { UIComponents } from '../../../../components/ui-components';
 import { ContactsData } from '../../../../models/convention.interface';
 import { initFlowbite } from 'flowbite';
+import { bindReadOnlyForm } from '../../../../utils/form-readonly';
 
 @Component({
   selector: 'app-contacts',
@@ -20,6 +21,7 @@ export class Contacts implements OnInit, AfterViewInit {
 
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
+  isReadOnly = this.conventionService.isReadOnly;
 
   contactsForm: FormGroup = this.fb.group({
     commercial: this.createContactPair(),
@@ -30,12 +32,17 @@ export class Contacts implements OnInit, AfterViewInit {
 
   @Output() next = new EventEmitter<void>();
 
-  ngOnInit() {
-    const data = this.conventionService.getContacts();
-    if (data) {
-      this.contactsForm.patchValue(data);
-    }
+  constructor() {
+    bindReadOnlyForm(this.contactsForm, () => this.conventionService.isReadOnly());
+    effect(() => {
+      const data = this.conventionService.getContacts();
+      if (data) {
+        this.contactsForm.patchValue(data, { emitEvent: false });
+      }
+    });
+  }
 
+  ngOnInit() {
     // Save changes to service (and thus localStorage) automatically
     this.contactsForm.valueChanges.pipe(
       debounceTime(300)

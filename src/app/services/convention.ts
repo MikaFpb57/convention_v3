@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ConventionData } from '../models/convention.model';
+import { ConventionApiResponse } from '../models/convention.model';
 
 export type TypeCompte = 'Flotte' | 'Assurance' | 'Courtier' | 'Apporteur d\'affaire' | 'Loueur';
 
@@ -42,23 +42,23 @@ export class ConventionService {
   /**
    * Récupère toutes les conventions
    */
-  getAllConventions(): Observable<ConventionData> {
+  getAllConventions(): Observable<ConventionApiResponse> {
     const params = new HttpParams()
       .set('crypted', this.CRYPTED_TOKEN);
 
-    return this.http.get<ConventionData>(`${this.API_URL}/all`, { params });
+    return this.http.get<ConventionApiResponse>(`${this.API_URL}/all`, { params });
   }
 
   /**
    * Récupère une convention par son ID
    * @param id ID de la convention
    */
-  getConventionById(id: string): Observable<ConventionData> {
+  getConventionById(id: string): Observable<ConventionApiResponse> {
     const params = new HttpParams()
       .set('crypted', this.CRYPTED_TOKEN)
       .set('id', id);
 
-    return this.http.get<ConventionData>(`${this.API_URL}/get`, { params });
+    return this.http.get<ConventionApiResponse>(`${this.API_URL}/get`, { params });
   }
 
   /**
@@ -66,12 +66,12 @@ export class ConventionService {
    * @param id ID de la convention
    * @param data Données à mettre à jour
    */
-  updateConvention(id: string, data: Partial<ConventionData>): Observable<ConventionData> {
+  updateConvention(id: string, data: any): Observable<ConventionApiResponse> {
     const params = new HttpParams()
       .set('crypted', this.CRYPTED_TOKEN)
       .set('id', id);
 
-    return this.http.put<ConventionData>(`${this.API_URL}/update`, data, { params });
+    return this.http.put<ConventionApiResponse>(`${this.API_URL}/update`, data, { params });
   }
 
   /**

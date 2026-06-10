@@ -9,7 +9,11 @@
     </div>
     <input [type]="type" [placeholder]="placeholder" [required]="required" [disabled]="disabled" [readonly]="readonly"
       [value]="value()" (input)="handleInput($event)" (blur)="handleBlur($event)"
-      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2 {{ extraClass }}" />
+      [class]="'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2 ' + extraClass + (hasSuffix ? ' pe-10' : '')" />
+
+    <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+      <ng-content select="[suffix]"></ng-content>
+    </div>
 
     <div [hidden]="!errorVisible()" class="text-red-600 text-sm mt-0.5">
       {{ errorMessage }}

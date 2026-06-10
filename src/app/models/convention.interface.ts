@@ -36,28 +36,44 @@ export interface ContactsData {
 }
 
 export interface FacturationData {
+  demat?: number;
+  mode_gest?: string;
+  email_demat?: string;
+  email_demat_2?: string;
   adresseFacturation?: string;
   codePostalFacturation?: string;
   villeFacturation?: string;
   emailFacturation?: string;
   delaiPaiement?: string;
   modePaiement?: string;
+  delaiReglement?: string;
+  freqTransmission?: string;
 }
 
 export interface InfosData {
-  effectif?: string;
-  chiffreAffaires?: string;
-  dateCreation?: string;
-  formeJuridique?: string;
+  assurance?: string;
+  courtier?: string;
+  loueur?: string;
+  tarif?: string;
   capital?: string;
   rcs?: string;
+  assureBdg?: number;
+  recuperationTva?: number;
+  nb_vu_vl?: number;
+  nb_pl?: number;
+  nb_bus?: number;
+  nb_tp?: number;
+  nb_agri?: number;
+  nb_ca?: number;
+  nb_total?: number;
 }
 
 export interface ProceduresData {
-  procedureQualite?: boolean;
-  certifications?: string;
-  assurances?: string;
-  documentUnique?: boolean;
+  typePriseEnCharge?: number[];
+  auDepartConducteur?: number[];
+  surFacture?: number[];
+  proceduresParticulieres?: string;
+  visiblePartenaire?: boolean;
 }
 
 export interface ConventionData {

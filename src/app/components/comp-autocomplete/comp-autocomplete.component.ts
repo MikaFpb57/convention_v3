@@ -30,6 +30,7 @@ export class CompAutocompleteComponent implements ControlValueAccessor {
     @Input() extraClass = '';
     @Input() errorMessage: string | null = null;
     @Input() minChars = 3; // Nombre minimum de caractères avant de déclencher la recherche
+    @Input() serverSide = false;
     @Input() options = signal<AutocompleteOption[]>([]); // Options disponibles
 
     @Output() search = new EventEmitter<string>(); // Émis quand l'utilisateur tape (après minChars)
@@ -42,13 +43,16 @@ export class CompAutocompleteComponent implements ControlValueAccessor {
     isLoading = signal(false);
     errorVisible = signal(false);
 
-    // Filtrer les options en fonction de la valeur saisie
     filteredOptions = computed(() => {
+        const opts = this.options();
+        if (this.serverSide) {
+            return opts;
+        }
         const search = this.inputValue().toLowerCase();
         if (search.length < this.minChars) {
             return [];
         }
-        return this.options().filter(opt =>
+        return opts.filter(opt =>
             opt.label.toLowerCase().includes(search) ||
             opt.value.toLowerCase().includes(search)
         );
@@ -101,7 +105,12 @@ export class CompAutocompleteComponent implements ControlValueAccessor {
     }
 
     handleFocus() {
-        if (this.inputValue().length >= this.minChars) {
+        if (this.serverSide && this.options().length > 0) {
+            this.isOpen.set(true);
+            if (this.inputValue().length < this.minChars) {
+                this.search.emit(this.inputValue());
+            }
+        } else if (this.inputValue().length >= this.minChars) {
             this.isOpen.set(true);
         }
     }

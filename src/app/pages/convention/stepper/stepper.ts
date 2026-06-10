@@ -1,4 +1,4 @@
-import { Component, ElementRef, QueryList, ViewChildren, signal, inject, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ElementRef, QueryList, ViewChildren, signal, inject, AfterViewInit, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, ViewportScroller } from '@angular/common';
 import { initTooltips } from 'flowbite';
 import { Compte } from '../steps/compte/compte';
@@ -8,6 +8,11 @@ import { Infos } from '../steps/infos/infos';
 import { Procedures } from '../steps/procedures/procedures';
 import { initFlowbite } from 'flowbite';
 import { UIComponents } from '../../../components/ui-components';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ConventionService as ConventionApiService } from '../../../services/convention';
+import { ConventionService as ConventionStateService } from '../../../services/convention.service';
+import { Fiche } from '../../../models/convention.model';
+import { mapFicheToConventionData } from '../../../utils/fiche-mapper';
 
 @Component({
   selector: 'app-stepper',
@@ -17,10 +22,19 @@ import { UIComponents } from '../../../components/ui-components';
   styleUrl: './stepper.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Stepper implements AfterViewInit {
+export class Stepper implements OnInit, AfterViewInit {
   private viewportScroller = inject(ViewportScroller);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private apiService = inject(ConventionApiService);
+  private stateService = inject(ConventionStateService);
 
   activeStep = signal<string>('compte');
+  isLoading = signal(false);
+  loadError = signal<string | null>(null);
+
+  isReadOnly = this.stateService.isReadOnly;
+  etape = this.stateService.etape;
 
   steps = [
     { id: 'compte', label: 'Compte', icon: 'fa-solid fa-building' },
@@ -32,17 +46,54 @@ export class Stepper implements AfterViewInit {
 
   @ViewChildren('stepSection') stepSections!: QueryList<ElementRef>;
 
+  ngOnInit() {
+    this.route.params.subscribe(params => {
+      const id = params['id'];
+      if (id) {
+        this.loadConvention(id);
+      } else {
+        this.stateService.resetNewMode();
+      }
+    });
+  }
+
+  private loadConvention(id: string) {
+    const navState = this.router.getCurrentNavigation()?.extras?.state ?? history.state;
+    const stateFiche = navState?.['fiche'] as Fiche | undefined;
+    const previewFiche = stateFiche?.ID === id ? stateFiche : undefined;
+
+    if (previewFiche) {
+      const previewData = mapFicheToConventionData(previewFiche);
+      this.stateService.startEditMode(id, previewData, previewFiche.etape);
+    } else {
+      this.stateService.startEditMode(id);
+    }
+
+    this.isLoading.set(true);
+    this.loadError.set(null);
+
+    this.apiService.getConventionById(id).subscribe({
+      next: (response) => {
+        if (response.fiches?.length > 0) {
+          const fiche = response.fiches[0];
+          this.stateService.setEditMode(id, mapFicheToConventionData(fiche), fiche.etape);
+        } else if (!previewFiche) {
+          this.loadError.set('Convention introuvable.');
+        }
+        this.isLoading.set(false);
+      },
+      error: () => {
+        if (!previewFiche) {
+          this.loadError.set('Impossible de charger la convention. Veuillez réessayer.');
+        }
+        this.isLoading.set(false);
+      }
+    });
+  }
+
   ngAfterViewInit() {
-    // Initialize Flowbite components (Speed Dial)
-    setTimeout(() => {
-      initFlowbite();
-    }, 100);
-
-    // Réinitialiser les tooltips avec délai pour laisser le temps au DOM de se construire
-    setTimeout(() => {
-      initTooltips();
-    }, 200);
-
+    setTimeout(() => initFlowbite(), 100);
+    setTimeout(() => initTooltips(), 200);
     this.observeSections();
   }
 

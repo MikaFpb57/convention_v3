@@ -115,7 +115,8 @@
                     <tbody>
                         @for (fiche of filteredFiches | slice: (currentPage - 1) * itemsPerPage : currentPage *
                         itemsPerPage; track fiche.ID) {
-                        <tr class="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium">
+                        <tr class="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium cursor-pointer"
+                            (click)="openFiche(fiche, $event)">
                             <td class="px-2 py-1 sm:px-6 sm:py-4 font-mono text-sm hidden sm:table-cell">
                                 {{ fiche.siret }}
                             </td>
@@ -133,9 +134,15 @@
                                 {{ fiche.date_update | date:'dd/MM/yyyy HH:mm' }}
                             </td>
                             <td class="px-2 py-1 sm:px-6 sm:py-4">
-                                <button class="text-fg-brand hover:underline" (click)="editFiche(fiche)">
+                                @if (fiche.etape !== 'Signé' && fiche.etape !== 'En Attente') {
+                                <button type="button" class="text-fg-brand hover:underline" (click)="editFiche(fiche, $event)">
                                     Éditer
                                 </button>
+                                } @else {
+                                <button type="button" class="text-body italic text-xs hover:underline" (click)="editFiche(fiche, $event)">
+                                    Consulter
+                                </button>
+                                }
                             </td>
                             <td class="p-1 sm:p-4 hidden sm:table-cell">
                                 <div class="flex items-center">

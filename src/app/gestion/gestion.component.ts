@@ -4,6 +4,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Fiche } from '../models/convention.model';
 import { FormsModule } from '@angular/forms';
 import { UIComponents } from '../components/ui-components';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-gestion',
@@ -37,7 +38,10 @@ export class GestionComponent implements OnInit {
     'En Attente': 'bg-red-100 text-red-800'
   };
 
-  constructor(private conventionService: ConventionService) { }
+  constructor(
+    private conventionService: ConventionService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.loadConventions();
@@ -267,10 +271,20 @@ export class GestionComponent implements OnInit {
     return Object.keys(this.etapeClasses);
   }
 
-  // Édition d'une fiche
-  editFiche(fiche: Fiche): void {
-    // Implémentez la logique d'édition ici
-    console.log('Édition de la fiche:', fiche);
-    // Par exemple : this.router.navigate(['/edition', fiche.ID]);
+  openFiche(fiche: Fiche, event?: Event): void {
+    if (event) {
+      const target = event.target as HTMLElement;
+      if (target.closest('input, button, a, label')) {
+        return;
+      }
+    }
+    if (fiche.ID) {
+      this.router.navigate(['/convention', fiche.ID], { state: { fiche } });
+    }
+  }
+
+  editFiche(fiche: Fiche, event: Event): void {
+    event.stopPropagation();
+    this.openFiche(fiche);
   }
 }

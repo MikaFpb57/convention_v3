@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, Output, EventEmitter } from '@angular/core';
+import { Component, inject, OnInit, signal, Output, EventEmitter, effect } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { ConventionService as ConventionApiService, EntitesResponse, Entite } from '../../../../services/convention';
@@ -6,6 +6,7 @@ import { ConventionService } from '../../../../services/convention.service';
 import { CommonModule } from '@angular/common';
 import { UIComponents } from '../../../../components/ui-components';
 import { AutocompleteOption } from '../../../../components/comp-autocomplete/comp-autocomplete.component';
+import { bindReadOnlyForm } from '../../../../utils/form-readonly';
 
 @Component({
   selector: 'app-infos',
@@ -21,6 +22,7 @@ export class Infos implements OnInit {
 
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
+  isReadOnly = this.conventionService.isReadOnly;
 
   // Options pour les autocompletes
   assuranceOptions = signal<AutocompleteOption[]>([]);
@@ -54,12 +56,17 @@ export class Infos implements OnInit {
 
   @Output() next = new EventEmitter<void>();
 
-  ngOnInit() {
-    const data = this.conventionService.getInfos();
-    if (data) {
-      this.infosForm.patchValue(data);
-    }
+  constructor() {
+    bindReadOnlyForm(this.infosForm, () => this.conventionService.isReadOnly());
+    effect(() => {
+      const data = this.conventionService.getInfos();
+      if (data) {
+        this.infosForm.patchValue(data, { emitEvent: false });
+      }
+    });
+  }
 
+  ngOnInit() {
     this.infosForm.get('nb_total')?.disable({ emitEvent: false });
 
     // Sauvegarde automatique des changements avec un délai de 300ms
