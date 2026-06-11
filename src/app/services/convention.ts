@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ConventionApiResponse } from '../models/convention.model';
+import { API_CONFIG } from '../config/api.config';
 
 export type TypeCompte = 'Flotte' | 'Assurance' | 'Courtier' | 'Apporteur d\'affaire' | 'Loueur';
 
@@ -34,8 +35,7 @@ export interface MatrixResponse {
   providedIn: 'root'
 })
 export class ConventionService {
-  private readonly API_URL = 'https://extranet.franceparebrise.fr/assur_online/conv';
-  private readonly CRYPTED_TOKEN = 'bFZkb0hDK0JtNWFMQ1pvL1k5OHNUZmFURVk2Y05BUXBYTldLdVJ0V0pCaDUxdlNueThtQXlERTJSMWg0VjZCdkFqMUZ4cGh3SXhSQ1U3dWhFVTBEMDRnSW5JQ1FoaURJNTMzUmdyT1IzY009';
+  private readonly API_URL = `${API_CONFIG.baseUrl}/conv`;
 
   constructor(private http: HttpClient) { }
 
@@ -43,10 +43,7 @@ export class ConventionService {
    * Récupère toutes les conventions
    */
   getAllConventions(): Observable<ConventionApiResponse> {
-    const params = new HttpParams()
-      .set('crypted', this.CRYPTED_TOKEN);
-
-    return this.http.get<ConventionApiResponse>(`${this.API_URL}/all`, { params });
+    return this.http.get<ConventionApiResponse>(`${this.API_URL}/all`);
   }
 
   /**
@@ -54,10 +51,7 @@ export class ConventionService {
    * @param id ID de la convention
    */
   getConventionById(id: string): Observable<ConventionApiResponse> {
-    const params = new HttpParams()
-      .set('crypted', this.CRYPTED_TOKEN)
-      .set('id', id);
-
+    const params = new HttpParams().set('id', id);
     return this.http.get<ConventionApiResponse>(`${this.API_URL}/get`, { params });
   }
 
@@ -67,10 +61,7 @@ export class ConventionService {
    * @param data Données à mettre à jour
    */
   updateConvention(id: string, data: any): Observable<ConventionApiResponse> {
-    const params = new HttpParams()
-      .set('crypted', this.CRYPTED_TOKEN)
-      .set('id', id);
-
+    const params = new HttpParams().set('id', id);
     return this.http.put<ConventionApiResponse>(`${this.API_URL}/update`, data, { params });
   }
 
@@ -79,10 +70,7 @@ export class ConventionService {
    * @param id ID de la convention à supprimer
    */
   deleteConvention(id: string): Observable<void> {
-    const params = new HttpParams()
-      .set('crypted', this.CRYPTED_TOKEN)
-      .set('id', id);
-
+    const params = new HttpParams().set('id', id);
     return this.http.delete<void>(`${this.API_URL}/delete`, { params });
   }
 
@@ -92,10 +80,7 @@ export class ConventionService {
    * @returns Observable contenant la liste des entités du type demandé
    */
   getListeByType(typeCpt: TypeCompte): Observable<EntitesResponse> {
-    const params = new HttpParams()
-      .set('crypted', this.CRYPTED_TOKEN)
-      .set('type_cpt', typeCpt);
-
+    const params = new HttpParams().set('type_cpt', typeCpt);
     return this.http.get<EntitesResponse>(`${this.API_URL}/tools/entites_types`, { params });
   }
 
@@ -103,7 +88,7 @@ export class ConventionService {
    * Récupère les listes de valeurs typées (matrix)
    * @param type Type de liste (delaipaie, freq_envoi, gestion_fa, lieu_paie, mode_pec, type_relance, mode_paie)
    * @returns Observable contenant la liste des valeurs du type demandé
-   * 
+   *
    * @example
    * // Récupérer les modes de paiement
    * getListeMatrix('mode_paie').subscribe(response => {
@@ -112,10 +97,7 @@ export class ConventionService {
    * });
    */
   getListeMatrix(type: TypeMatrix): Observable<MatrixResponse> {
-    const params = new HttpParams()
-      .set('crypted', this.CRYPTED_TOKEN)
-      .set('type', type);
-
+    const params = new HttpParams().set('type', type);
     return this.http.get<MatrixResponse>(`${this.API_URL}/tools/types_matrix`, { params });
   }
 }
