@@ -1,5 +1,5 @@
-<app-navbar></app-navbar>
-<app-footer></app-footer>
+<app-navbar *ngIf="!(router.url === '/login')"></app-navbar>
+<app-footer *ngIf="!(router.url === '/login')"></app-footer>
 
 
 

@@ -1,6 +1,6 @@
 {
-  "name": "convention-v3",
-  "version": "0.0.0",
+  "name": "Partenariats",
+  "version": "26.6.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
