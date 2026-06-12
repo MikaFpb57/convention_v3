@@ -75,7 +75,7 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     const token = this.getToken();
-    return !!token && !this.isTokenExpired();
+    return !!token;
   }
 
   clearSession(): void {

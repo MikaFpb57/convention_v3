@@ -44,9 +44,7 @@ export class GestionComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // Temporairement désactivé - en attente de configuration API
-    // this.loadConventions();
-    this.isLoading = false;
+    this.loadConventions();
   }
 
   private loadConventions() {
