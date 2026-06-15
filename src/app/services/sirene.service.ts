@@ -1,13 +1,14 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SireneService {
     private http = inject(HttpClient);
-    private apiUrl = '/api/webservice';
+    private apiUrl = `${API_CONFIG.baseUrl}/webservices/siret`;
 
     getEtablissement(siret: string): Observable<any> {
         // Clean Siret: keep only digits
@@ -17,9 +18,11 @@ export class SireneService {
             return of({ error: 'Siret invalide (longueur incorrecte)' });
         }
 
-        const url = `${this.apiUrl}?siret=${cleanSiret}`;
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        });
 
-        return this.http.get<any>(url).pipe(
+        return this.http.get<any>(this.apiUrl, { params: { siret: cleanSiret }, headers }).pipe(
             map(response => {
                 if (!response || response.error || response.api_error) {
                     return { error: response.api_error || response.error || 'Aucune donnée trouvée' };

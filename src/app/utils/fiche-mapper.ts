@@ -1,5 +1,5 @@
 import { ConventionData, CompteData, ContactsData, ContactData, FacturationData } from '../models/convention.interface';
-import { Fiche } from '../models/convention.model';
+import { Fiche, ConventionInfo } from '../models/convention.model';
 
 type FicheRecord = Fiche & Record<string, unknown>;
 
@@ -59,7 +59,7 @@ function mapContactPair(fiche: FicheRecord, prefix: string, backupPrefix?: strin
 }
 
 export function isConsultationOnly(etape?: string | null): boolean {
-    return etape === 'Signé' || etape === 'En Attente';
+    return etape === 'Signé' || etape === 'En attente';
 }
 
 export function mapFicheToConventionData(fiche: Fiche): ConventionData {
@@ -124,6 +124,155 @@ export function mapFicheToConventionData(fiche: Fiche): ConventionData {
         relance: mapContactPair(f, 'rel', 'rel_bkp'),
         priseEnCharge: mapContactPair(f, 'pec', 'pec_bkp'),
         comptabilite: mapContactPair(f, 'compta', 'compta_bkp')
+    };
+
+    return { compte, facturation, infos, procedures, contacts };
+}
+
+export function mapConventionInfoToConventionData(info: ConventionInfo): ConventionData {
+    const compte: CompteData = {
+        siret: info.siret ?? '',
+        tvaIntra: info.tva,
+        nomSociete: info.entite,
+        adresse: info.adresse,
+        codePostal: info.code_postal,
+        ville: info.ville,
+        codeNaf: info.activite_principale,
+        activitePrincipale: info.libelle_activite,
+        rayonAction: info.rayon_action,
+        filiales: info.filiales?.toString(),
+        logo: ''
+    };
+
+    const facturation: FacturationData = {
+        demat: info.fac_demat === '1' ? 1 : 0,
+        mode_gest: info.mode_gest,
+        email_demat: info.email_demat,
+        email_demat_2: info.email_demat_2,
+        adresseFacturation: info.adresse_fac_1,
+        codePostalFacturation: info.code_postal_fac_1,
+        villeFacturation: info.ville_fac_1,
+        emailFacturation: info.email_demat,
+        delaiPaiement: info.delai_reglement?.toString(),
+        modePaiement: '',
+        delaiReglement: info.delai_reglement?.toString(),
+        freqTransmission: info.freq_transmission
+    };
+
+    const infos = {
+        assurance: info.nom_assurance,
+        courtier: info.nom_courtier,
+        loueur: info.nom_loueur,
+        tarif: info.tarif_fpb?.toString(),
+        capital: '',
+        rcs: '',
+        assureBdg: info.assure_bdg === '1' ? 1 : 0,
+        recuperationTva: info.recup_tva === '1' ? 1 : 0,
+        nb_vu_vl: info.nb_vu_vl ?? 0,
+        nb_pl: info.nb_pl ?? 0,
+        nb_bus: 0,
+        nb_tp: info.nb_tp ?? 0,
+        nb_agri: info.nb_agri ?? 0,
+        nb_ca: 0
+    };
+
+    const procedures = {
+        typePriseEnCharge: [],
+        auDepartConducteur: [],
+        surFacture: [],
+        proceduresParticulieres: '',
+        visiblePartenaire: true
+    };
+
+    const contacts: ContactsData = {
+        commercial: {
+            primary: {
+                nom: info.commercial_nom ?? '',
+                prenom: info.commercial_prenom ?? '',
+                fonction: '',
+                email: info.commercial_mail ?? '',
+                telephone: info.commercial_tel ?? '',
+                adresse: '',
+                codePostal: '',
+                ville: ''
+            },
+            backup: {
+                nom: '',
+                prenom: '',
+                fonction: '',
+                email: info.commercial_mail_2 ?? '',
+                telephone: info.commercial_port ?? '',
+                adresse: '',
+                codePostal: '',
+                ville: ''
+            }
+        },
+        relance: {
+            primary: {
+                nom: info.relance_nom ?? '',
+                prenom: info.relance_prenom ?? '',
+                fonction: '',
+                email: info.relance_mail ?? '',
+                telephone: info.relance_tel ?? '',
+                adresse: '',
+                codePostal: '',
+                ville: ''
+            },
+            backup: {
+                nom: '',
+                prenom: '',
+                fonction: '',
+                email: info.relance_mail_2 ?? '',
+                telephone: info.relance_port ?? '',
+                adresse: '',
+                codePostal: '',
+                ville: ''
+            }
+        },
+        priseEnCharge: {
+            primary: {
+                nom: info.pec_nom ?? '',
+                prenom: info.pec_prenom ?? '',
+                fonction: '',
+                email: info.pec_mail ?? '',
+                telephone: info.pec_tel ?? '',
+                adresse: '',
+                codePostal: '',
+                ville: ''
+            },
+            backup: {
+                nom: '',
+                prenom: '',
+                fonction: '',
+                email: info.pec_mail_2 ?? '',
+                telephone: info.pec_port ?? '',
+                adresse: '',
+                codePostal: '',
+                ville: ''
+            }
+        },
+        comptabilite: {
+            primary: {
+                nom: info.compta_nom ?? '',
+                prenom: info.compta_prenom ?? '',
+                fonction: '',
+                email: info.compta_mail ?? '',
+                telephone: info.compta_tel ?? '',
+                adresse: '',
+                codePostal: '',
+                ville: ''
+            },
+            backup: {
+                nom: '',
+                prenom: '',
+                fonction: '',
+                email: info.compta_mail_2 ?? '',
+                telephone: info.compta_port ?? '',
+                adresse: '',
+                codePostal: '',
+                ville: ''
+            }
+        }
     };
 
     return { compte, facturation, infos, procedures, contacts };

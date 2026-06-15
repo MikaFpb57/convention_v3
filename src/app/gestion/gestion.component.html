@@ -104,9 +104,6 @@
                                 </span>
                                 }
                             </th>
-                            <th scope="col" class="px-2 py-1 sm:px-6 sm:py-3">
-                                Action
-                            </th>
                             <th scope="col" class="p-1 sm:p-4 hidden sm:table-cell">
                                 Traité
                             </th>
@@ -133,23 +130,12 @@
                             <td class="px-2 py-1 sm:px-6 sm:py-4 whitespace-nowrap hidden sm:table-cell">
                                 {{ fiche.date_update | date:'dd/MM/yyyy HH:mm' }}
                             </td>
-                            <td class="px-2 py-1 sm:px-6 sm:py-4">
-                                @if (fiche.etape !== 'Signé' && fiche.etape !== 'En Attente') {
-                                <button type="button" class="text-fg-brand hover:underline" (click)="editFiche(fiche, $event)">
-                                    Éditer
-                                </button>
-                                } @else {
-                                <button type="button" class="text-body italic text-xs hover:underline" (click)="editFiche(fiche, $event)">
-                                    Consulter
-                                </button>
-                                }
-                            </td>
                             <td class="p-1 sm:p-4 hidden sm:table-cell">
                                 <div class="flex items-center">
-                                    <input type="checkbox" [checked]="fiche.traite === 1"
-                                        [disabled]="fiche.traite === 1"
+                                    <input type="checkbox" [checked]="fiche.traite == 1"
+                                        [disabled]="fiche.traite == 1"
                                         (change)="updateTraite(fiche, $event.target.checked)"
-                                        [class.opacity-50]="fiche.traite === 1"
+                                        [class.opacity-50]="fiche.traite == 1"
                                         class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft">
                                     <span class="sr-only">Traité</span>
                                 </div>
@@ -157,7 +143,7 @@
                         </tr>
                         } @empty {
                         <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-body">
+                            <td colspan="5" class="px-6 py-4 text-center text-body">
                                 Aucune donnée disponible
                             </td>
                         </tr>

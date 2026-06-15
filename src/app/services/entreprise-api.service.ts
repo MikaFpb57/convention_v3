@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, map, catchError, throwError } from 'rxjs';
 import { CompteData } from '../models/convention.interface';
+import { API_CONFIG } from '../config/api.config';
 
 export interface EntrepriseSuggestion {
     siret: string;
@@ -41,7 +42,7 @@ interface RechercheEntrepriseResult {
 })
 export class EntrepriseApiService {
     private http = inject(HttpClient);
-    private readonly apiUrl = 'https://recherche-entreprises.api.gouv.fr/search';
+    private readonly apiUrl = `${API_CONFIG.baseUrl}/webservices/search`;
 
     formatQuery(raw: string): string {
         return raw
@@ -67,12 +68,11 @@ export class EntrepriseApiService {
             params['code_postal'] = codePostal;
         }
 
-        const qs = new URLSearchParams(params).toString();
         const headers = new HttpHeaders({
-            'User-Agent': 'ConventionV3/1.0 (France Pare-Brise; contact@franceparebrise.fr)'
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
         });
 
-        return this.http.get<RechercheEntreprisesResponse>(`${this.apiUrl}?${qs}`, { headers }).pipe(
+        return this.http.get<RechercheEntreprisesResponse>(this.apiUrl, { params, headers }).pipe(
             map(response => this.mapResultsToSuggestions(response)),
             catchError((err: HttpErrorResponse) => {
                 if (err.status === 429) {

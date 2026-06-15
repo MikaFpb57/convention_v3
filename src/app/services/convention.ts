@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ConventionApiResponse } from '../models/convention.model';
+import { ConventionApiResponse, ConventionDetail } from '../models/convention.model';
 import { API_CONFIG } from '../config/api.config';
 
 export type TypeCompte = 'Flotte' | 'Assurance' | 'Courtier' | 'Apporteur d\'affaire' | 'Loueur';
@@ -50,9 +50,8 @@ export class ConventionService {
    * Récupère une convention par son ID
    * @param id ID de la convention
    */
-  getConventionById(id: string): Observable<ConventionApiResponse> {
-    const params = new HttpParams().set('id', id);
-    return this.http.get<ConventionApiResponse>(`${this.API_URL}/get`, { params });
+  getConventionById(id: string): Observable<ConventionDetail> {
+    return this.http.get<ConventionDetail>(`${this.API_URL}/${id}`);
   }
 
   /**

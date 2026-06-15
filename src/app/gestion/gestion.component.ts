@@ -30,12 +30,13 @@ export class GestionComponent implements OnInit {
   // Etapes
   etapeFilter: string = '';
   etapeClasses: { [key: string]: string } = {
+    'Fiche': 'bg-gray-100 text-gray-800',
     'Compte': 'bg-purple-100 text-purple-800',
     'Facturation': 'bg-yellow-100 text-yellow-800',
     'Processus': 'bg-green-100 text-green-800',
     'Contacts': 'bg-indigo-100 text-indigo-800',
-    'Signé': 'bg-emerald-100 text-emerald-800',
-    'En Attente': 'bg-red-100 text-red-800'
+    'En attente': 'bg-red-100 text-red-800',
+    'Signé': 'bg-emerald-100 text-emerald-800'
   };
 
   constructor(
@@ -54,7 +55,11 @@ export class GestionComponent implements OnInit {
     this.conventionService.getAllConventions().subscribe({
       next: (data) => {
         this.utilisateur = data.utilisateur;
-        this.fiches = data.fiches || [];
+        // Utiliser libelle_etape pour l'affichage de l'étape
+        this.fiches = (data.fiches || []).map(fiche => ({
+          ...fiche,
+          etape: fiche.libelle_etape || fiche.etape
+        }));
         this.total = data.total || 0;
         this.isLoading = false;
       },

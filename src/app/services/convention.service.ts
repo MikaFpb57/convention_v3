@@ -51,7 +51,7 @@ export class ConventionService {
     }
 
     isConsultationEtape(etape?: string | null): boolean {
-        return etape === 'Signé' || etape === 'En Attente';
+        return etape === 'Signé' || etape === 'En attente';
     }
 
     resetNewMode() {

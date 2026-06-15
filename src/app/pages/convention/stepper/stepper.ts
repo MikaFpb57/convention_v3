@@ -11,8 +11,8 @@ import { UIComponents } from '../../../components/ui-components';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConventionService as ConventionApiService } from '../../../services/convention';
 import { ConventionService as ConventionStateService } from '../../../services/convention.service';
-import { Fiche } from '../../../models/convention.model';
-import { mapFicheToConventionData } from '../../../utils/fiche-mapper';
+import { Fiche, ConventionInfo } from '../../../models/convention.model';
+import { mapFicheToConventionData, mapConventionInfoToConventionData } from '../../../utils/fiche-mapper';
 
 @Component({
   selector: 'app-stepper',
@@ -74,9 +74,11 @@ export class Stepper implements OnInit, AfterViewInit {
 
     this.apiService.getConventionById(id).subscribe({
       next: (response) => {
-        if (response.fiches?.length > 0) {
-          const fiche = response.fiches[0];
-          this.stateService.setEditMode(id, mapFicheToConventionData(fiche), fiche.etape);
+        if (response.Informations?.length > 0) {
+          const info = response.Informations[0];
+          // Utiliser libelle_etape directement depuis le backend
+          const etapeTexte = info.libelle_etape || info.etape;
+          this.stateService.setEditMode(id, mapConventionInfoToConventionData(info), etapeTexte);
         } else if (!previewFiche) {
           this.loadError.set('Convention introuvable.');
         }
