@@ -75,7 +75,14 @@
         <section #stepSection id="contacts" class="scroll-mt-24">
             <div
                 class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
-                <app-contacts (next)="scrollTo('facturation')"></app-contacts>
+                <app-contacts (next)="scrollTo('fichiers')"></app-contacts>
+            </div>
+        </section>
+
+        <section #stepSection id="fichiers" class="scroll-mt-24">
+            <div
+                class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+                <app-fichiers (next)="scrollTo('facturation')"></app-fichiers>
             </div>
         </section>
     </div>

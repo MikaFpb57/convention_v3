@@ -36,7 +36,7 @@ export class Compte implements OnInit {
       const data = this.stateService.getCompte();
       if (data) {
         this.compteForm.patchValue(data, { emitEvent: false });
-        if (data.codePostal && /^\d{5}$/.test(data.codePostal)) {
+        if (!this.skipEffectFetch && data.codePostal && /^\d{5}$/.test(data.codePostal)) {
           this.fetchVillesByCodePostal(data.codePostal, data.ville);
         }
       } else {
@@ -71,6 +71,7 @@ export class Compte implements OnInit {
   villeOptions = signal<AutocompleteOption[]>([]);
   isLoadingVilles = signal(false);
   private skipCpVilleReset = false;
+  private skipEffectFetch = false;
 
   rayonActionOptions = [
     { value: 'departement', label: 'Départemental' },
@@ -338,15 +339,22 @@ export class Compte implements OnInit {
         this.isLoadingVilles.set(false);
 
         if (villePrefill && communes.some(c => c.nom === villePrefill)) {
+          this.skipEffectFetch = true;
           this.compteForm.patchValue({ ville: villePrefill }, { emitEvent: false });
           this.stateService.updateCompte(this.compteForm.value);
+          this.skipEffectFetch = false;
         } else if (communes.length === 1) {
           this.skipCpVilleReset = true;
+          this.skipEffectFetch = true;
           this.compteForm.patchValue({ ville: communes[0].nom }, { emitEvent: false });
           this.stateService.updateCompte(this.compteForm.value);
           this.skipCpVilleReset = false;
+          this.skipEffectFetch = false;
         } else if (communes.length === 0) {
+          this.skipEffectFetch = true;
           this.compteForm.patchValue({ ville: '' }, { emitEvent: false });
+          this.stateService.updateCompte(this.compteForm.value);
+          this.skipEffectFetch = false;
         }
       },
       error: () => {

@@ -1,5 +1,5 @@
 import { Injectable, signal, effect } from '@angular/core';
-import { ConventionData, CompteData, ContactsData, FacturationData, InfosData, ProceduresData } from '../models/convention.interface';
+import { ConventionData, CompteData, ContactsData, FacturationData, InfosData, ProceduresData, FilesData } from '../models/convention.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -135,5 +135,17 @@ export class ConventionService {
 
     getProcedures(): ProceduresData | undefined {
         return this.conventionSignal().procedures;
+    }
+
+    updateFiles(files: any[]) {
+        if (!this.guardWrite()) return;
+        this.conventionSignal.update(current => ({
+            ...current,
+            files: { files }
+        }));
+    }
+
+    getFiles(): any[] | undefined {
+        return this.conventionSignal().files?.files;
     }
 }

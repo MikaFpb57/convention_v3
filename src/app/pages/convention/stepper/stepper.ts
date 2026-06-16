@@ -6,6 +6,7 @@ import { Contacts } from '../steps/contacts/contacts';
 import { Facturation } from '../steps/facturation/facturation';
 import { Infos } from '../steps/infos/infos';
 import { Procedures } from '../steps/procedures/procedures';
+import { Fichiers } from '../steps/fichiers/fichiers';
 import { initFlowbite } from 'flowbite';
 import { UIComponents } from '../../../components/ui-components';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,7 +18,7 @@ import { mapFicheToConventionData, mapConventionInfoToConventionData } from '../
 @Component({
   selector: 'app-stepper',
   standalone: true,
-  imports: [CommonModule, Compte, Contacts, Facturation, Infos, Procedures, UIComponents],
+  imports: [CommonModule, Compte, Contacts, Facturation, Infos, Procedures, Fichiers, UIComponents],
   templateUrl: './stepper.html',
   styleUrl: './stepper.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -41,7 +42,8 @@ export class Stepper implements OnInit, AfterViewInit {
     { id: 'infos', label: 'Infos', icon: 'fa-solid fa-info-circle' },
     { id: 'facturation', label: 'Facturation', icon: 'fa-solid fa-file-invoice' },
     { id: 'procedures', label: 'Procédures', icon: 'fa-solid fa-cogs' },
-    { id: 'contacts', label: 'Contacts', icon: 'fa-solid fa-users' }
+    { id: 'contacts', label: 'Contacts', icon: 'fa-solid fa-users' },
+    { id: 'fichiers', label: 'Documents', icon: 'fa-solid fa-folder-open' }
   ];
 
   @ViewChildren('stepSection') stepSections!: QueryList<ElementRef>;

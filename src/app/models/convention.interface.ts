@@ -76,10 +76,15 @@ export interface ProceduresData {
   visiblePartenaire?: boolean;
 }
 
+export interface FilesData {
+  files: any[];
+}
+
 export interface ConventionData {
   compte?: CompteData;
   contacts?: ContactsData;
   facturation?: FacturationData;
   infos?: InfosData;
   procedures?: ProceduresData;
+  files?: FilesData;
 }

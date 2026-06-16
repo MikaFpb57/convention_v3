@@ -1,0 +1,42 @@
+<div class="relative">
+  <!-- Spinner Overlay -->
+  @if (isLoading()) {
+    <comp-loader></comp-loader>
+  }
+
+  <!-- Error Alert -->
+  @if (errorMessage()) {
+    <comp-alert-error [message]="errorMessage()"></comp-alert-error>
+  }
+
+  <form (ngSubmit)="onSubmit()" class="space-y-6">
+    <comp-h1-gd textGradient="Documents" textNormal="de la convention"></comp-h1-gd>
+
+    <div class="p-6 rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-blue-100 dark:border-blue-900/30 transition-all duration-500 hover:shadow-blue-500/10">
+      <div class="mb-4">
+        <p class="text-gray-600 dark:text-gray-400 text-sm">
+          Ajoutez vos documents (contrats, conventions, annexes, etc.) avant de les envoyer au serveur.
+          Formats acceptés : JPG, PNG, PDF, DOC, DOCX, XLS, XLSX
+        </p>
+      </div>
+
+      <comp-file-upload
+        [accept]="'.jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx'"
+        [maxFiles]="25"
+        [initialFiles]="files"
+        [readonly]="isReadOnly()"
+        (filesAdded)="onFilesAdded($event)"
+        (fileRemoved)="onFileRemoved($event)">
+      </comp-file-upload>
+    </div>
+
+    @if (!isReadOnly()) {
+      <div class="flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
+        <comp-button label="Réinitialiser" variant="neutral" type="button" (click)="onClear()">
+        </comp-button>
+        <comp-button label="Continuer" variant="primary" type="submit">
+        </comp-button>
+      </div>
+    }
+  </form>
+</div>
