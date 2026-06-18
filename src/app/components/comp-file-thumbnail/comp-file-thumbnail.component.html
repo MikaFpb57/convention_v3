@@ -1,7 +1,7 @@
 <div class="file-card" (click)="open.emit()">
   @if (isImage) {
     <img [src]="item.url" class="thumb-img" alt="{{ item.name }}" />
-  } 
+  }
   @else if (isPdf) {
     <div class="thumb-pdf">
       <object
@@ -15,12 +15,12 @@
         </iframe>
       </object>
     </div>
-  } 
-  @else if (isOffice) {
+  }
+  @else if (isOffice && officeUrl) {
     <div class="thumb-office">
       <iframe [src]="officeUrl" frameborder="0"></iframe>
     </div>
-  } 
+  }
   @else {
     <div class="thumb-generic">
       <div class="icon">{{ preview.getIconFromType(item.type) }}</div>

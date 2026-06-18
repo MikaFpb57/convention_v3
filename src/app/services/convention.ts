@@ -99,4 +99,32 @@ export class ConventionService {
     const params = new HttpParams().set('type', type);
     return this.http.get<MatrixResponse>(`${this.API_URL}/tools/types_matrix`, { params });
   }
+
+  /**
+   * Récupère les fichiers d'une convention
+   * @param id ID de la convention
+   */
+  getConventionFiles(id: string): Observable<any> {
+    return this.http.get(`${this.API_URL}/${id}/files`);
+  }
+
+  /**
+   * Récupère l'URL d'un fichier spécifique
+   * @param id ID de la convention
+   * @param filename Nom du fichier
+   */
+  getFileUrl(id: string, filename: string): string {
+    return `${this.API_URL}/${id}/files/${filename}`;
+  }
+
+  /**
+   * Télécharge un fichier via HTTP et retourne un Blob
+   * @param id ID de la convention
+   * @param filename Nom du fichier
+   */
+  downloadFile(id: string, filename: string): Observable<Blob> {
+    return this.http.get(`${this.API_URL}/${id}/files/${filename}`, {
+      responseType: 'blob'
+    });
+  }
 }

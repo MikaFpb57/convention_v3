@@ -9,15 +9,31 @@
     <comp-alert-error [message]="errorMessage()"></comp-alert-error>
   }
 
+  <!-- Info message for edit mode -->
+  @if (conventionService.isEditMode() && files.length === 0 && !isLoading()) {
+    <div class="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+      <p class="text-sm text-blue-800 dark:text-blue-200">
+        Aucun document associé à cette convention.
+      </p>
+    </div>
+  }
+
   <form (ngSubmit)="onSubmit()" class="space-y-6">
     <comp-h1-gd textGradient="Documents" textNormal="de la convention"></comp-h1-gd>
 
     <div class="p-6 rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-blue-100 dark:border-blue-900/30 transition-all duration-500 hover:shadow-blue-500/10">
       <div class="mb-4">
-        <p class="text-gray-600 dark:text-gray-400 text-sm">
-          Ajoutez vos documents (contrats, conventions, annexes, etc.) avant de les envoyer au serveur.
-          Formats acceptés : JPG, PNG, PDF, DOC, DOCX, XLS, XLSX
-        </p>
+        @if (conventionService.isEditMode()) {
+          <p class="text-gray-600 dark:text-gray-400 text-sm">
+            Documents associés à cette convention.
+            Formats acceptés : JPG, PNG, PDF, DOC, DOCX, XLS, XLSX
+          </p>
+        } @else {
+          <p class="text-gray-600 dark:text-gray-400 text-sm">
+            Ajoutez vos documents (contrats, conventions, annexes, etc.) avant de les envoyer au serveur.
+            Formats acceptés : JPG, PNG, PDF, DOC, DOCX, XLS, XLSX
+          </p>
+        }
       </div>
 
       <comp-file-upload

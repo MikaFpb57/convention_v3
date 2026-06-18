@@ -20,7 +20,7 @@ export class CompFileThumbnailComponent {
   @Output() delete = new EventEmitter<void>();
 
   safeUrl!: SafeResourceUrl;
-  officeUrl!: SafeResourceUrl;
+  officeUrl: SafeResourceUrl | null = null;
 
   constructor(
     public preview: FilePreviewService,
@@ -32,9 +32,12 @@ export class CompFileThumbnailComponent {
 
     this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.item.url);
 
-    if (this.isOffice) {
+    // Only use Office viewer for remote URLs (not blob URLs)
+    if (this.isOffice && !this.item.url.startsWith('blob:')) {
       const full = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(this.item.url)}`;
       this.officeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(full);
+    } else {
+      this.officeUrl = null;
     }
   }
 

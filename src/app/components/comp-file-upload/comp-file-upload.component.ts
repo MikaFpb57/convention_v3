@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FilePreviewService } from '../../services/file-preview.service';
 import { FileItem } from '../../models/file-item.model';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,7 @@ import { UIComponents } from '../ui-components';
   templateUrl: './comp-file-upload.component.html',
   styleUrls: ['./comp-file-upload.component.css']
 })
-export class CompFileUploadComponent {
+export class CompFileUploadComponent implements OnChanges {
   @Input() accept = '.jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx';
   @Input() maxFiles = 25;
   @Input() initialFiles: FileItem[] = [];
@@ -27,6 +27,12 @@ export class CompFileUploadComponent {
 
   ngOnInit() {
     this.files = [...this.initialFiles];
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['initialFiles'] && changes['initialFiles'].currentValue) {
+      this.files = [...changes['initialFiles'].currentValue];
+    }
   }
 
   onFileInput(e: Event) {

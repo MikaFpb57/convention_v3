@@ -7,14 +7,16 @@
       <img [src]="file.url" class="fp-img" alt="{{ file.name }}" />
     } @else if (file.type === 'application/pdf') {
       <iframe [src]="safeUrl" class="fp-frame"></iframe>
-    } @else if (
-      file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
-      file.type === 'application/msword' ||                                                      
-      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||      
-      file.type === 'application/vnd.ms-excel'                                                  
-    ) {
+    } @else if (isOffice && officeUrl) {
       <iframe [src]="officeUrl" class="fp-frame"></iframe>
-    }  @else {
+    } @else if (isOffice && !officeUrl) {
+      <div class="fp-generic">
+        <div class="fp-icon">{{ file.name.split('.').pop()?.toUpperCase() }}</div>
+        <div class="fp-message">Prévisualisation non disponible pour les fichiers Office locaux</div>
+        <div>{{ file.name }}</div>
+        <a [href]="file.url" download="{{ file.name }}" class="btn">Télécharger</a>
+      </div>
+    } @else {
       <div class="fp-generic">
         <div class="fp-icon">{{ file.name.split('.').pop()?.toUpperCase() }}</div>
         <div>{{ file.name }}</div>
