@@ -1,0 +1,9 @@
+.tariff {
+    font-family: 'Montserrat Variable';
+    display: flex;
+    flex-direction: column;
+    height:100%
+}
+.tariff-header {
+    line-height: 2em;
+}

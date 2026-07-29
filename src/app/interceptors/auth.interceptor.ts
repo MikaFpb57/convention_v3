@@ -1,13 +1,14 @@
 import { HttpErrorResponse, HttpHandlerFn, HttpRequest, HttpInterceptorFn, HttpEvent } from '@angular/common/http';
-import { Observable, EMPTY, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, EMPTY, throwError, TimeoutError } from 'rxjs';
+import { catchError, timeout } from 'rxjs/operators';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
   const authService = inject(AuthService);
-  const router = inject(Router);
+
+  const isFileRequest = req.url.includes('/files');
+  const timeoutMs = isFileRequest ? 120000 : 25000;
 
   const parseErrorBody = (payload: unknown): any => {
     if (!payload) {
@@ -55,7 +56,16 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
   const authReq = token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
 
   return next(authReq).pipe(
+    timeout(timeoutMs),
     catchError((error: HttpErrorResponse) => {
+      if (error instanceof TimeoutError) {
+        return throwError(() => ({
+          code: 'REQUEST_TIMEOUT',
+          status: 408,
+          message: `Le serveur met trop de temps a repondre (${timeoutMs / 1000}s).`
+        }));
+      }
+
       if (isAccountDisabledResponse(error)) {
         authService.logoutWithReason('account_disabled');
         return EMPTY;

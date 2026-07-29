@@ -1,0 +1,6 @@
+.sig-preview img {
+	display: block;
+	border-radius: 0.5rem;
+	border: 1px dashed #d1d5db;
+	background: #ffffff;
+}

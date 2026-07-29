@@ -1,0 +1,95 @@
+<table class="page_body" width="100%">
+    <thead>
+        <tr>
+            <th colspan="4">Mode de gestion et Envoi de facture</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="hl">Mode de gestion:</td>
+            <td colspan="3">{{ u_format_mode_gest }}</td>
+        </tr>
+
+        <tr>
+            <td class="hl">Dématérialisation:</td>
+            <td>{{ u_bool_demat }}</td>
+
+            <td class="hl">Mail démat:</td>
+            <td>{{ facturationData.email_demat }}</td>
+        </tr>
+
+        <tr><td>&nbsp;</td></tr>
+
+        <tr align="center">
+            <td width="50%" class="scope_row bordered" colspan="2">Adresse 1</td>
+            <td width="50%" class="scope_row bordered borderend" colspan="2">Adresse 2</td>
+        </tr>
+
+        <tr>
+            <td class="bordered borderbott" colspan="2">
+                {{ compteData.nomSociete }}<br />
+                {{ facturationData.adresseFacturation }}<br />
+                {{ facturationData.codePostalFacturation }} - {{ facturationData.villeFacturation }}
+            </td>
+
+            <td class="bordered borderend borderbott" colspan="2">
+                {{ compteData.nomSociete }}<br />
+                {{ facturationData.adresseFacturation }}<br />
+                {{ facturationData.codePostalFacturation }} - {{ facturationData.villeFacturation }}
+            </td>
+        </tr>
+
+        <tr>
+            <td class="bordered borderbott">
+                {{ u_bool_tva }} TVA
+            </td>
+            <td class="borderbott">
+                {{ u_bool_franchise }} Franchise
+            </td>
+            <td class="bordered borderbott">
+                {{ u_bool_ht }} HT
+            </td>
+            <td class="borderend borderbott">
+                {{ u_bool_ttc }} TTC
+            </td>
+        </tr>
+
+        <tr>
+            <td class="hl">Délais de règlement:</td>
+            <td>{{ u_format_delaipaie }}</td>
+
+            <td class="hl">Fréquence de transmission:</td>
+            <td>{{ u_format_freq_envoi }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="page_body" width="100%">
+    <thead>
+        <tr>
+            <th>Observations particulières</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <em>
+                    Les notes décrites ci-dessous ont été complétées en accord des 2 parties.
+                    Ces observations ne se substituent pas aux conditions contractuelles standards
+                    France Pare-Brise et peuvent évoluer dans le temps.
+                </em>
+            </td>
+        </tr>
+
+        <tr><td>&nbsp;</td></tr>
+
+        <tr class="">
+            <td class="specs borderfull" [innerHTML]="proceduresData.proceduresParticulieres">
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div>
+    <!-- {{ facturationData.paraphes }} -->
+</div>

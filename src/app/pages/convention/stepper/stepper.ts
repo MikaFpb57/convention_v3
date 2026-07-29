@@ -1,4 +1,4 @@
-import { Component, ElementRef, QueryList, ViewChildren, signal, inject, AfterViewInit, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ElementRef, QueryList, ViewChildren, signal, inject, AfterViewInit, OnInit, ChangeDetectionStrategy, effect } from '@angular/core';
 import { CommonModule, ViewportScroller } from '@angular/common';
 import { initTooltips } from 'flowbite';
 import { Compte } from '../steps/compte/compte';
@@ -7,8 +7,13 @@ import { Facturation } from '../steps/facturation/facturation';
 import { Infos } from '../steps/infos/infos';
 import { Procedures } from '../steps/procedures/procedures';
 import { Fichiers } from '../steps/fichiers/fichiers';
+import { SignatureStep } from '../steps/signature/signature';
 import { initFlowbite } from 'flowbite';
-import { UIComponents } from '../../../components/ui-components';
+import { CompLoaderComponent } from '../../../components/comp-loader/comp-loader.component';
+import { CompAlertErrorComponent } from '../../../components/comp-alert-error/comp-alert-error.component';
+import { CompButtonComponent } from '../../../components/comp-button/comp-button.component';
+import { CompH1GdComponent } from '../../../components/comp-h1-gd/comp-h1-gd.component';
+import { CompPdfResultComponent } from '../../../components/comp-pdf-result/comp-pdf-result.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConventionService as ConventionApiService } from '../../../services/convention';
 import { ConventionService as ConventionStateService } from '../../../services/convention.service';
@@ -18,7 +23,7 @@ import { mapFicheToConventionData, mapConventionInfoToConventionData } from '../
 @Component({
   selector: 'app-stepper',
   standalone: true,
-  imports: [CommonModule, Compte, Contacts, Facturation, Infos, Procedures, Fichiers, UIComponents],
+  imports: [CommonModule, Compte, Contacts, Facturation, Infos, Procedures, Fichiers, SignatureStep, CompLoaderComponent, CompAlertErrorComponent, CompButtonComponent, CompH1GdComponent, CompPdfResultComponent],
   templateUrl: './stepper.html',
   styleUrl: './stepper.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -36,6 +41,7 @@ export class Stepper implements OnInit, AfterViewInit {
 
   isReadOnly = this.stateService.isReadOnly;
   etape = this.stateService.etape;
+  conventionData = signal(this.stateService.convention());
 
   steps = [
     { id: 'compte', label: 'Compte', icon: 'fa-solid fa-building' },
@@ -43,10 +49,17 @@ export class Stepper implements OnInit, AfterViewInit {
     { id: 'facturation', label: 'Facturation', icon: 'fa-solid fa-file-invoice' },
     { id: 'procedures', label: 'Procédures', icon: 'fa-solid fa-cogs' },
     { id: 'contacts', label: 'Contacts', icon: 'fa-solid fa-users' },
-    { id: 'fichiers', label: 'Documents', icon: 'fa-solid fa-folder-open' }
+    { id: 'fichiers', label: 'Documents', icon: 'fa-solid fa-folder-open' },
+    { id: 'signature', label: 'Signature', icon: 'fa-solid fa-signature' }
   ];
 
   @ViewChildren('stepSection') stepSections!: QueryList<ElementRef>;
+
+  constructor() {
+    effect(() => {
+      this.conventionData.set(this.stateService.convention());
+    });
+  }
 
   ngOnInit() {
     this.route.params.subscribe(params => {

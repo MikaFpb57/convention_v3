@@ -31,6 +31,36 @@ export interface MatrixResponse {
   values: MatrixValue[];
 }
 
+export interface SignatureRequestPayload {
+  conventionId: string;
+  nom: string;
+  prenom: string;
+  fonction: string;
+  email: string;
+  validityDays: number;
+}
+
+export interface SignatureRequestResponse {
+  requestId: string;
+  sentAt: string;
+  expiresAt: string;
+  status: 'pending_email';
+  message?: string;
+}
+
+export interface SignatureVerifyPayload {
+  conventionId: string;
+  requestId: string;
+  otpCode: string;
+}
+
+export interface SignatureVerifyResponse {
+  verified: boolean;
+  verifiedAt: string;
+  status: 'verified';
+  message?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -126,5 +156,13 @@ export class ConventionService {
     return this.http.get(`${this.API_URL}/${id}/files/${filename}`, {
       responseType: 'blob'
     });
+  }
+
+  requestEmailSignature(payload: SignatureRequestPayload): Observable<SignatureRequestResponse> {
+    return this.http.post<SignatureRequestResponse>(`${this.API_URL}/signature/request`, payload);
+  }
+
+  verifyEmailSignatureOtp(payload: SignatureVerifyPayload): Observable<SignatureVerifyResponse> {
+    return this.http.post<SignatureVerifyResponse>(`${this.API_URL}/signature/verify`, payload);
   }
 }

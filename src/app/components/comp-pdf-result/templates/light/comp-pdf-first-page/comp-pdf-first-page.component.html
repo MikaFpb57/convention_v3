@@ -1,0 +1,137 @@
+<table class="page_body" width="100%">
+    <thead>
+        <tr>
+            <th colspan="2">Entreprise partenaire</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td width="25%" class="hl">Nom de la société :</td>
+            <td width="75%"><strong>{{compteData.nomSociete}}</strong></td>
+        </tr>
+        <tr>
+            <td class="hl">Adresse :</td>
+            <td>{{compteData.adresse}}</td>
+        </tr>
+        <tr>
+            <td class="hl">CP - Ville :</td>
+            <td>{{compteData.codePostal}} - {{compteData.ville}}</td>
+        </tr>
+        <tr>
+            <td class="hl">Numéro Siret :</td>
+            <td>{{compteData.siret}}</td>
+        </tr>
+        <tr>
+            <td class="hl">Numéro TVA :</td>
+            <td>{{compteData.tvaIntra}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="page_body table-lay-fixed" width="100%">
+    <thead>
+        <tr>
+            <th colspan="4">Informations sur le compte</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="hl">Assuré BDG :</td>
+            <td>{{u_bool_assureBdg}}</td>
+
+            <td class="hl">Nom de l'assurance  :</td>
+            <td>{{infosData.assurance}}</td>
+        </tr>
+        <tr>
+            <td class="hl">Récupération TVA :</td>
+            <td>{{u_bool_recuperationTva}}</td>
+
+            <td class="hl">Nom du courtier payeur :</td>
+            <td>{{infosData.courtier}}</td>
+        </tr>
+        <tr>
+            <td class="hl">Tarif FPB :</td>
+            <td><strong>{{u_tr_tarif}}</strong></td>
+
+            <td class="hl">Nom du loueur :</td>
+            <td>{{infosData.loueur}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="page_body table-lay-fixed" width="100%">
+    <tr align="center">
+        <td class="scope_hl">Type de véhicule</td>
+        <td class="scope_row">VL - VU</td>
+        <td class="scope_row">PL</td>
+        <td class="scope_row">BUS</td>
+        <td class="scope_row">TP</td>
+        <td class="scope_row">AGRI</td>
+        <td class="scope_row">CA</td>
+        <td class="scope_hl">TOTAL</td>
+    </tr>
+    <tr align="center">
+        <td class="scope_hl">Nombre de véhicules</td>
+        <td>{{infosData.nb_vu_vl}}</td>
+        <td>{{infosData.nb_pl}}</td>
+        <td>{{infosData.nb_bus}}</td>
+        <td>{{infosData.nb_tp}}</td>
+        <td>{{infosData.nb_agri}}</td>
+        <td>{{infosData.nb_ca}}</td>
+        <td><b>{{infosData.nb_total ?? 0}}</b></td>
+    </tr>
+</table>
+
+<table class="page_body" width="100%">
+    <thead>
+        <tr>
+            <th colspan="4">Fiche Identité flotte</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="hl">Activité :</td>
+            <td colspan="3">{{compteData.activitePrincipale}}</td>
+        </tr>
+        <tr>
+            <td class="hl">Rayon d'action :</td>
+            <td colspan="3" style="text-transform: uppercase;">
+                {{compteData.rayonAction}}
+            </td>
+        </tr>
+        <tr>
+            <td class="hl">Filiale(s) :</td>
+            <td colspan="3">{{compteData.filiales}}</td>
+        </tr>
+
+        @if(true){
+        <tr>
+            <td class="hl">Implantation :</td>
+            <td colspan="3">
+                <b>Tableau EXCEL à transmettre avec la liste des filiales.</b>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<table class="page_body table-lay-fixed" width="100%">
+    <thead>
+        <tr>
+            <th class="sign">Représentant France Pare-Brise</th>
+            <th class="sign">Représentant entreprise partenaire</th>
+            <th class="sign">Cachet de l'entreprise partenaire</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- {{content_signature}} -->
+    </tbody>
+</table>
+
+<table class="page_footer">
+    <tr>
+        <td style="text-align: right">
+            Une procédure de prise en charge est préétablie dans le rapport commercial.
+        </td>
+    </tr>
+</table>

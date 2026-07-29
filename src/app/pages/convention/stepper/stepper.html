@@ -82,7 +82,27 @@
         <section #stepSection id="fichiers" class="scroll-mt-24">
             <div
                 class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
-                <app-fichiers (next)="scrollTo('facturation')"></app-fichiers>
+                <app-fichiers (next)="scrollTo('signature')"></app-fichiers>
+            </div>
+        </section>
+
+        <section #stepSection id="signature" class="scroll-mt-24">
+            <div
+                class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+                <app-signature-step></app-signature-step>
+            </div>
+        </section>
+    </div>
+
+    <div class="space-y-8 lg:pb-16 pb-16">
+        <section class="sticky top-16">
+            <div class="flex flex-col h-[calc(100dvh-9rem)] overflow-hidden p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+                <header class="shrink-0">
+                    <comp-h1-gd textGradient="Visualisation" textNormal="du document"></comp-h1-gd>
+                </header>
+                <div class="flex-1 overflow-y-auto">
+                    <comp-pdf-result [conventionData]="conventionData()"></comp-pdf-result>
+                </div>
             </div>
         </section>
     </div>

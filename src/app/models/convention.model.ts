@@ -31,6 +31,9 @@ export interface Fiche {
   etape: string;
   libelle_etape: string;
   traite: number;
+  signature_status?: 'draft' | 'pending_email' | 'verified' | 'expired';
+  signature_sent_at?: string;
+  signature_expires_at?: string;
 }
 
 export interface ConventionDetail {
@@ -145,4 +148,10 @@ export interface ConventionInfo {
   cartes_adr: string;
   cartes_cp: string;
   cartes_ville: string;
+  signtaure_partenaire?: string;
+  signature_partenaire?: string;
+  sign_partenaire_nom?: string;
+  sign_partenaire_prenom?: string;
+  sign_partenaire_fonction?: string;
+  date_sign_part?: string;
 }

@@ -1,5 +1,5 @@
 import { Injectable, signal, effect } from '@angular/core';
-import { ConventionData, CompteData, ContactsData, FacturationData, InfosData, ProceduresData, FilesData } from '../models/convention.interface';
+import { ConventionData, CompteData, ContactsData, FacturationData, InfosData, ProceduresData, SignatureData } from '../models/convention.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -147,5 +147,22 @@ export class ConventionService {
 
     getFiles(): any[] | undefined {
         return this.conventionSignal().files?.files;
+    }
+
+    updateSignature(data: SignatureData) {
+        if (!this.guardWrite()) return;
+        this.conventionSignal.update(current => ({
+            ...current,
+            signature: data
+        }));
+    }
+
+    getSignature(): SignatureData | undefined {
+        return this.conventionSignal().signature;
+    }
+
+    markAsSigned() {
+        this.etape.set('Signé');
+        this.isReadOnly.set(true);
     }
 }

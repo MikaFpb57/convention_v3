@@ -1,5 +1,15 @@
 import { ConventionData, CompteData, ContactsData, ContactData, FacturationData } from '../models/convention.interface';
 import { Fiche, ConventionInfo } from '../models/convention.model';
+import { AssurDto } from '../models/dto/assur.dto';
+import { RemiseDto } from '../models/dto/remise.dto';
+import { TarifResponseDto } from '../models/dto/tarifsresponse.dto';
+import { TarifsSpecDto } from '../models/dto/tarifsspec.dto';
+import { VehiculeTarifDto } from '../models/dto/vehiculetarif.dto';
+import { Assur } from '../models/assur.interface';
+import { Remise } from '../models/remise.interface';
+import { TarifResponse } from '../models/tarifsresponse.interface';
+import { TarifsSpec } from '../models/tarifsspec.interface';
+import { VehiculeTarif } from '../models/vehiculetarif.interface';
 
 type FicheRecord = Fiche & Record<string, unknown>;
 
@@ -275,5 +285,85 @@ export function mapConventionInfoToConventionData(info: ConventionInfo): Convent
         }
     };
 
-    return { compte, facturation, infos, procedures, contacts };
+    const signatureImage = info.signtaure_partenaire ?? info.signature_partenaire ?? '';
+    const signature = {
+        nom: info.sign_partenaire_nom ?? '',
+        prenom: info.sign_partenaire_prenom ?? '',
+        fonction: info.sign_partenaire_fonction ?? '',
+        emailSignataire: '',
+        certifie: Boolean(signatureImage),
+        signatureImage,
+        signedAt: info.date_sign_part ?? ''
+    };
+
+    return { compte, facturation, infos, procedures, contacts, signature };
+}
+
+function mapAssur(dto: AssurDto): Assur {
+    return {
+        fongi: dto.fongi,
+        recy: dto.recy,
+        t1: dto.t1,
+        t2: dto.t2,
+        t3: dto.t3,
+        dateMep: new Date(dto.date_mep)
+    };
+}
+
+function mapRemise(dto: RemiseDto): Remise {
+    return {
+        type: dto.type_rem,
+        id: dto.id_rem,
+        libelle: dto.rm_libelle,
+        pourcentage: dto.rm_rem,
+        tarif: dto.rm_tar,
+        tempsMO: dto.rm_tmo,
+        libelleMO: dto.rm_tmo_lib,
+        prix: dto.rm_prix,
+        dateMaj: new Date(dto.date_maj),
+        dateMep: new Date(dto.date_mep)
+    };
+}
+
+function mapRemises(dto: { [key: string]: RemiseDto[] }): Record<string, Remise[]> {
+    const result: Record<string, Remise[]> = {};
+
+    Object.keys(dto).forEach((key) => {
+        result[key] = dto[key].map(r => mapRemise(r));
+    });
+
+    return result;
+}
+
+function mapVehiculeTarif(dto: VehiculeTarifDto): VehiculeTarif {
+    return {
+        assur: mapAssur(dto.assur),
+        remises: mapRemises(dto.remises)
+    };
+}
+
+function mapTarifsSpec(dto: TarifsSpecDto): TarifsSpec {
+    const result: TarifsSpec = {};
+
+    Object.keys(dto).forEach((key) => {
+        const vehiculeDto = dto[key];
+        if (!vehiculeDto) {
+            return;
+        }
+        result[key] = mapVehiculeTarif(vehiculeDto);
+    });
+
+    return result;
+}
+
+export function mapTarifResponse(dto: TarifResponseDto): TarifResponse {
+    return {
+        baseTarifs: {
+            groupe: dto.base_tarifs.groupe,
+            regionId: dto.base_tarifs.region_id,
+            dateMaj: new Date(dto.base_tarifs.date_maj),
+            dateMep: new Date(dto.base_tarifs.date_mep)
+        },
+        tarifsSpec: mapTarifsSpec(dto.tarifs_spec)
+    };
 }

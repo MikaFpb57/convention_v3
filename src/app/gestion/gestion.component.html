@@ -95,6 +95,10 @@
                                 }
                             </th>
                             <th scope="col"
+                                class="px-2 py-1 sm:px-6 sm:py-3 text-left hidden sm:table-cell">
+                                Signature
+                            </th>
+                            <th scope="col"
                                 class="px-2 py-1 sm:px-6 sm:py-3 cursor-pointer hover:text-heading hidden sm:table-cell"
                                 (click)="changeSort('date_update')">
                                 Date de MAJ
@@ -127,6 +131,16 @@
                             <td class="px-2 py-1 sm:px-6 sm:py-4">
                                 <comp-badge [value]="fiche.etape"></comp-badge>
                             </td>
+                            <td class="px-2 py-1 sm:px-6 sm:py-4 hidden sm:table-cell">
+                                <span class="px-2 py-1 rounded-full text-xs font-medium" [ngClass]="getSignatureBadgeClass(fiche)">
+                                    {{ getSignatureBadgeLabel(fiche) }}
+                                </span>
+                                @if (fiche.signature_expires_at) {
+                                <div class="text-xs text-body mt-1">
+                                    Expire: {{ fiche.signature_expires_at | date:'dd/MM/yyyy' }}
+                                </div>
+                                }
+                            </td>
                             <td class="px-2 py-1 sm:px-6 sm:py-4 whitespace-nowrap hidden sm:table-cell">
                                 {{ fiche.date_update | date:'dd/MM/yyyy HH:mm' }}
                             </td>
@@ -143,7 +157,7 @@
                         </tr>
                         } @empty {
                         <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-body">
+                            <td colspan="7" class="px-6 py-4 text-center text-body">
                                 Aucune donnée disponible
                             </td>
                         </tr>

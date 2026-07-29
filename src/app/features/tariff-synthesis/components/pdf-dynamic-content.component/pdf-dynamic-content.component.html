@@ -1,0 +1,95 @@
+<!-- Sections -->
+@for (section of page.sections; track section.title) {
+
+<section class="mt-[1.5em]">
+
+    @if (section.title) {
+    <h2 class="uppercase text-blue-900 border-l-[0.5em] pl-[0.6em] text-[1.3em] font-bold border-red-600">
+        {{ section.title }}
+    </h2>
+    }
+
+    <!-- INTRO -->
+    @if (section.intro) {
+    <p class="mt-[0.8em]">
+        {{ section.intro }}
+    </p>
+    }
+
+    <!-- TEXT CONTENT -->
+    @if (section.content) {
+    @for (text of section.content; track $index) {
+    <p class="mt-[0.5em]">{{ text }}</p>
+    }
+    }
+
+    <!-- LIST -->
+    @if (section.lines) {
+    <ul class="space-y-[0.5em] mt-[0.8em]">
+
+        @for (line of section.lines; track line.label) {
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]">
+
+            <span>{{ line.label }}</span>
+            <span class="border-b border-blue-100 opacity-70"></span>
+            <span class="font-semibold text-right tabular-nums">
+                {{ line.value }}
+            </span>
+
+        </li>
+
+        <!-- CHILDREN -->
+        @if (line.children?.length) {
+        <div class="ml-[1em] mt-[0.3em]">
+
+            @for (child of line.children; track child.label) {
+            <div class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em] text-[0.9em]">
+                <span>{{ child.label }}</span>
+                <span class="border-b border-blue-50"></span>
+                <span class="text-right tabular-nums">{{ child.value }}</span>
+            </div>
+            }
+
+        </div>
+        }
+
+        }
+
+    </ul>
+    }
+
+    <!-- GROUP (nested sections)
+    @if (section.sections) {
+    @for (subSection of section.sections; track subSection.title) {
+    <app-pdf-dynamic-content [page]="{ sections: [subSection] }"></app-pdf-dynamic-content>
+    }
+    } -->
+
+    <!-- SIGNATURE -->
+    @if (section.type === 'signature') {
+
+    <div class="mt-[2em] grid grid-cols-2 gap-8 text-center">
+
+        <div>
+            <p>{{ section.left?.title }}</p>
+            <div class="mt-12 border-t border-gray-400 w-3/4 mx-auto"></div>
+            <p class="mt-2 text-[0.8em]">{{ section.left?.subtitle }}</p>
+        </div>
+
+        <div>
+            <p>{{ section.right?.title }}</p>
+            <div class="mt-12 border-t border-gray-400 w-3/4 mx-auto"></div>
+            <p class="mt-2 text-[0.8em]">{{ section.right?.subtitle }}</p>
+        </div>
+
+    </div>
+
+    @if (section.footer) {
+    <p class="mt-6 text-[0.8em] text-center">
+        {{ section.footer }}
+    </p>
+    }
+    }
+
+</section>
+}

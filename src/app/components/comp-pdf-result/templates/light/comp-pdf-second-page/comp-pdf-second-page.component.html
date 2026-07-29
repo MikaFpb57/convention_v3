@@ -1,0 +1,134 @@
+<table class="page_body borderbott w-full">
+    <thead>
+        <tr>
+            <th colspan="4" scope="row">Contacts</th>
+        </tr>
+        <tr>
+            <th style="width:10%" scope="col" scope="scope_row">Type</th>
+            <th style="width:45%" scope="col" scope="scope_row">Principal</th>
+            <th style="width:45%" scope="col" scope="scope_row">Backup</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @for (contact of contactsConfig; track contact.key) {
+        <tr class="borderbott">
+
+            <!-- Type -->
+            <td class="scope_row bordered">
+                {{ contact.label }}
+            </td>
+
+            <!-- Principal -->
+            <td class="bordered">
+                @if (contactsData[contact.key].primary; as p) {
+                <strong>{{ p.nom }} {{ p.prenom }}</strong><br />
+                {{ p.fonction }}<br />
+                {{ p.email }}<br />
+                {{ p.telephone }}
+                }
+            </td>
+
+            <!-- Backup -->
+            <td class="bordered borderend">
+                @if (contactsData[contact.key].backup; as b) {
+                <strong>{{ b.nom }} {{ b.prenom }}</strong><br />
+                {{ b.fonction }}<br />
+                {{ b.email }}<br />
+                {{ b.telephone }}
+                }
+            </td>
+
+        </tr>
+        }
+    </tbody>
+</table>
+
+<table class="page_body" width="100%">
+    <thead>
+        <tr>
+            <th>Procédure à adapter selon fonctionnement</th>
+        </tr>
+    </thead>
+
+    <tbody class="borderfull reduce-fs npx specs nls">
+
+        <!-- 1 -->
+        <tr>
+            <td>
+                <b>1 - Le conducteur se présente au centre France Pare-brise avec CG, CV ou mémo assurance.</b>
+            </td>
+        </tr>
+
+        <!-- 2 -->
+        <tr>
+            <td>
+                <b>2 - La prise en charge se fait par :</b>
+                <ul>
+                    @for (item of utilsService.getLabels('typePriseEnCharge', typePriseEnChargeIds); track
+                    item) {
+                    <li>{{ item }}</li>
+                    }
+                </ul>
+            </td>
+        </tr>
+
+        <!-- 3 -->
+        <tr>
+            <td>
+                <b>3 - Le centre fait remplir une DSCP (déclaration) au conducteur.</b>
+            </td>
+        </tr>
+
+        <!-- 4 -->
+        <tr>
+            <td>
+                <b>4 - Le centre réalise l'intervention.</b>
+            </td>
+        </tr>
+
+        <!-- 5 -->
+        @if (auDepartConducteurIds.length) {
+        <tr>
+            <td>
+                <b>5 - Le conducteur repart avec :</b>
+                <ul>
+                    @for (item of utilsService.getLabels('auDepartConducteur', auDepartConducteurIds); track
+                    item) {
+                    <li>{{ item }}</li>
+                    }
+                </ul>
+            </td>
+        </tr>
+        }
+
+        <!-- 6 -->
+        @if (surFactureIds.length) {
+        <tr>
+            <td>
+                <b>6 - Envoi de la facture :</b>
+                <ul>
+                    @for (item of utilsService.getLabels('surFacture', surFactureIds); track item) {
+                    <li>{{ item }}</li>
+                    }
+                </ul>
+            </td>
+        </tr>
+        }
+
+        <!-- 7 -->
+        @if (surFactureIds.length) {
+        <tr>
+            <td>
+                <span style="color:red"><b>IMPORTANT ! Doit figurer sur la facture :</b></span>
+                <ul>
+                    @for (item of utilsService.getLabels('surFacture', surFactureIds); track item) {
+                    <li>{{ item }}</li>
+                    }
+                </ul>
+            </td>
+        </tr>
+        }
+
+    </tbody>
+</table>

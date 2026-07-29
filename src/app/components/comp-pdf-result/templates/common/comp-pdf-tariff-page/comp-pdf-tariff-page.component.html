@@ -1,0 +1,25 @@
+<div class="tariff">
+
+  <!-- header dynamique -->
+  <div class="tariff-header text-right mb-[1.5em]">
+    <h1 class="uppercase font-bold text-blue-900 text-[1.6em]">
+      {{ pageVM.header.title }}
+    </h1>
+
+    <h3 class="uppercase font-bold text-blue-900 text-[1.3em]">
+      {{ pageVM.header.subtitle }}
+    </h3>
+
+    <div class="w-full relative mt-[0.5em]">
+      <img
+        [src]="pageVM.header.pictos"
+        class="absolute end-0 h-[2.5em]"
+        alt="Pictogrammes"
+      />
+    </div>
+  </div>
+
+  <!-- contenu dynamique -->
+  <app-pdf-dynamic-content [page]="pageVM"></app-pdf-dynamic-content>
+
+</div>

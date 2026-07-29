@@ -39,6 +39,13 @@ export class GestionComponent implements OnInit {
     'Signé': 'bg-emerald-100 text-emerald-800'
   };
 
+  private readonly signatureClasses: Record<string, string> = {
+    draft: 'bg-gray-100 text-gray-800',
+    pending_email: 'bg-amber-100 text-amber-800',
+    verified: 'bg-emerald-100 text-emerald-800',
+    expired: 'bg-rose-100 text-rose-800'
+  };
+
   constructor(
     private conventionService: ConventionService,
     private router: Router
@@ -58,7 +65,8 @@ export class GestionComponent implements OnInit {
         // Utiliser libelle_etape pour l'affichage de l'étape
         this.fiches = (data.fiches || []).map(fiche => ({
           ...fiche,
-          etape: fiche.libelle_etape || fiche.etape
+          etape: fiche.libelle_etape || fiche.etape,
+          signature_status: this.normalizeSignatureStatus(fiche.signature_status, fiche.libelle_etape || fiche.etape)
         }));
         this.total = data.total || 0;
         this.isLoading = false;
@@ -269,6 +277,41 @@ export class GestionComponent implements OnInit {
   // Gestion des étapes
   getEtapeBadgeClass(etape: string): string {
     return this.etapeClasses[etape] || 'bg-gray-100 text-gray-800';
+  }
+
+  getSignatureBadgeClass(fiche: Fiche): string {
+    const status = fiche.signature_status || 'draft';
+    return this.signatureClasses[status] || this.signatureClasses['draft'];
+  }
+
+  getSignatureBadgeLabel(fiche: Fiche): string {
+    const status = fiche.signature_status || 'draft';
+    switch (status) {
+      case 'verified':
+        return 'Vérifiée';
+      case 'pending_email':
+        return 'En attente';
+      case 'expired':
+        return 'Expirée';
+      default:
+        return 'Non lancée';
+    }
+  }
+
+  private normalizeSignatureStatus(signatureStatus: Fiche['signature_status'], etape: string): Fiche['signature_status'] {
+    if (signatureStatus) {
+      return signatureStatus;
+    }
+
+    if (etape === 'Signé') {
+      return 'verified';
+    }
+
+    if (etape === 'En attente') {
+      return 'pending_email';
+    }
+
+    return 'draft';
   }
 
   //Etapes disponibles

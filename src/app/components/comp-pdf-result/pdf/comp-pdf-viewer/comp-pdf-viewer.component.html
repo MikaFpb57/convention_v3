@@ -1,0 +1,52 @@
+<div class="flex flex-col h-full w-full bg-gray-800 border border-gray-950 rounded shadow">
+
+  <!-- NAVBAR -->
+  <div class="sticky top-0 z-10 flex justify-center gap-4 px-4 py-2 bg-gray-900/90 backdrop-blur">
+    <button
+      (click)="zoomOut()"
+      class="w-8 h-8 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded"
+    >−</button>
+
+    <span class="text-xs text-gray-300 w-16 text-center flex items-center justify-center">
+      {{ getZoomPercent() }}%
+    </span>
+
+    <button
+      (click)="zoomIn()"
+      class="w-8 h-8 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded"
+    >+</button>
+  </div>
+
+  <!-- SCROLL CONTAINER -->
+  <div
+    id="pdfScrollContainer"
+    class="flex-1 overflow-auto bg-gray-700 relative"
+  >
+  
+  <div class="min-w-max min-h-max p-8 relative">
+    <div class="pdf-watermark"></div>
+    <!-- DOCUMENT -->
+      <div
+        class="flex flex-col gap-4" #pdfpages id="pdfpages"
+      >
+        @for (page of pages; track $index) {
+          <comp-pdf-viewer-page
+            [pageNumber]="$index + 1"
+            [data]="page.inputs ?? {}"
+            [zoom]="zoom()"
+            [type]="page.type"
+            [title]="page.title || ''"
+            [backgroundColor]="page.backgroundColor"
+            [backgroundImage]="page.backgroundImage"
+            class="mx-auto"
+          >
+            <ng-container
+              [ngComponentOutlet]="page.component"
+              [ngComponentOutletInputs]="page.inputs ?? {}"
+            />
+          </comp-pdf-viewer-page>
+        }
+      </div>
+    </div>
+  </div>
+</div>

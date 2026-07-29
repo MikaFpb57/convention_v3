@@ -1,1 +1,117 @@
-<p>signature works!</p>
+<div class="relative">
+	@if (isLoading()) {
+		<comp-loader></comp-loader>
+	}
+
+	@if (errorMessage()) {
+		<comp-alert-error [message]="errorMessage()"></comp-alert-error>
+	}
+
+	@if (successMessage()) {
+		<div class="mb-4 p-3 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-900 text-sm">
+			{{ successMessage() }}
+		</div>
+	}
+
+	<form (ngSubmit)="onSubmit()" [formGroup]="signatureForm" class="space-y-6">
+		<comp-h1-gd textGradient="Signature pro" textNormal="email + code"></comp-h1-gd>
+
+		<div class="p-6 rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-blue-100 dark:border-blue-900/30">
+			<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+				Parcours recommandé: lien de signature envoyé par email + code OTP. Validité d'une demande: {{ validityDays }} jours.
+			</p>
+
+			<div class="mb-5 p-3 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-700">
+				Statut actuel: <span class="font-semibold">{{ statusText }}</span>
+				@if (signatureForm.value.expiresAt) {
+					<span> - expire le {{ signatureForm.value.expiresAt }}</span>
+				}
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+				<comp-input
+					formControlName="nom"
+					label="Nom"
+					placeholder="Nom du signataire"
+					[required]="true"
+					[readonly]="isReadOnly()"
+				></comp-input>
+
+				<comp-input
+					formControlName="prenom"
+					label="Prénom"
+					placeholder="Prénom du signataire"
+					[required]="true"
+					[readonly]="isReadOnly()"
+				></comp-input>
+
+				<comp-input
+					formControlName="fonction"
+					label="Fonction"
+					placeholder="Fonction du signataire"
+					[required]="true"
+					[readonly]="isReadOnly()"
+				></comp-input>
+
+				<comp-input
+					formControlName="emailSignataire"
+					label="Email du signataire"
+					placeholder="partenaire@exemple.com"
+					type="email"
+					[required]="true"
+					[readonly]="isReadOnly()"
+				></comp-input>
+			</div>
+
+			@if (!isReadOnly()) {
+				<div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-3 mb-5">
+					<comp-input
+						formControlName="otpCode"
+						label="Code de vérification"
+						placeholder="Code reçu par email"
+						[readonly]="isReadOnly()"
+					></comp-input>
+					<div class="flex items-end">
+						<comp-button
+							label="Vérifier le code"
+							variant="primary"
+							type="button"
+							[disabled]="!signatureForm.value.signatureRequestId"
+							(click)="verifyOtpCode()"
+						></comp-button>
+					</div>
+				</div>
+			}
+
+			<div class="mt-5 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+				<p class="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Piste d'audit</p>
+				<ul class="text-xs text-gray-600 dark:text-gray-300 space-y-1">
+					<li>Demande envoyée: {{ signatureForm.value.requestSentAt || 'Non envoyée' }}</li>
+					<li>Expiration: {{ signatureForm.value.expiresAt || 'Non définie' }}</li>
+					<li>Code vérifié: {{ signatureForm.value.otpVerifiedAt || 'Non vérifié' }}</li>
+					<li>Signature finalisée: {{ signatureForm.value.signedAt || 'Non finalisée' }}</li>
+				</ul>
+			</div>
+
+			<label class="mt-6 flex items-start gap-3 cursor-pointer" [class.cursor-not-allowed]="isReadOnly()">
+				<input
+					type="checkbox"
+					formControlName="certifie"
+					class="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+					[disabled]="isReadOnly()"
+				/>
+				<span class="text-sm text-gray-700 dark:text-gray-300">
+					Je certifie l'exactitude des informations et autorise l'utilisation de cette signature.
+				</span>
+			</label>
+		</div>
+
+		@if (!isReadOnly()) {
+			<div class="flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
+				<comp-button label="Réinitialiser" variant="neutral" type="button" (click)="resetSignatureWorkflow()"></comp-button>
+				<comp-button label="Envoyer le lien email" variant="primary" type="button" (click)="requestSignatureByEmail()"></comp-button>
+				<comp-button label="Finaliser" variant="primary" type="submit"></comp-button>
+			</div>
+		}
+	</form>
+</div>

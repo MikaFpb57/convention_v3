@@ -80,6 +80,22 @@ export interface FilesData {
   files: any[];
 }
 
+export interface SignatureData {
+  nom: string;
+  prenom: string;
+  fonction: string;
+  emailSignataire: string;
+  certifie: boolean;
+  signatureImage?: string;
+  mode?: 'remote-email-otp';
+  statut?: 'draft' | 'pending_email' | 'verified';
+  signatureRequestId?: string;
+  requestSentAt?: string;
+  expiresAt?: string;
+  otpVerifiedAt?: string;
+  signedAt?: string;
+}
+
 export interface ConventionData {
   compte?: CompteData;
   contacts?: ContactsData;
@@ -87,4 +103,5 @@ export interface ConventionData {
   infos?: InfosData;
   procedures?: ProceduresData;
   files?: FilesData;
+  signature?: SignatureData;
 }

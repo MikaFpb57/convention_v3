@@ -1,0 +1,205 @@
+<div class="tariff font-sans text-[0.85em]">
+
+  <!-- Header -->
+  <div class="tariff-header text-right">
+    <h1 class="uppercase font-bold text-blue-900 text-[1.6em]">Grille de tarification</h1>
+    <h3 class="uppercase font-bold text-blue-900 text-[1.3em]">{{baseTarifs.groupe}}</h3>
+    <div class="w-full relative mt-[0.5em]">
+      <img alt="icons" src="/assets/img/pictos.png" class="absolute end-0 h-[2em]" />
+    </div>
+  </div>
+
+  <!-- Réparation pare-brise -->
+  <section class="mt-[2em]">
+    <h2 class="uppercase text-blue-900 border-l-[0.5em] pl-[0.6em] text-[1.3em] font-bold border-red-600">Réparation de
+      pare-brise</h2>
+
+    <ul class="space-y-[0.5em] mt-[0.8em]">
+      <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]">
+        <span>1er impact</span>
+        <span class="border-b border-blue-100 opacity-70"></span>
+        <span class="font-semibold text-right tabular-nums">00,00 € HT</span>
+      </li>
+      <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]">
+        <span>Multi-impacts VL/VU</span>
+        <span class="border-b border-blue-100 opacity-70"></span>
+        <span class="font-semibold text-right tabular-nums">00,00 € HT</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Main d'oeuvre VL -->
+  <section class="mt-[1.5em]">
+    <h2 class="uppercase text-blue-900 border-l-[0.5em] pl-[0.6em] text-[1.3em] font-bold border-red-600">Tarif horaire
+      de main d'œuvre VL</h2>
+
+    <div class="mt-[0.8em]">
+      <p><strong>Temps de main d'œuvre :</strong></p>
+      <ul class="list-disc ml-[1.2em]">
+        <li>Pare-brise et lunette : selon barème constructeur (min. 1h)</li>
+        <li>Glace latérale : selon barème constructeur (min. 1h30)</li>
+        <li>Optique : selon barème constructeur (min. 1h)</li>
+      </ul>
+    </div>
+
+    <div class="mt-[0.8em]">
+      <p class="font-bold text-[1.1em]">Province</p>
+      <ul class="space-y-[0.5em] mt-[0.8em]">
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]">
+          <span>T1 Travaux courants</span>
+          <span class="border-b border-blue-100 opacity-70"></span>
+          <span class="font-semibold text-right tabular-nums">{{round2(tarifsSpec['vl']?.assur?.t1)}} € HT</span>
+        </li>
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]">
+          <span>T2 Travaux complexes</span>
+          <span class="border-b border-blue-100 opacity-70"></span>
+          <span class="font-semibold text-right tabular-nums">{{round2(tarifsSpec['vl']?.assur?.t2)}} € HT</span>
+        </li>
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]">
+          <span>T3 Haute technicité (ADAS)</span>
+          <span class="border-b border-blue-100 opacity-70"></span>
+          <span class="font-semibold text-right tabular-nums">{{round2(tarifsSpec['vl']?.assur?.t3)}} € HT</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="mt-[0.8em]">
+      <p class="font-bold text-[1.1em]">Île-de-France + Corse</p>
+      <ul class="space-y-[0.5em] mt-[0.8em]">
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]">
+          <span>T1 Travaux courants</span>
+          <span class="border-b border-blue-100 opacity-70"></span>
+          <span class="font-semibold text-right tabular-nums">00,00 € HT</span>
+        </li>
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]">
+          <span>T2 Travaux complexes</span>
+          <span class="border-b border-blue-100 opacity-70"></span>
+          <span class="font-semibold text-right tabular-nums">00,00 € HT</span>
+        </li>
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]">
+          <span>T3 Haute technicité (ADAS)</span>
+          <span class="border-b border-blue-100 opacity-70"></span>
+          <span class="font-semibold text-right tabular-nums">00,00 € HT</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Main d'oeuvre PL -->
+  <section class="mt-[1.5em]">
+    <h2 class="uppercase text-blue-900 border-l-[0.5em] pl-[0.6em] text-[1.3em] font-bold border-red-600">Main d'œuvre
+      PL / Agricole / TP / Transport</h2>
+
+    <div class="mt-[0.8em]">
+      <p class="font-bold text-[1.1em]">Province</p>
+      <ul class="space-y-[0.5em] mt-[0.8em]">
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]">
+          <span>Travaux courants</span>
+          <span class="border-b border-blue-100 opacity-70"></span>
+          <span class="font-semibold text-right tabular-nums">{{round2(tarifsSpec['pl']?.assur?.t1)}} € HT</span>
+        </li>
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]">
+          <span>Haute technicité (ADAS)</span>
+          <span class="border-b border-blue-100 opacity-70"></span>
+          <span class="font-semibold text-right tabular-nums">{{round2(tarifsSpec['pl']?.assur?.t1)}} € HT</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="mt-[0.8em]">
+      <p class="font-bold text-[1.1em]">Île-de-France + Corse</p>
+      <ul class="space-y-[0.5em] mt-[0.8em]">
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]">
+          <span>Travaux courants</span>
+          <span class="border-b border-blue-100 opacity-70"></span>
+          <span class="font-semibold text-right tabular-nums">00,00 € HT</span>
+        </li>
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]">
+          <span>Haute technicité (ADAS)</span>
+          <span class="border-b border-blue-100 opacity-70"></span>
+          <span class="font-semibold text-right tabular-nums">00,00 € HT</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Pièces -->
+  <section class="mt-[1.5em]">
+    <h2 class="uppercase text-blue-900 border-l-[0.5em] pl-[0.6em] text-[1.3em] font-bold border-red-600">Tarifs pièces
+      et remises</h2>
+
+    <ul class="space-y-[0.5em] mt-[0.8em]">
+      <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]"><span>Pare-brise / lunette</span><span
+          class="border-b border-blue-100 opacity-70"></span><span class="font-semibold text-right tabular-nums">-25
+          %</span></li>
+      <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]"><span>Joint / enjoliveur</span><span
+          class="border-b border-blue-100 opacity-70"></span><span class="font-semibold text-right tabular-nums">-20
+          %</span></li>
+      <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]"><span>Toit en verre</span><span
+          class="border-b border-blue-100 opacity-70"></span><span class="font-semibold text-right tabular-nums">-10
+          %</span></li>
+      <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]"><span>Glace latérale</span><span
+          class="border-b border-blue-100 opacity-70"></span><span class="font-semibold text-right tabular-nums">-10
+          %</span></li>
+      <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]"><span>Optique phare</span><span
+          class="border-b border-blue-100 opacity-70"></span><span class="font-semibold text-right tabular-nums">-10
+          %</span></li>
+    </ul>
+
+    <div class="mt-[0.8em]">
+      <p class="font-bold">Forfaits :</p>
+      <ul class="space-y-[0.5em] mt-[0.8em]">
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]"><span>Kit collage VL/VU</span><span
+            class="border-b border-blue-100 opacity-70"></span><span class="font-semibold text-right tabular-nums">44,82
+            € HT</span></li>
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]"><span>Kit collage PL</span><span
+            class="border-b border-blue-100 opacity-70"></span><span class="font-semibold text-right tabular-nums">44,82
+            € HT</span></li>
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]"><span>Fournitures diverses</span><span
+            class="border-b border-blue-100 opacity-70"></span><span class="font-semibold text-right tabular-nums">7,25
+            € HT</span></li>
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]"><span>Recyclage pare-brise</span><span
+            class="border-b border-blue-100 opacity-70"></span><span class="font-semibold text-right tabular-nums">4,00
+            € HT</span></li>
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]"><span>Traitement déchets</span><span
+            class="border-b border-blue-100 opacity-70"></span><span class="font-semibold text-right tabular-nums">1,50
+            € HT</span></li>
+        <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]"><span>Consultation SIDEXA</span><span
+            class="border-b border-blue-100 opacity-70"></span><span class="font-semibold text-right tabular-nums">3,00
+            € HT</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Calibration -->
+  <section class="mt-[1.5em]">
+    <h2 class="uppercase text-blue-900 border-l-[0.5em] pl-[0.6em] text-[1.3em] font-bold border-red-600">Forfaits
+      calibration</h2>
+
+    <ul class="space-y-[0.5em] mt-[0.8em]">
+      <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]"><span>Calibration remote
+          pare-brise</span><span class="border-b border-blue-100 opacity-70"></span><span
+          class="font-semibold text-right tabular-nums">60,00 € HT</span></li>
+      <li class="grid grid-cols-[auto_1fr_auto] items-center gap-[0.5em]"><span>Calibration phare matrix</span><span
+          class="border-b border-blue-100 opacity-70"></span><span class="font-semibold text-right tabular-nums">130,00
+          € HT</span></li>
+    </ul>
+  </section>
+
+  <!-- Nota -->
+  <section class="mt-[1.5em]">
+    <div class="relative border border-red-500 rounded-[6px] p-[1em] pt-[1.5em]">
+      <span
+        class="absolute -top-[0.7em] left-[0.8em] bg-white px-[0.4em] text-[0.9em] font-bold text-red-600 uppercase">
+        Nota
+      </span>
+      <p>
+        Pour toute(s) fourniture(s) approvisionnée(s) chez les concessionnaires, la remise sera au maximum égale à
+        50 % de la remise reçue, et une copie de la facture d'achat sera impérativement jointe à la facture effectuée
+        dans le centre de pose.
+        Toutes les remises seront portées en clair sur toutes les factures réalisées à un assuré.
+      </p>
+    </div>
+  </section>
+
+</div>
