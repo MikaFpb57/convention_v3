@@ -1,3 +1,10 @@
 <div class="pdf-img-wrapper">
-  <img [src]="src" class="pdf-img" />
+  @if (!imageLoadError) {
+    <img [src]="src" class="pdf-img" (error)="onImageError()" />
+  } @else {
+    <div class="pdf-img-error">
+      <i class="fa-solid fa-image-slash text-4xl text-gray-400"></i>
+      <p class="text-sm text-gray-500 mt-2">Image non disponible</p>
+    </div>
+  }
 </div>

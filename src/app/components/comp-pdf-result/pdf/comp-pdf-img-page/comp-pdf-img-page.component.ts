@@ -7,4 +7,9 @@ import { Component, Input } from '@angular/core';
 })
 export class CompPdfImgPageComponent {
   @Input() src!: string;
+  imageLoadError = false;
+
+  onImageError() {
+    this.imageLoadError = true;
+  }
 }

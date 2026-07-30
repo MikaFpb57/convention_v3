@@ -1,0 +1,10 @@
+@if (isOpen) {
+  <div class="pdf-backdrop" (click)="close.emit()"></div>
+
+  <div class="pdf-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    <button class="pdf-close" (click)="close.emit()">✕</button>
+    <div class="pdf-content">
+      <comp-pdf-result [conventionData]="conventionData"></comp-pdf-result>
+    </div>
+  </div>
+}

@@ -35,6 +35,18 @@
                 <div class="tooltip-arrow" data-popper-arrow></div>
             </div>
             }
+            
+            <button type="button" (click)="openPdfModal()" data-tooltip-target="tooltip-pdf"
+                data-tooltip-placement="left"
+                class="relative w-[52px] h-[52px] text-white rounded-full border border-gray-600 shadow-sm dark:border-gray-600 focus:ring-4 focus:ring-gray-400 focus:outline-none dark:focus:ring-gray-400 transition-all bg-purple-600 hover:bg-purple-700">
+                <i class="fa-solid fa-eye text-lg"></i>
+            </button>
+
+            <div id="tooltip-pdf" role="tooltip"
+                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-dark rounded-base shadow-xs opacity-0 tooltip">
+                Visualiser le document
+                <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
         </div>
         <comp-button label="+" variant="primary" type="button" rounded="full" size="lg"
             extraClass="w-14 h-14 !p-0 text-2xl" data-dial-toggle="speed-dial-menu-text-outside-button"
@@ -94,16 +106,5 @@
         </section>
     </div>
 
-    <div class="space-y-8 lg:pb-16 pb-16">
-        <section class="sticky top-16">
-            <div class="flex flex-col h-[calc(100dvh-9rem)] overflow-hidden p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
-                <header class="shrink-0">
-                    <comp-h1-gd textGradient="Visualisation" textNormal="du document"></comp-h1-gd>
-                </header>
-                <div class="flex-1 overflow-y-auto">
-                    <comp-pdf-result [conventionData]="conventionData()"></comp-pdf-result>
-                </div>
-            </div>
-        </section>
-    </div>
+    <comp-pdf-modal [isOpen]="isPdfModalOpen()" [conventionData]="conventionData()" (close)="closePdfModal()"></comp-pdf-modal>
 </div>

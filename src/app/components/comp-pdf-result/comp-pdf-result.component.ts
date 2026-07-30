@@ -41,12 +41,9 @@ export class CompPdfResultComponent implements OnChanges {
 
   title = 'Convention simplifiée pour ouverture de compte client';
 
-  // ✅ CGV images
+  // ✅ CGV image unique
   private readonly cgv: string[] = [
-    "https://extranet.franceparebrise.fr/convention/asset/doc_fpb/cgv_1.jpg",
-    "https://extranet.franceparebrise.fr/convention/asset/doc_fpb/cgv_2.jpg",
-    "https://extranet.franceparebrise.fr/convention/asset/doc_fpb/cgv_3.jpg",
-    "https://extranet.franceparebrise.fr/convention/asset/doc_fpb/cgv_4.jpg",
+    "./assets/img/cgv_unique.jpg",
   ];
   constructor(
     private readonly assurService: AssurService,

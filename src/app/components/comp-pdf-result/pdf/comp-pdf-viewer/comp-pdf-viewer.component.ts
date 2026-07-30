@@ -39,10 +39,14 @@ export class CompPdfViewerComponent implements AfterViewInit {
   scrollTop = 0;
 
   ngAfterViewInit() {
-    requestAnimationFrame(() => this.calculateMinZoom());
-
     const container = this.getContainer();
     if (!container) return;
+
+    // ✅ ResizeObserver pour recalculer le zoom quand le container devient visible
+    const resizeObserver = new ResizeObserver(() => {
+      this.calculateMinZoom();
+    });
+    resizeObserver.observe(container);
 
     // ✅ CTRL + WHEEL ZOOM (mouse centered)
     container.addEventListener(

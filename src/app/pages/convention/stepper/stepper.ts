@@ -14,6 +14,7 @@ import { CompAlertErrorComponent } from '../../../components/comp-alert-error/co
 import { CompButtonComponent } from '../../../components/comp-button/comp-button.component';
 import { CompH1GdComponent } from '../../../components/comp-h1-gd/comp-h1-gd.component';
 import { CompPdfResultComponent } from '../../../components/comp-pdf-result/comp-pdf-result.component';
+import { CompPdfModalComponent } from '../../../components/comp-pdf-modal/comp-pdf-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConventionService as ConventionApiService } from '../../../services/convention';
 import { ConventionService as ConventionStateService } from '../../../services/convention.service';
@@ -23,7 +24,7 @@ import { mapFicheToConventionData, mapConventionInfoToConventionData } from '../
 @Component({
   selector: 'app-stepper',
   standalone: true,
-  imports: [CommonModule, Compte, Contacts, Facturation, Infos, Procedures, Fichiers, SignatureStep, CompLoaderComponent, CompAlertErrorComponent, CompButtonComponent, CompH1GdComponent, CompPdfResultComponent],
+  imports: [CommonModule, Compte, Contacts, Facturation, Infos, Procedures, Fichiers, SignatureStep, CompLoaderComponent, CompAlertErrorComponent, CompButtonComponent, CompH1GdComponent, CompPdfResultComponent, CompPdfModalComponent],
   templateUrl: './stepper.html',
   styleUrl: './stepper.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -38,6 +39,7 @@ export class Stepper implements OnInit, AfterViewInit {
   activeStep = signal<string>('compte');
   isLoading = signal(false);
   loadError = signal<string | null>(null);
+  isPdfModalOpen = signal(false);
 
   isReadOnly = this.stateService.isReadOnly;
   etape = this.stateService.etape;
@@ -117,6 +119,14 @@ export class Stepper implements OnInit, AfterViewInit {
   scrollTo(id: string) {
     this.viewportScroller.scrollToAnchor(id);
     this.activeStep.set(id);
+  }
+
+  openPdfModal() {
+    this.isPdfModalOpen.set(true);
+  }
+
+  closePdfModal() {
+    this.isPdfModalOpen.set(false);
   }
 
   private observeSections() {
