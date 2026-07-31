@@ -1,7 +1,6 @@
 import { Component, inject, OnInit, signal, Output, EventEmitter, ChangeDetectorRef, effect, HostListener, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { ConventionService as ConventionApiService } from '../../../../services/convention';
 import { ConventionService as ConventionStateService } from '../../../../services/convention.service';
 import { SireneService } from '../../../../services/sirene.service';
 import { EntrepriseApiService, EntrepriseSuggestion } from '../../../../services/entreprise-api.service';
@@ -23,7 +22,6 @@ import { bindReadOnlyForm } from '../../../../utils/form-readonly';
 export class Compte implements OnInit {
   private fb = inject(FormBuilder);
   private stateService = inject(ConventionStateService);
-  private apiService = inject(ConventionApiService);
   private sireneService = inject(SireneService);
   private entrepriseApiService = inject(EntrepriseApiService);
   private geoApiService = inject(GeoApiService);
@@ -395,42 +393,8 @@ export class Compte implements OnInit {
 
   onSubmit() {
     if (this.compteForm.valid) {
-      if (this.isEditMode()) {
-        const id = this.stateService.currentId();
-        if (id) {
-          const updateData = {
-            fiches: [{
-              ID: id,
-              siret: this.compteForm.value.siret,
-              tva: this.compteForm.value.tvaIntra,
-              entite: this.compteForm.value.nomSociete,
-              adresse: this.compteForm.value.adresse,
-              code_postal: this.compteForm.value.codePostal,
-              ville: this.compteForm.value.ville,
-              activite_principale: this.compteForm.value.codeNaf,
-              libelle_activite: this.compteForm.value.activitePrincipale,
-              rayon_action: this.compteForm.value.rayonAction,
-              filiales: Number(this.compteForm.value.filiales) || 0
-            }]
-          };
-
-          this.apiService.updateConvention(id, updateData).subscribe({
-            next: () => {
-              this.isLoading.set(false);
-              this.stateService.updateCompte(this.compteForm.value);
-              this.next.emit();
-            },
-            error: (err) => {
-              this.isLoading.set(false);
-              this.errorMessage.set("Une erreur est survenue lors de la mise à jour.");
-              console.error(err);
-            }
-          });
-        }
-      } else {
-        this.stateService.updateCompte(this.compteForm.value);
-        this.next.emit();
-      }
+      this.stateService.updateCompte(this.compteForm.value);
+      this.next.emit();
     } else {
       this.compteForm.markAllAsTouched();
     }

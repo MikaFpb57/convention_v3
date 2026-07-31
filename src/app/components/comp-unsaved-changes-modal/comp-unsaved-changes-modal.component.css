@@ -1,0 +1,129 @@
+.unsaved-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 50;
+}
+
+.unsaved-modal {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.unsaved-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.unsaved-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.unsaved-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  transition: background 0.2s, color 0.2s;
+}
+
+.unsaved-close:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.unsaved-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.unsaved-icon {
+  margin-bottom: 16px;
+}
+
+.unsaved-message {
+  margin: 0;
+  font-size: 1rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.unsaved-footer {
+  display: flex;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #e5e7eb;
+  justify-content: flex-end;
+}
+
+.unsaved-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unsaved-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.unsaved-btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.unsaved-btn-secondary:hover:not(:disabled) {
+  background: #e5e7eb;
+}
+
+.unsaved-btn-danger {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.unsaved-btn-danger:hover:not(:disabled) {
+  background: #fecaca;
+}
+
+.unsaved-btn-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.unsaved-btn-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signature convention</title>
+</head>
+<body style="margin:0;padding:0;background:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#1f2937;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#f3f6fb;padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="620" style="width:620px;max-width:94%;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+          <tr>
+            <td style="background:linear-gradient(90deg,#003b7a,#0a64b5);padding:20px 24px;color:#ffffff;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td style="font-size:20px;font-weight:700;letter-spacing:0.2px;">France Pare-Brise</td>
+                  <td align="right" style="font-size:12px;opacity:0.9;">Convention {{conventionId}}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:28px 24px 8px 24px;">
+              <p style="margin:0 0 12px 0;font-size:16px;line-height:1.5;">Bonjour {{prenom}} {{nom}},</p>
+              <p style="margin:0 0 12px 0;font-size:15px;line-height:1.6;">
+                Votre signature est requise pour finaliser la convention partenaire.
+              </p>
+              <p style="margin:0 0 22px 0;font-size:15px;line-height:1.6;">
+                Fonction enregistree: <strong>{{fonction}}</strong>
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:0 24px 12px 24px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border:1px solid #dbeafe;border-radius:10px;background:#f8fbff;">
+                <tr>
+                  <td align="center" style="padding:16px 12px 6px 12px;font-size:12px;letter-spacing:1.4px;color:#1d4ed8;text-transform:uppercase;">Code OTP</td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding:0 12px 18px 12px;font-size:34px;font-weight:800;letter-spacing:10px;color:#0f172a;">{{otpCode}}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:8px 24px 18px 24px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td align="center">
+                    <a href="{{signatureLink}}" style="display:inline-block;background:#0a64b5;color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:700;">
+                      Ouvrir la convention
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:0 24px 24px 24px;">
+              <p style="margin:0 0 6px 0;font-size:13px;line-height:1.6;color:#4b5563;">
+                Ce code est valable <strong>{{validityDays}} jours</strong>, jusqu'au <strong>{{expiryDate}}</strong>.
+              </p>
+              <p style="margin:0;font-size:13px;line-height:1.6;color:#4b5563;">
+                Si vous n'etes pas concerne, ignorez cet email.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="border-top:1px solid #e5e7eb;background:#f8fafc;padding:14px 24px;color:#6b7280;font-size:11px;line-height:1.5;">
+              Message automatique - merci de ne pas repondre directement a cet email.<br />
+              France Pare-Brise - Processus de signature securisee OTP.
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

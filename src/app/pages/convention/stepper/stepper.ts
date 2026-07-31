@@ -1,4 +1,4 @@
-import { Component, ElementRef, QueryList, ViewChildren, signal, inject, AfterViewInit, OnInit, ChangeDetectionStrategy, effect } from '@angular/core';
+import { Component, ElementRef, QueryList, ViewChildren, signal, inject, AfterViewInit, OnInit, ChangeDetectionStrategy, effect, HostListener } from '@angular/core';
 import { CommonModule, ViewportScroller } from '@angular/common';
 import { initTooltips } from 'flowbite';
 import { Compte } from '../steps/compte/compte';
@@ -12,24 +12,24 @@ import { initFlowbite } from 'flowbite';
 import { CompLoaderComponent } from '../../../components/comp-loader/comp-loader.component';
 import { CompAlertErrorComponent } from '../../../components/comp-alert-error/comp-alert-error.component';
 import { CompButtonComponent } from '../../../components/comp-button/comp-button.component';
-import { CompH1GdComponent } from '../../../components/comp-h1-gd/comp-h1-gd.component';
-import { CompPdfResultComponent } from '../../../components/comp-pdf-result/comp-pdf-result.component';
 import { CompPdfModalComponent } from '../../../components/comp-pdf-modal/comp-pdf-modal.component';
+import { CompUnsavedChangesModalComponent } from '../../../components/comp-unsaved-changes-modal/comp-unsaved-changes-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConventionService as ConventionApiService } from '../../../services/convention';
 import { ConventionService as ConventionStateService } from '../../../services/convention.service';
 import { Fiche, ConventionInfo } from '../../../models/convention.model';
 import { mapFicheToConventionData, mapConventionInfoToConventionData } from '../../../utils/fiche-mapper';
+import { CanComponentDeactivate } from '../../../guards/unsaved-changes.guard';
 
 @Component({
   selector: 'app-stepper',
   standalone: true,
-  imports: [CommonModule, Compte, Contacts, Facturation, Infos, Procedures, Fichiers, SignatureStep, CompLoaderComponent, CompAlertErrorComponent, CompButtonComponent, CompH1GdComponent, CompPdfResultComponent, CompPdfModalComponent],
+  imports: [CommonModule, Compte, Contacts, Facturation, Infos, Procedures, Fichiers, SignatureStep, CompLoaderComponent, CompAlertErrorComponent, CompButtonComponent, CompPdfModalComponent, CompUnsavedChangesModalComponent],
   templateUrl: './stepper.html',
   styleUrl: './stepper.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Stepper implements OnInit, AfterViewInit {
+export class Stepper implements OnInit, AfterViewInit, CanComponentDeactivate {
   private viewportScroller = inject(ViewportScroller);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -40,9 +40,14 @@ export class Stepper implements OnInit, AfterViewInit {
   isLoading = signal(false);
   loadError = signal<string | null>(null);
   isPdfModalOpen = signal(false);
+  isUnsavedModalOpen = signal(false);
+  isSavingBeforeLeave = signal(false);
+
+  private pendingLeaveResolver: ((allowNavigation: boolean) => void) | null = null;
 
   isReadOnly = this.stateService.isReadOnly;
   etape = this.stateService.etape;
+  hasUnsavedChanges = this.stateService.hasUnsavedChanges;
   conventionData = signal(this.stateService.convention());
 
   steps = [
@@ -127,6 +132,67 @@ export class Stepper implements OnInit, AfterViewInit {
 
   closePdfModal() {
     this.isPdfModalOpen.set(false);
+  }
+
+  canDeactivate(): Promise<boolean> | boolean {
+    if (!this.hasUnsavedChanges()) {
+      return true;
+    }
+
+    this.isUnsavedModalOpen.set(true);
+    return new Promise<boolean>((resolve) => {
+      this.pendingLeaveResolver = resolve;
+    });
+  }
+
+  onUnsavedStay(): void {
+    this.isUnsavedModalOpen.set(false);
+    this.resolvePendingLeave(false);
+  }
+
+  onUnsavedDiscard(): void {
+    this.stateService.discardPendingChanges();
+    this.isUnsavedModalOpen.set(false);
+    this.resolvePendingLeave(true);
+  }
+
+  async onUnsavedSave(): Promise<void> {
+    const id = this.stateService.currentId();
+    if (!id) {
+      this.onUnsavedDiscard();
+      return;
+    }
+
+    this.isSavingBeforeLeave.set(true);
+    this.loadError.set(null);
+
+    try {
+      await this.stateService.saveToDatabase(id);
+      this.isUnsavedModalOpen.set(false);
+      this.resolvePendingLeave(true);
+    } catch {
+      this.loadError.set('Sauvegarde impossible pour le moment. Réessaie ou annule les modifications.');
+    } finally {
+      this.isSavingBeforeLeave.set(false);
+    }
+  }
+
+  private resolvePendingLeave(allowNavigation: boolean): void {
+    const resolver = this.pendingLeaveResolver;
+    this.pendingLeaveResolver = null;
+    if (resolver) {
+      resolver(allowNavigation);
+    }
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  handleBeforeUnload(event: BeforeUnloadEvent): void {
+    if (!this.hasUnsavedChanges()) {
+      return;
+    }
+
+    event.preventDefault();
+    event.returnValue = '';
   }
 
   private observeSections() {

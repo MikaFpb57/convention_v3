@@ -35,7 +35,7 @@
                 <div class="tooltip-arrow" data-popper-arrow></div>
             </div>
             }
-            
+
             <button type="button" (click)="openPdfModal()" data-tooltip-target="tooltip-pdf"
                 data-tooltip-placement="left"
                 class="relative w-[52px] h-[52px] text-white rounded-full border border-gray-600 shadow-sm dark:border-gray-600 focus:ring-4 focus:ring-gray-400 focus:outline-none dark:focus:ring-gray-400 transition-all bg-purple-600 hover:bg-purple-700">
@@ -107,4 +107,13 @@
     </div>
 
     <comp-pdf-modal [isOpen]="isPdfModalOpen()" [conventionData]="conventionData()" (close)="closePdfModal()"></comp-pdf-modal>
+
+    <comp-unsaved-changes-modal
+        [isOpen]="isUnsavedModalOpen()"
+        [isSaving]="isSavingBeforeLeave()"
+        [hasUnsavedChanges]="hasUnsavedChanges()"
+        (save)="onUnsavedSave()"
+        (discard)="onUnsavedDiscard()"
+        (stay)="onUnsavedStay()">
+    </comp-unsaved-changes-modal>
 </div>

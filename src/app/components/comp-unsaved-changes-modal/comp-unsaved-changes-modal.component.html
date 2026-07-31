@@ -1,0 +1,45 @@
+@if (isOpen) {
+  <div class="unsaved-backdrop" (click)="stay.emit()"></div>
+
+  <div class="unsaved-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    <div class="unsaved-header">
+      <h2 class="unsaved-title">Modifications non sauvegardées</h2>
+      <button class="unsaved-close" (click)="stay.emit()">✕</button>
+    </div>
+
+    <div class="unsaved-body">
+      <div class="unsaved-icon">
+        <i class="fa-solid fa-triangle-exclamation text-4xl text-amber-500"></i>
+      </div>
+      <p class="unsaved-message">
+        Vous avez des modifications non sauvegardées. Que souhaitez-vous faire ?
+      </p>
+    </div>
+
+    <div class="unsaved-footer">
+      <button 
+        class="unsaved-btn unsaved-btn-secondary" 
+        (click)="stay.emit()"
+        [disabled]="isSaving">
+        Rester sur la page
+      </button>
+      <button 
+        class="unsaved-btn unsaved-btn-danger" 
+        (click)="discard.emit()"
+        [disabled]="isSaving">
+        Annuler les modifications
+      </button>
+      <button 
+        class="unsaved-btn unsaved-btn-primary" 
+        (click)="save.emit()"
+        [disabled]="isSaving">
+        @if (isSaving) {
+          <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+          Sauvegarde en cours...
+        } @else {
+          Sauvegarder et quitter
+        }
+      </button>
+    </div>
+  </div>
+}
