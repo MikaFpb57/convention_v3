@@ -94,9 +94,14 @@ export class ConventionService {
         return new Promise((resolve, reject) => {
             const cachedData = this.getEditCache(id);
             const data = cachedData ?? this.conventionSignal();
+            const payload = this.mapToApiFormat(data);
 
-            this.apiService.updateConvention(id, this.mapToApiFormat(data)).subscribe({
+            console.log('[ConventionService] Envoi au backend - ID:', id);
+            console.log('[ConventionService] Payload JSON:', JSON.stringify(payload, null, 2));
+
+            this.apiService.updateConvention(id, payload).subscribe({
                 next: () => {
+                    console.log('[ConventionService] Sauvegarde réussie');
                     this.clearEditCache(id);
                     this.conventionSignal.set(this.cloneData(data));
                     this.originalData.set(this.cloneData(data));
@@ -104,7 +109,7 @@ export class ConventionService {
                     resolve();
                 },
                 error: (err) => {
-                    console.error('Error saving to database', err);
+                    console.error('[ConventionService] Erreur sauvegarde:', err);
                     reject(err);
                 }
             });
@@ -129,10 +134,25 @@ export class ConventionService {
                 rayon_action: compte.rayonAction,
                 filiales: Number(compte.filiales) || 0
             }],
+            compte: {
+                recup_tva: compte.recupTva,
+                assure_bdg: compte.assureBdg,
+                nom_assurance: compte.nomAssurance,
+                nom_courtier: compte.nomCourtier,
+                nom_loueur: compte.nomLoueur,
+                tarif_fpb: compte.tarifFpb,
+                nb_vehicules_total: compte.nbVehiculesTotal,
+                nb_vu_vl: compte.nbVuVl,
+                nb_pl: compte.nbPl,
+                nb_tp: compte.nbTp,
+                nb_agri: compte.nbAgri
+            },
             contacts: data.contacts ?? null,
             facturation: data.facturation ?? null,
             infos: data.infos ?? null,
             procedures: data.procedures ?? null,
+            notes: data.notes ?? null,
+            cartes: data.cartes ?? null,
             files: data.files?.files ?? [],
             signature: data.signature ?? null
         };

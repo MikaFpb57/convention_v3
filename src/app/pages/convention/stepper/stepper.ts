@@ -166,11 +166,15 @@ export class Stepper implements OnInit, AfterViewInit, CanComponentDeactivate {
     this.isSavingBeforeLeave.set(true);
     this.loadError.set(null);
 
+    console.log('[Stepper] Starting save to database for ID:', id);
+
     try {
       await this.stateService.saveToDatabase(id);
+      console.log('[Stepper] Save successful, closing modal and allowing navigation');
       this.isUnsavedModalOpen.set(false);
       this.resolvePendingLeave(true);
-    } catch {
+    } catch (err) {
+      console.error('[Stepper] Save failed:', err);
       this.loadError.set('Sauvegarde impossible pour le moment. Réessaie ou annule les modifications.');
     } finally {
       this.isSavingBeforeLeave.set(false);

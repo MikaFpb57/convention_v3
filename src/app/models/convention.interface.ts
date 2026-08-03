@@ -10,6 +10,17 @@ export interface CompteData {
   rayonAction?: string;
   filiales?: string;
   logo?: string;
+  recupTva?: number;
+  assureBdg?: number;
+  nomAssurance?: string;
+  nomCourtier?: string;
+  nomLoueur?: string;
+  tarifFpb?: string;
+  nbVehiculesTotal?: number;
+  nbVuVl?: number;
+  nbPl?: number;
+  nbTp?: number;
+  nbAgri?: number;
 }
 
 export interface ContactData {
@@ -104,4 +115,22 @@ export interface ConventionData {
   procedures?: ProceduresData;
   files?: FilesData;
   signature?: SignatureData;
+  notes?: NotesData;
+  cartes?: CartesData;
+}
+
+export interface NotesData {
+  note_fpb_html?: string;
+  affichage_obs?: number;
+}
+
+export interface CartesData {
+  cartes_flotte?: number;
+  logo_cartes?: number;
+  qte_cartes?: number;
+  cartes_nom?: string;
+  cartes_prenom?: string;
+  cartes_adr?: string;
+  cartes_cp?: string;
+  cartes_ville?: string;
 }
