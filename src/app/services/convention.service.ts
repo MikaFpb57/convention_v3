@@ -118,6 +118,8 @@ export class ConventionService {
 
     private mapToApiFormat(data: ConventionData): any {
         const compte: Partial<CompteData> = data.compte ?? {};
+        const infos: Partial<InfosData> = data.infos ?? {};
+        const facturation: Partial<FacturationData> = data.facturation ?? {};
 
         // Keep current fiches payload for backward compatibility while sending a full snapshot.
         return {
@@ -135,20 +137,31 @@ export class ConventionService {
                 filiales: Number(compte.filiales) || 0
             }],
             compte: {
-                recup_tva: compte.recupTva,
-                assure_bdg: compte.assureBdg,
-                nom_assurance: compte.nomAssurance,
-                nom_courtier: compte.nomCourtier,
-                nom_loueur: compte.nomLoueur,
-                tarif_fpb: compte.tarifFpb,
-                nb_vehicules_total: compte.nbVehiculesTotal,
-                nb_vu_vl: compte.nbVuVl,
-                nb_pl: compte.nbPl,
-                nb_tp: compte.nbTp,
-                nb_agri: compte.nbAgri
+                recup_tva: infos.recuperationTva,
+                assure_bdg: infos.assureBdg,
+                nom_assurance: infos.assurance,
+                nom_courtier: infos.courtier,
+                nom_loueur: infos.loueur,
+                tarif_fpb: infos.tarif,
+                nb_vehicules_total: infos.nb_total,
+                nb_vu_vl: infos.nb_vu_vl,
+                nb_pl: infos.nb_pl,
+                nb_tp: infos.nb_tp,
+                nb_agri: infos.nb_agri
             },
             contacts: data.contacts ?? null,
-            facturation: data.facturation ?? null,
+            facturation: {
+                fac_demat: facturation.demat,
+                email_demat: facturation.email_demat,
+                email_demat_2: facturation.email_demat_2,
+                mode_gest: facturation.mode_gest,
+                lib_adresse_fac_1: facturation.adresseFacturation,
+                adresse_fac_1: facturation.adresseFacturation,
+                code_postal_fac_1: facturation.codePostalFacturation,
+                ville_fac_1: facturation.villeFacturation,
+                delai_reglement: facturation.delaiReglement,
+                freq_transmission: facturation.freqTransmission
+            },
             infos: data.infos ?? null,
             procedures: data.procedures ?? null,
             notes: data.notes ?? null,
