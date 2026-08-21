@@ -120,6 +120,12 @@ export class ConventionService {
         const compte: Partial<CompteData> = data.compte ?? {};
         const infos: Partial<InfosData> = data.infos ?? {};
         const facturation: Partial<FacturationData> = data.facturation ?? {};
+        const procedures: Partial<ProceduresData> = data.procedures ?? {};
+
+        // Map procedures arrays to individual fields
+        const typePriseEnCharge = procedures.typePriseEnCharge || [];
+        const auDepartConducteur = procedures.auDepartConducteur || [];
+        const surFacture = procedures.surFacture || [];
 
         // Keep current fiches payload for backward compatibility while sending a full snapshot.
         return {
@@ -160,10 +166,37 @@ export class ConventionService {
                 code_postal_fac_1: facturation.codePostalFacturation,
                 ville_fac_1: facturation.villeFacturation,
                 delai_reglement: facturation.delaiReglement,
-                freq_transmission: facturation.freqTransmission
+                freq_transmission: facturation.freqTransmission,
+                factva: 0,
+                facttc: 0,
+                facht: 0,
+                facfran: 0
             },
             infos: data.infos ?? null,
-            procedures: data.procedures ?? null,
+            procedures: {
+                tacite: typePriseEnCharge.includes(1) ? 1 : 0,
+                bddimat: typePriseEnCharge.includes(2) ? 1 : 0,
+                accordtel: typePriseEnCharge.includes(3) ? 1 : 0,
+                accordmail: typePriseEnCharge.includes(4) ? 1 : 0,
+                valdevis_0: typePriseEnCharge.includes(5) ? 1 : 0,
+                valdevis_12: typePriseEnCharge.includes(6) ? 1 : 0,
+                valdevis_24: typePriseEnCharge.includes(7) ? 1 : 0,
+                valdevis_48: typePriseEnCharge.includes(8) ? 1 : 0,
+                bdc_0: typePriseEnCharge.includes(9) ? 1 : 0,
+                bdc_1: typePriseEnCharge.includes(10) ? 1 : 0,
+                procassu: typePriseEnCharge.includes(11) ? 1 : 0,
+                procloueur: typePriseEnCharge.includes(12) ? 1 : 0,
+                dspc: auDepartConducteur.includes(1) ? 1 : 0,
+                fac_depart: auDepartConducteur.includes(2) ? 1 : 0,
+                accdspc: auDepartConducteur.includes(3) ? 1 : 0,
+                accbc: auDepartConducteur.includes(4) ? 1 : 0,
+                acccv: auDepartConducteur.includes(5) ? 1 : 0,
+                acccg: auDepartConducteur.includes(6) ? 1 : 0,
+                accjv: auDepartConducteur.includes(7) ? 1 : 0,
+                ifnadh: surFacture.includes(1) ? 1 : 0,
+                ifnbdc: surFacture.includes(2) ? 1 : 0,
+                ifnoco: surFacture.includes(3) ? 1 : 0
+            },
             notes: data.notes ?? null,
             cartes: data.cartes ?? null,
             files: data.files?.files ?? [],

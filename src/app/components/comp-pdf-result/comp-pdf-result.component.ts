@@ -43,7 +43,7 @@ export class CompPdfResultComponent implements OnChanges {
 
   // ✅ CGV image unique
   private readonly cgv: string[] = [
-    "./assets/img/cgv_unique.jpg",
+    "/assets/img/cgv_unique.jpg",
   ];
   constructor(
     private readonly assurService: AssurService,
@@ -143,7 +143,7 @@ export class CompPdfResultComponent implements OnChanges {
       },
       type: 'text',
       title: 'GRILLE DE TARIFICATION',
-      backgroundImage: "./assets/img/tariff_background.png"
+      backgroundImage: "/assets/img/tariff_background.png"
     });
 
     pages.push({
@@ -155,7 +155,7 @@ export class CompPdfResultComponent implements OnChanges {
       },
       type: 'text',
       title: 'GRILLE DE TARIFICATION',
-      backgroundImage: "./assets/img/tariff_background.png"
+      backgroundImage: "/assets/img/tariff_background.png"
     });
 
     pages.push({
@@ -167,7 +167,7 @@ export class CompPdfResultComponent implements OnChanges {
       },
       type: 'text',
       title: 'GRILLE DE TARIFICATION',
-      backgroundImage: "./assets/img/tariff_background.png"
+      backgroundImage: "/assets/img/tariff_background.png"
     });
 
     
