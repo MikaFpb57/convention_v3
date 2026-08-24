@@ -7,5 +7,14 @@
     <div class="pdf-content">
       <comp-pdf-result [conventionData]="conventionData"></comp-pdf-result>
     </div>
+    
+    @if (showValidationButton) {
+      <div class="pdf-validation-bar">
+        <button class="pdf-validate-button" (click)="validate.emit()">
+          <i class="fa-solid fa-check-circle mr-2"></i>
+          Valider la saisie
+        </button>
+      </div>
+    }
   </div>
 }

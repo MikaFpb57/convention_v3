@@ -61,6 +61,20 @@ export interface SignatureVerifyResponse {
   message?: string;
 }
 
+export interface GeneratePdfPayload {
+  conventionId: string;
+  recipientNom: string;
+  recipientPrenom: string;
+  recipientFonction: string;
+  recipientEmail: string;
+}
+
+export interface GeneratePdfResponse {
+  success: boolean;
+  message: string;
+  pdfPath?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -164,5 +178,9 @@ export class ConventionService {
 
   verifyEmailSignatureOtp(payload: SignatureVerifyPayload): Observable<SignatureVerifyResponse> {
     return this.http.post<SignatureVerifyResponse>(`${this.API_URL}/signature/verify`, payload);
+  }
+
+  generateAndSendConventionPdf(payload: GeneratePdfPayload): Observable<GeneratePdfResponse> {
+    return this.http.post<GeneratePdfResponse>(`${this.API_URL}/generate-pdf`, payload);
   }
 }

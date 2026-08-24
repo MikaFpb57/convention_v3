@@ -102,11 +102,31 @@
             <div
                 class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
                 <app-signature-step></app-signature-step>
+                
+                @if (!isReadOnly()) {
+                    <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <div class="flex justify-center">
+                            <comp-button 
+                                label="Générer la convention PDF" 
+                                variant="primary" 
+                                type="button"
+                                size="lg"
+                                (click)="generatePdfConvention()"
+                            ></comp-button>
+                        </div>
+                    </div>
+                }
             </div>
         </section>
     </div>
 
-    <comp-pdf-modal [isOpen]="isPdfModalOpen()" [conventionData]="conventionData()" (close)="closePdfModal()"></comp-pdf-modal>
+    <comp-pdf-modal [isOpen]="isPdfModalOpen()" [conventionData]="conventionData()" [showValidationButton]="isPdfValidationMode()" (close)="closePdfModal()" (validate)="onPdfValidate()"></comp-pdf-modal>
+
+    <comp-recipient-modal
+        [isOpen]="isRecipientModalOpen()"
+        (submit)="onRecipientSubmit($event)"
+        (close)="onRecipientClose()">
+    </comp-recipient-modal>
 
     <comp-unsaved-changes-modal
         [isOpen]="isUnsavedModalOpen()"

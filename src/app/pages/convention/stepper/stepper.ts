@@ -14,6 +14,8 @@ import { CompAlertErrorComponent } from '../../../components/comp-alert-error/co
 import { CompButtonComponent } from '../../../components/comp-button/comp-button.component';
 import { CompPdfModalComponent } from '../../../components/comp-pdf-modal/comp-pdf-modal.component';
 import { CompUnsavedChangesModalComponent } from '../../../components/comp-unsaved-changes-modal/comp-unsaved-changes-modal.component';
+import { CompRecipientModalComponent } from '../../../components/comp-recipient-modal/comp-recipient-modal.component';
+import { RecipientData } from '../../../models/convention.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConventionService as ConventionApiService } from '../../../services/convention';
 import { ConventionService as ConventionStateService } from '../../../services/convention.service';
@@ -24,7 +26,7 @@ import { CanComponentDeactivate } from '../../../guards/unsaved-changes.guard';
 @Component({
   selector: 'app-stepper',
   standalone: true,
-  imports: [CommonModule, Compte, Contacts, Facturation, Infos, Procedures, Fichiers, SignatureStep, CompLoaderComponent, CompAlertErrorComponent, CompButtonComponent, CompPdfModalComponent, CompUnsavedChangesModalComponent],
+  imports: [CommonModule, Compte, Contacts, Facturation, Infos, Procedures, Fichiers, SignatureStep, CompLoaderComponent, CompAlertErrorComponent, CompButtonComponent, CompPdfModalComponent, CompUnsavedChangesModalComponent, CompRecipientModalComponent],
   templateUrl: './stepper.html',
   styleUrl: './stepper.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -40,6 +42,8 @@ export class Stepper implements OnInit, AfterViewInit, CanComponentDeactivate {
   isLoading = signal(false);
   loadError = signal<string | null>(null);
   isPdfModalOpen = signal(false);
+  isPdfValidationMode = signal(false);
+  isRecipientModalOpen = signal(false);
   isUnsavedModalOpen = signal(false);
   isSavingBeforeLeave = signal(false);
 
@@ -132,6 +136,83 @@ export class Stepper implements OnInit, AfterViewInit, CanComponentDeactivate {
 
   closePdfModal() {
     this.isPdfModalOpen.set(false);
+    this.isPdfValidationMode.set(false);
+  }
+
+  async generatePdfConvention() {
+    const id = this.stateService.currentId();
+    if (!id) {
+      this.loadError.set('Enregistrez d\'abord la convention avant de générer le PDF.');
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.loadError.set(null);
+
+    try {
+      await this.stateService.saveToDatabase(id);
+      this.isPdfValidationMode.set(true);
+      this.isPdfModalOpen.set(true);
+    } catch (err) {
+      console.error('[Stepper] Erreur lors de la sauvegarde:', err);
+      this.loadError.set('Erreur lors de la sauvegarde des données. Veuillez réessayer.');
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  onPdfValidate() {
+    this.closePdfModal();
+    this.isRecipientModalOpen.set(true);
+  }
+
+  onRecipientClose() {
+    this.isRecipientModalOpen.set(false);
+  }
+
+  async onRecipientSubmit(data: RecipientData) {
+    this.isRecipientModalOpen.set(false);
+    this.isLoading.set(true);
+    this.loadError.set(null);
+
+    try {
+      const id = this.stateService.currentId();
+      if (!id) {
+        this.loadError.set('Convention ID non trouvé.');
+        return;
+      }
+
+      const payload = {
+        conventionId: id,
+        recipientNom: data.nom,
+        recipientPrenom: data.prenom,
+        recipientFonction: data.fonction,
+        recipientEmail: data.email
+      };
+
+      this.apiService.generateAndSendConventionPdf(payload).subscribe({
+        next: (response) => {
+          if (response.success) {
+            alert('Convention PDF générée et envoyée avec succès à ' + data.email);
+            // Reload the convention to update the status
+            this.loadConvention(id);
+          } else {
+            this.loadError.set('Erreur lors de la génération du PDF: ' + response.message);
+          }
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          console.error('[Stepper] Erreur lors de la génération du PDF:', err);
+          this.loadError.set('Erreur lors de la génération du PDF. Contactez le Service informatique avec l\'erreur: ' + (err as Error).message);
+          this.isLoading.set(false);
+        }
+      });
+      
+    } catch (err) {
+      console.error('[Stepper] Erreur lors de la génération du PDF:', err);
+      this.loadError.set('Erreur lors de la génération du PDF. Contactez le Service informatique avec l\'erreur: ' + (err as Error).message);
+      this.isLoading.set(false);
+    }
   }
 
   canDeactivate(): Promise<boolean> | boolean {

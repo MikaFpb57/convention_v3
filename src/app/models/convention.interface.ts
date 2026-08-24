@@ -134,3 +134,10 @@ export interface CartesData {
   cartes_cp?: string;
   cartes_ville?: string;
 }
+
+export interface RecipientData {
+  nom: string;
+  prenom: string;
+  fonction: string;
+  email: string;
+}
