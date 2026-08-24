@@ -1,139 +1,238 @@
 <div class="p-4 sm:ml-64 mt-14">
+
     @if (isLoading()) {
+
     <comp-loader></comp-loader>
+
     }
+
+
 
     @if (loadError()) {
+
     <comp-alert-error [message]="loadError()"></comp-alert-error>
+
     }
+
+
 
     @if (isReadOnly()) {
+
     <div class="mb-4 p-3 rounded-lg border border-amber-300 bg-amber-50 text-amber-900 text-sm">
+
         <i class="fa-solid fa-lock mr-2"></i>
+
         Mode consultation seule
+
         @if (etape()) {
+
         <span class="font-medium">({{ etape() }})</span>
+
         }
+
         — aucune modification n'est possible.
+
     </div>
+
     }
 
+
+
     <!-- Speed Dial Navigation -->
+
     <div data-dial-init class="fixed end-6 top-20 group z-50">
+
         <div id="speed-dial-menu-text-outside-button" class="flex flex-col items-center hidden mb-4 space-y-2">
+
             @for (step of steps; track step.id; let i = $index) {
+
             <button type="button" (click)="scrollTo(step.id)" [attr.data-tooltip-target]="'tooltip-' + i"
+
                 [attr.data-tooltip-placement]="'left'"
+
                 [ngClass]="activeStep() === step.id ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-700 hover:bg-gray-800'"
+
                 class="relative w-[52px] h-[52px] text-white rounded-full border border-gray-600 shadow-sm dark:border-gray-600 focus:ring-4 focus:ring-gray-400 focus:outline-none dark:focus:ring-gray-400 transition-all">
+
                 <i [class]="step.icon" class="text-lg"></i>
+
             </button>
+
+
 
             <div [id]="'tooltip-' + i" role="tooltip"
+
                 class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-dark rounded-base shadow-xs opacity-0 tooltip">
+
                 {{ step.label || 'Tooltip' }}
+
                 <div class="tooltip-arrow" data-popper-arrow></div>
+
             </div>
+
             }
 
+
+
             <button type="button" (click)="openPdfModal()" data-tooltip-target="tooltip-pdf"
+
                 data-tooltip-placement="left"
+
                 class="relative w-[52px] h-[52px] text-white rounded-full border border-gray-600 shadow-sm dark:border-gray-600 focus:ring-4 focus:ring-gray-400 focus:outline-none dark:focus:ring-gray-400 transition-all bg-purple-600 hover:bg-purple-700">
+
                 <i class="fa-solid fa-eye text-lg"></i>
+
             </button>
 
+
+
             <div id="tooltip-pdf" role="tooltip"
+
                 class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-dark rounded-base shadow-xs opacity-0 tooltip">
+
                 Visualiser le document
+
                 <div class="tooltip-arrow" data-popper-arrow></div>
+
             </div>
+
         </div>
+
         <comp-button label="+" variant="primary" type="button" rounded="full" size="lg"
+
             extraClass="w-14 h-14 !p-0 text-2xl" data-dial-toggle="speed-dial-menu-text-outside-button"
+
             aria-controls="speed-dial-menu-text-outside-button" aria-expanded="false">
+
         </comp-button>
+
     </div>
+
+
 
     <!-- Content Area -->
+
     <div class="space-y-8 pb-32">
+
         <section #stepSection id="compte" class="scroll-mt-24">
+
             <div
+
                 class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+
                 <app-compte (next)="scrollTo('contacts')"></app-compte>
+
             </div>
+
         </section>
+
+
 
         <section #stepSection id="infos" class="scroll-mt-24">
+
             <div
+
                 class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+
                 <app-infos (next)="scrollTo('procedures')"></app-infos>
+
             </div>
+
         </section>
+
+
 
         <section #stepSection id="facturation" class="scroll-mt-24">
+
             <div
+
                 class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+
                 <app-facturation (next)="scrollTo('infos')"></app-facturation>
+
             </div>
+
         </section>
+
+
 
         <section #stepSection id="procedures" class="scroll-mt-24">
+
             <div
+
                 class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+
                 <app-procedures></app-procedures>
+
             </div>
+
         </section>
+
+
 
         <section #stepSection id="contacts" class="scroll-mt-24">
+
             <div
+
                 class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+
                 <app-contacts (next)="scrollTo('fichiers')"></app-contacts>
+
             </div>
+
         </section>
+
+
 
         <section #stepSection id="fichiers" class="scroll-mt-24">
+
             <div
+
                 class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+
                 <app-fichiers (next)="scrollTo('signature')"></app-fichiers>
+
             </div>
+
         </section>
+
+
 
         <section #stepSection id="signature" class="scroll-mt-24">
+
             <div
+
                 class="p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-sm">
+
                 <app-signature-step></app-signature-step>
-                
-                @if (!isReadOnly()) {
-                    <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                        <div class="flex justify-center">
-                            <comp-button 
-                                label="Générer la convention PDF" 
-                                variant="primary" 
-                                type="button"
-                                size="lg"
-                                (click)="generatePdfConvention()"
-                            ></comp-button>
-                        </div>
-                    </div>
-                }
+
             </div>
+
         </section>
+
     </div>
 
-    <comp-pdf-modal [isOpen]="isPdfModalOpen()" [conventionData]="conventionData()" [showValidationButton]="isPdfValidationMode()" (close)="closePdfModal()" (validate)="onPdfValidate()"></comp-pdf-modal>
 
-    <comp-recipient-modal
-        [isOpen]="isRecipientModalOpen()"
-        (submit)="onRecipientSubmit($event)"
-        (close)="onRecipientClose()">
-    </comp-recipient-modal>
+
+    <comp-pdf-modal [isOpen]="isPdfModalOpen()" [conventionData]="conventionData()" (close)="closePdfModal()"></comp-pdf-modal>
+
+
 
     <comp-unsaved-changes-modal
+
         [isOpen]="isUnsavedModalOpen()"
+
         [isSaving]="isSavingBeforeLeave()"
+
         [hasUnsavedChanges]="hasUnsavedChanges()"
+
         (save)="onUnsavedSave()"
+
         (discard)="onUnsavedDiscard()"
+
         (stay)="onUnsavedStay()">
+
     </comp-unsaved-changes-modal>
+
 </div>
+

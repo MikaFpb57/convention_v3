@@ -13,7 +13,5 @@ import { ConventionData } from '../../models/convention.interface';
 export class CompPdfModalComponent {
   @Input() isOpen = false;
   @Input() conventionData!: ConventionData;
-  @Input() showValidationButton = false;
   @Output() close = new EventEmitter<void>();
-  @Output() validate = new EventEmitter<void>();
 }
