@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, Output, EventEmitter, AfterViewInit, effect } from '@angular/core';
+import { Component, inject, OnInit, signal, AfterViewInit, effect } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { ConventionService } from '../../../../services/convention.service';
@@ -29,8 +29,6 @@ export class Contacts implements OnInit, AfterViewInit {
     priseEnCharge: this.createContactPair(),
     comptabilite: this.createContactPair()
   });
-
-  @Output() next = new EventEmitter<void>();
 
   constructor() {
     bindReadOnlyForm(this.contactsForm, () => this.conventionService.isReadOnly());
@@ -97,16 +95,4 @@ export class Contacts implements OnInit, AfterViewInit {
     }
   }
 
-  onSubmit() {
-    if (this.contactsForm.valid) {
-      this.conventionService.updateContacts(this.contactsForm.value);
-      this.next.emit();
-    } else {
-      this.contactsForm.markAllAsTouched();
-    }
-  }
-
-  onClear() {
-    this.contactsForm.reset();
-  }
 }

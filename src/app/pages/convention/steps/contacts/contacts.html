@@ -9,7 +9,7 @@
     <comp-alert-error [message]="errorMessage()"></comp-alert-error>
     }
 
-    <form [formGroup]="contactsForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    <form [formGroup]="contactsForm" class="space-y-6">
         <comp-h1-gd textGradient="Contacts" textNormal="de la convention"></comp-h1-gd>
 
         <!-- Tabs Container -->
@@ -163,15 +163,6 @@
                 </div>
             </div>
         </ng-template>
-
-        @if (!isReadOnly()) {
-        <div class="flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
-            <comp-button label="Réinitialiser" variant="neutral" type="button" (click)="onClear()">
-            </comp-button>
-            <comp-button label="Continuer" variant="primary" type="submit">
-            </comp-button>
-        </div>
-        }
 
     </form>
 </div>

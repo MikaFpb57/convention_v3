@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
@@ -42,8 +42,6 @@ export class SignatureStep {
     otpVerifiedAt: [''],
     signedAt: ['']
   });
-
-  @Output() next = new EventEmitter<void>();
 
   constructor() {
     bindReadOnlyForm(this.signatureForm, () => this.conventionService.isReadOnly());
@@ -176,22 +174,6 @@ export class SignatureStep {
     });
   }
 
-  resetSignatureWorkflow() {
-    if (this.isReadOnly()) return;
-    this.signatureForm.patchValue({
-      certifie: false,
-      statut: 'draft',
-      signatureRequestId: '',
-      requestSentAt: '',
-      expiresAt: '',
-      otpCode: '',
-      otpVerifiedAt: '',
-      signedAt: ''
-    });
-    this.successMessage.set(null);
-    this.errorMessage.set(null);
-  }
-
   onSubmit() {
     if (this.signatureForm.get('statut')?.value !== 'verified') {
       this.errorMessage.set('La signature n\'est pas finalisée: vérifie d\'abord le code email du partenaire.');
@@ -202,9 +184,7 @@ export class SignatureStep {
     this.conventionService.updateSignature(signatureState as SignatureData);
     this.errorMessage.set(null);
     this.successMessage.set('Parcours de signature finalisé et prêt à être persisté.');
-    if (this.signatureForm.valid) {
-      this.next.emit();
-    } else {
+    if (!this.signatureForm.valid) {
       this.signatureForm.markAllAsTouched();
     }
   }

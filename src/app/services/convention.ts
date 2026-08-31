@@ -122,6 +122,34 @@ export interface SignatureVerifyResponse {
 
 }
 
+export interface GeneratePdfPayload {
+
+  siret: string;
+
+  recipientNom: string;
+
+  recipientPrenom: string;
+
+  recipientFonction: string;
+
+  recipientEmail: string;
+
+}
+
+export interface GeneratePdfResponse {
+
+  success: boolean;
+
+  message?: string;
+
+  pdfPath?: string;
+
+  error?: string;
+
+  details?: string;
+
+}
+
 
 
 @Injectable({

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, Output, EventEmitter, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, signal, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConventionService as ConventionStateService } from '../../../../services/convention.service';
 import { ConventionService as ConventionApiService } from '../../../../services/convention';
@@ -25,8 +25,6 @@ export class Fichiers implements OnInit, AfterViewInit, OnDestroy {
   isReadOnly = this.conventionService.isReadOnly;
 
   files: FileItem[] = [];
-
-  @Output() next = new EventEmitter<void>();
 
   constructor() {
     // Disabled effect to prevent reloading
@@ -120,24 +118,6 @@ export class Fichiers implements OnInit, AfterViewInit, OnDestroy {
       this.previewService.revokeUrl(removedFile);
     }
     // Don't update service to avoid triggering effect
-  }
-
-  onSubmit() {
-    this.conventionService.updateFiles(this.files);
-    this.next.emit();
-  }
-
-  onClear() {
-    // Revoke all blob URLs before clearing
-    this.files.forEach(file => {
-      if (file.url.startsWith('blob:')) {
-        URL.revokeObjectURL(file.url);
-      } else {
-        this.previewService.revokeUrl(file);
-      }
-    });
-    this.files = [];
-    this.conventionService.updateFiles(this.files);
   }
 
   ngOnDestroy() {

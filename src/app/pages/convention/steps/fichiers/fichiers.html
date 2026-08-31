@@ -18,7 +18,7 @@
     </div>
   }
 
-  <form (ngSubmit)="onSubmit()" class="space-y-6">
+  <form class="space-y-6">
     <comp-h1-gd textGradient="Documents" textNormal="de la convention"></comp-h1-gd>
 
     <div class="p-6 rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-blue-100 dark:border-blue-900/30 transition-all duration-500 hover:shadow-blue-500/10">
@@ -46,13 +46,5 @@
       </comp-file-upload>
     </div>
 
-    @if (!isReadOnly()) {
-      <div class="flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
-        <comp-button label="Réinitialiser" variant="neutral" type="button" (click)="onClear()">
-        </comp-button>
-        <comp-button label="Continuer" variant="primary" type="submit">
-        </comp-button>
-      </div>
-    }
   </form>
 </div>

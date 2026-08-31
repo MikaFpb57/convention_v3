@@ -308,7 +308,9 @@ export class Stepper implements OnInit, AfterViewInit, CanComponentDeactivate {
 
     this.isUnsavedModalOpen.set(false);
 
-    this.resolvePendingLeave(true);
+    this.resolvePendingLeave(false);
+
+    void this.router.navigate(['/gestion']);
 
   }
 
@@ -320,7 +322,11 @@ export class Stepper implements OnInit, AfterViewInit, CanComponentDeactivate {
 
     if (!id) {
 
-      this.onUnsavedDiscard();
+      this.isUnsavedModalOpen.set(false);
+
+      this.resolvePendingLeave(false);
+
+      void this.router.navigate(['/gestion']);
 
       return;
 
@@ -346,7 +352,9 @@ export class Stepper implements OnInit, AfterViewInit, CanComponentDeactivate {
 
       this.isUnsavedModalOpen.set(false);
 
-      this.resolvePendingLeave(true);
+      this.resolvePendingLeave(false);
+
+      void this.router.navigate(['/gestion']);
 
     } catch (err) {
 
