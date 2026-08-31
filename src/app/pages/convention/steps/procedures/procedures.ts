@@ -117,15 +117,45 @@ export class Procedures implements OnInit {
     const control = this.proceduresForm.get(controlName);
     if (!control) return;
 
-    const currentValue: number[] = control.value || [];
-    const index = currentValue.indexOf(optionId);
+    // Logique spéciale pour typePriseEnCharge : si Acceptation tacite (id=1) est coché, désélectionner les autres
+    if (controlName === 'typePriseEnCharge' && optionId === 1) {
+      const currentValue: number[] = control.value || [];
+      const index = currentValue.indexOf(optionId);
 
-    if (index > -1) {
-      // Déjà sélectionné, on le retire
-      control.setValue(currentValue.filter(id => id !== optionId));
+      if (index > -1) {
+        // Déjà sélectionné, on le retire
+        control.setValue(currentValue.filter(id => id !== optionId));
+      } else {
+        // Pas sélectionné, on l'ajoute et on retire tous les autres
+        control.setValue([optionId]);
+      }
+    } else if (controlName === 'typePriseEnCharge' && optionId !== 1) {
+      // Si on coche un autre option et que Acceptation tacite est déjà coché, on le retire
+      const currentValue: number[] = control.value || [];
+      const taciteIndex = currentValue.indexOf(1);
+
+      if (taciteIndex > -1) {
+        // Acceptation tacite est coché, on le retire
+        control.setValue(currentValue.filter(id => id !== 1));
+      }
+
+      // Ensuite on ajoute l'option
+      const index = currentValue.indexOf(optionId);
+      if (index === -1) {
+        control.setValue([...currentValue, optionId]);
+      }
     } else {
-      // Pas sélectionné, on l'ajoute
-      control.setValue([...currentValue, optionId]);
+      // Comportement normal pour les autres contrôles
+      const currentValue: number[] = control.value || [];
+      const index = currentValue.indexOf(optionId);
+
+      if (index > -1) {
+        // Déjà sélectionné, on le retire
+        control.setValue(currentValue.filter(id => id !== optionId));
+      } else {
+        // Pas sélectionné, on l'ajoute
+        control.setValue([...currentValue, optionId]);
+      }
     }
 
     // Mettre à jour le récapitulatif immédiatement

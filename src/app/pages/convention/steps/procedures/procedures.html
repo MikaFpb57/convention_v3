@@ -18,19 +18,28 @@
                 <div class="bg-neutral-secondary-soft border border-default-medium rounded-lg p-4">
                     <label class="block text-sm font-medium text-heading mb-3">
                         Type de prise en charge
-                        <span class="text-xs text-body ml-1">(Sélection multiple possible)</span>
+                        <span class="text-xs text-body ml-1">(<span [class.text-red-600]="isSelected('typePriseEnCharge', 1)">Sélection multiple possible</span>)</span>
                     </label>
                     <div class="space-y-2">
                         @for (option of typePriseEnChargeOptions; track option.id) {
                         <label
-                            class="flex items-center space-x-3 p-2 rounded-md hover:bg-neutral-tertiary-soft cursor-pointer transition-colors">
+                            class="flex items-center space-x-3 p-2 rounded-md hover:bg-neutral-tertiary-soft cursor-pointer transition-colors"
+                            [class.opacity-50]="isSelected('typePriseEnCharge', 1) && option.id !== 1"
+                            [class.cursor-not-allowed]="isSelected('typePriseEnCharge', 1) && option.id !== 1">
                             <input type="checkbox" [checked]="isSelected('typePriseEnCharge', option.id)"
                                 (change)="toggleSelection('typePriseEnCharge', option.id)"
+                                [disabled]="isSelected('typePriseEnCharge', 1) && option.id !== 1"
                                 class="w-4 h-4 text-brand bg-neutral-secondary-medium border-default-medium rounded focus:ring-brand focus:ring-2">
                             <span class="text-sm text-heading">{{ option.label }}</span>
                         </label>
                         }
                     </div>
+                    @if (isSelected('typePriseEnCharge', 1)) {
+                    <p class="text-xs text-body mt-2 text-amber-600">
+                        <i class="fa-solid fa-circle-info mr-1"></i>
+                        Acceptation tacite exclut les autres options de prise en charge.
+                    </p>
+                    }
                 </div>
 
                 <!-- Au départ du conducteur -->

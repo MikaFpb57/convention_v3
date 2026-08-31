@@ -98,6 +98,17 @@ export class Facturation implements OnInit {
     ).subscribe(codePostal => {
       this.fetchVillesByCodePostal(codePostal);
     });
+
+    // Validation dynamique : email_demat obligatoire si demat coché
+    this.facturationForm.get('demat')?.valueChanges.subscribe(dematValue => {
+      const emailDematControl = this.facturationForm.get('email_demat');
+      if (dematValue === 1) {
+        emailDematControl?.setValidators([Validators.required, Validators.email]);
+      } else {
+        emailDematControl?.setValidators([Validators.email]);
+      }
+      emailDematControl?.updateValueAndValidity();
+    });
   }
 
   /**

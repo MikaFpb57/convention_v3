@@ -37,9 +37,9 @@
     <!-- Emails démat (affichés uniquement si dématérialisation cochée) -->
     @if (facturationForm.get('demat')?.value === 1) {
     <div class="grid gap-4 mb-3 md:grid-cols-2">
-      <comp-input formControlName="email_demat" label="Email dématérialisation" id="email_demat" name="email_demat"
+      <comp-input formControlName="email_demat" label="Email dématérialisation *" id="email_demat" name="email_demat"
         placeholder="Email pour dématérialisation" extraClass="w-full"
-        [errorMessage]="getControl('email_demat').touched && getControl('email_demat').invalid ? 'Email invalide.' : null">
+        [errorMessage]="getControl('email_demat').touched && getControl('email_demat').invalid ? (getControl('email_demat').errors?.['required'] ? 'Email obligatoire quand dématérialisation est coché.' : 'Email invalide.') : null">
       </comp-input>
       <comp-input formControlName="email_demat_2" label="Backup dématérialisation" id="email_demat_2"
         name="email_demat_2" placeholder="Backup pour dématérialisation" extraClass="w-full"
