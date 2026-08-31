@@ -127,41 +127,43 @@
 
 
 			@if (!isReadOnly()) {
-
-				<div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-3 mb-5">
-
-					<comp-input
-
-						formControlName="otpCode"
-
-						label="Code de vérification"
-
-						placeholder="Code reçu par email"
-
-						[readonly]="isReadOnly()"
-
-					></comp-input>
-
-					<div class="flex items-end">
-
-						<comp-button
-
-							label="Vérifier le code"
-
-							variant="primary"
-
-							type="button"
-
-							[disabled]="!signatureForm.value.signatureRequestId"
-
-							(click)="verifyOtpCode()"
-
-						></comp-button>
-
-					</div>
-
+				<div class="mb-5">
+					@if (!signatureForm.value.signatureRequestId) {
+						<div class="flex justify-end">
+							<comp-button
+								label="Envoyer le code"
+								variant="primary"
+								type="button"
+								(click)="requestSignatureByEmail()"
+							></comp-button>
+						</div>
+					} @else {
+						<div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-3 mb-3">
+							<comp-input
+								formControlName="otpCode"
+								label="Code de vérification"
+								placeholder="Code reçu par email"
+								[readonly]="isReadOnly()"
+							></comp-input>
+							<div class="flex items-end">
+								<comp-button
+									label="Vérifier le code"
+									variant="primary"
+									type="button"
+									(click)="verifyOtpCode()"
+								></comp-button>
+							</div>
+						</div>
+						<div class="flex justify-end gap-3">
+							<comp-button
+								label="Renvoyer le code"
+								variant="neutral"
+								type="button"
+								(click)="requestSignatureByEmail()"
+							></comp-button>
+						</div>
+					}
 				</div>
-
 			}
 
 
@@ -213,15 +215,9 @@
 
 
 		@if (!isReadOnly()) {
-
-			<div class="flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
-
-				<comp-button label="Envoyer le lien email" variant="primary" type="button" (click)="requestSignatureByEmail()"></comp-button>
-
+			<div class="flex justify-end pt-6 border-t border-gray-100 dark:border-gray-800">
 				<comp-button label="Finaliser" variant="primary" type="submit"></comp-button>
-
 			</div>
-
 		}
 
 	</form>

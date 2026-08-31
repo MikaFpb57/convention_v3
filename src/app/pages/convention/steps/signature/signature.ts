@@ -82,7 +82,7 @@ export class SignatureStep {
     return control;
   }
 
-  requestSignatureByEmail() {
+  async requestSignatureByEmail() {
     if (this.isReadOnly()) return;
 
     this.errorMessage.set(null);
@@ -90,7 +90,7 @@ export class SignatureStep {
 
     const currentId = this.conventionService.currentId();
     if (!currentId) {
-      this.errorMessage.set('Enregistrez d\'abord la convention avant d\'envoyer une demande de signature.');
+      this.errorMessage.set('Aucune convention active. Créez ou chargez une convention d\'abord.');
       return;
     }
 
@@ -100,7 +100,19 @@ export class SignatureStep {
       return;
     }
 
+    const isResend = !!this.getControl('signatureRequestId').value;
+
     this.isLoading.set(true);
+
+    // Sauvegarder automatiquement la convention avant d'envoyer le code
+    try {
+      await this.conventionService.saveToDatabase(currentId);
+    } catch (saveError) {
+      this.errorMessage.set('Impossible de sauvegarder la convention. Veuillez réessayer.');
+      this.isLoading.set(false);
+      return;
+    }
+
     this.apiService.requestEmailSignature({
       conventionId: currentId,
       nom: this.getControl('nom').value,
@@ -119,7 +131,10 @@ export class SignatureStep {
           otpVerifiedAt: '',
           signedAt: ''
         });
-        this.successMessage.set(response.message ?? 'Email de signature envoyé au partenaire.');
+        const message = isResend
+          ? 'Nouveau code envoyé par email au partenaire.'
+          : (response.message ?? 'Email de signature envoyé au partenaire.');
+        this.successMessage.set(message);
         this.isLoading.set(false);
       },
       error: () => {
