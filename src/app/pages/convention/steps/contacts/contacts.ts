@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, AfterViewInit, effect } from '@angular/core';
+import { Component, inject, OnInit, signal, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { ConventionService } from '../../../../services/convention.service';
@@ -32,15 +32,14 @@ export class Contacts implements OnInit, AfterViewInit {
 
   constructor() {
     bindReadOnlyForm(this.contactsForm, () => this.conventionService.isReadOnly());
-    effect(() => {
-      const data = this.conventionService.getContacts();
-      if (data) {
-        this.contactsForm.patchValue(data, { emitEvent: false });
-      }
-    });
   }
 
   ngOnInit() {
+    const data = this.conventionService.getContacts();
+    if (data) {
+      this.contactsForm.patchValue(data, { emitEvent: false });
+    }
+
     // Save changes to service (and thus localStorage) automatically
     this.contactsForm.valueChanges.pipe(
       debounceTime(300)

@@ -66,11 +66,19 @@ export class Facturation implements OnInit {
 
   @Output() next = new EventEmitter<void>();
 
+  private isSameState(formValue: any, serviceValue: any): boolean {
+    return JSON.stringify(formValue ?? {}) === JSON.stringify(serviceValue ?? {});
+  }
+
   constructor() {
     bindReadOnlyForm(this.facturationForm, () => this.conventionService.isReadOnly());
     effect(() => {
       const data = this.conventionService.getFacturation();
       if (data) {
+        const current = this.facturationForm.getRawValue();
+        if (this.isSameState(current, data)) {
+          return;
+        }
         this.facturationForm.patchValue(data, { emitEvent: false });
       }
     });

@@ -43,11 +43,25 @@ export class SignatureStep {
     signedAt: ['']
   });
 
+  private toComparable(value: any): any {
+    const src = value ?? {};
+    const { otpCode, ...rest } = src;
+    return rest;
+  }
+
+  private isSameSignatureState(formValue: any, serviceValue: any): boolean {
+    return JSON.stringify(this.toComparable(formValue)) === JSON.stringify(this.toComparable(serviceValue));
+  }
+
   constructor() {
     bindReadOnlyForm(this.signatureForm, () => this.conventionService.isReadOnly());
     effect(() => {
       const data = this.conventionService.getSignature();
       if (data) {
+        const current = this.signatureForm.getRawValue();
+        if (this.isSameSignatureState(current, data)) {
+          return;
+        }
         this.signatureForm.patchValue(data, { emitEvent: false });
       }
     });

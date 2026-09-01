@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, Output, EventEmitter, effect } from '@angular/core';
+import { Component, inject, OnInit, signal, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { ConventionService } from '../../../../services/convention.service';
@@ -75,16 +75,15 @@ export class Procedures implements OnInit {
 
   constructor() {
     bindReadOnlyForm(this.proceduresForm, () => this.conventionService.isReadOnly());
-    effect(() => {
-      const data = this.conventionService.getProcedures();
-      if (data) {
-        this.proceduresForm.patchValue(data, { emitEvent: false });
-        this.updateRecapSignals();
-      }
-    });
   }
 
   ngOnInit() {
+    const data = this.conventionService.getProcedures();
+    if (data) {
+      this.proceduresForm.patchValue(data, { emitEvent: false });
+      this.updateRecapSignals();
+    }
+
     // Save changes to service (and thus localStorage) automatically
     this.proceduresForm.valueChanges.pipe(
       debounceTime(300)

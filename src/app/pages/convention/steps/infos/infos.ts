@@ -56,11 +56,19 @@ export class Infos implements OnInit {
 
   @Output() next = new EventEmitter<void>();
 
+  private isSameState(formValue: any, serviceValue: any): boolean {
+    return JSON.stringify(formValue ?? {}) === JSON.stringify(serviceValue ?? {});
+  }
+
   constructor() {
     bindReadOnlyForm(this.infosForm, () => this.conventionService.isReadOnly());
     effect(() => {
       const data = this.conventionService.getInfos();
       if (data) {
+        const current = this.infosForm.getRawValue();
+        if (this.isSameState(current, data)) {
+          return;
+        }
         this.infosForm.patchValue(data, { emitEvent: false });
       }
     });

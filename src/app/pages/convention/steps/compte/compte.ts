@@ -32,10 +32,18 @@ export class Compte implements OnInit {
   private elementRef = inject(ElementRef);
   private lastLoadedLogoConventionId: string | null = null;
 
+  private isSameState(formValue: any, serviceValue: any): boolean {
+    return JSON.stringify(formValue ?? {}) === JSON.stringify(serviceValue ?? {});
+  }
+
   constructor() {
     effect(() => {
       const data = this.stateService.getCompte();
       if (data) {
+        const current = this.compteForm.getRawValue();
+        if (this.isSameState(current, data)) {
+          return;
+        }
         this.compteForm.patchValue(data, { emitEvent: false });
         this.loadLogoPreviewIfNeeded();
         if (!this.skipEffectFetch && data.codePostal && /^\d{5}$/.test(data.codePostal)) {
