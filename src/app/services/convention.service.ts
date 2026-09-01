@@ -7,7 +7,6 @@ import { FileUploadService } from './file-upload.service';
     providedIn: 'root'
 })
 export class ConventionService {
-    private readonly STORAGE_KEY = 'convention_data';
     private readonly EDIT_CACHE_PREFIX = 'convention_edit_cache_';
     private conventionSignal = signal<ConventionData>({});
     private originalData = signal<ConventionData | null>(null);
@@ -23,22 +22,9 @@ export class ConventionService {
     private tempFileIds: string[] = [];
 
     constructor(private apiService: ConventionApiService, private fileUploadService: FileUploadService) {
-        // Load from localStorage on init
-        const savedData = localStorage.getItem(this.STORAGE_KEY);
-        if (savedData) {
-            try {
-                this.conventionSignal.set(JSON.parse(savedData));
-            } catch (e) {
-                console.error('Error parsing saved convention data', e);
-            }
-        }
-
-        // Save to localStorage on change (only if not in edit mode)
+        // Keep draft state in memory only for new conventions.
         effect(() => {
-            const data = this.conventionSignal();
-            if (!this.isEditMode()) {
-                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
-            }
+            this.conventionSignal();
 
             // Check for unsaved changes
             this.checkForUnsavedChanges();
@@ -190,7 +176,8 @@ export class ConventionService {
                 activite_principale: compte.codeNaf,
                 libelle_activite: compte.activitePrincipale,
                 rayon_action: compte.rayonAction,
-                filiales: Number(compte.filiales) || 0
+                filiales: Number(compte.filiales) || 0,
+                logo: compte.logo
             }],
             compte: {
                 recup_tva: infos.recuperationTva,
@@ -320,13 +307,7 @@ export class ConventionService {
         this.currentId.set(null);
         this.originalData.set(null);
         this.hasUnsavedChanges.set(false);
-        // Reload from localStorage
-        const savedData = localStorage.getItem(this.STORAGE_KEY);
-        if (savedData) {
-            this.conventionSignal.set(JSON.parse(savedData));
-        } else {
-            this.conventionSignal.set({});
-        }
+        this.conventionSignal.set({});
     }
 
     private guardWrite(): boolean {
@@ -343,7 +324,6 @@ export class ConventionService {
 
     clearData() {
         this.conventionSignal.set({});
-        localStorage.removeItem(this.STORAGE_KEY);
         this.hasUnsavedChanges.set(false);
     }
 

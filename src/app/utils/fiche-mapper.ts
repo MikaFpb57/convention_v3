@@ -47,6 +47,18 @@ function parseIdArray(val: unknown): number[] {
     return [];
 }
 
+function toFlag(val: unknown): 0 | 1 {
+    if (val === null || val === undefined) return 0;
+    if (typeof val === 'boolean') return val ? 1 : 0;
+    if (typeof val === 'number') return val === 1 ? 1 : 0;
+    if (typeof val === 'string') {
+        const normalized = val.trim().toLowerCase();
+        if (normalized === '1' || normalized === 'true' || normalized === 'oui') return 1;
+        return 0;
+    }
+    return 0;
+}
+
 function mapContact(fiche: FicheRecord, prefix: string): ContactData {
     return {
         nom: pick(fiche, `${prefix}_nom`, `${prefix}nom`) ?? '',
@@ -155,7 +167,7 @@ export function mapConventionInfoToConventionData(info: ConventionInfo): Convent
     };
 
     const facturation: FacturationData = {
-        demat: info.fac_demat === '1' ? 1 : 0,
+        demat: toFlag(info.fac_demat),
         mode_gest: info.mode_gest,
         email_demat: info.email_demat,
         email_demat_2: info.email_demat_2,
@@ -176,8 +188,8 @@ export function mapConventionInfoToConventionData(info: ConventionInfo): Convent
         tarif: info.tarif_fpb?.toString(),
         capital: '',
         rcs: '',
-        assureBdg: info.assure_bdg === '1' ? 1 : 0,
-        recuperationTva: info.recup_tva === '1' ? 1 : 0,
+        assureBdg: toFlag(info.assure_bdg),
+        recuperationTva: toFlag(info.recup_tva),
         nb_vu_vl: info.nb_vu_vl ?? 0,
         nb_pl: info.nb_pl ?? 0,
         nb_bus: 0,

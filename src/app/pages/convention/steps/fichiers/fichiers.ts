@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal, AfterViewInit, OnDestroy } from '@an
 import { CommonModule } from '@angular/common';
 import { ConventionService as ConventionStateService } from '../../../../services/convention.service';
 import { ConventionService as ConventionApiService } from '../../../../services/convention';
-import { FileUploadService, TempFileResponse } from '../../../../services/file-upload.service';
+import { FileUploadService } from '../../../../services/file-upload.service';
 import { UIComponents } from '../../../../components/ui-components';
 import { CompFileUploadComponent } from '../../../../components/comp-file-upload/comp-file-upload.component';
 import { FileItem } from '../../../../models/file-item.model';
@@ -107,26 +107,29 @@ export class Fichiers implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onFilesAdded(addedFiles: FileItem[]) {
+    const conventionId = this.conventionService.currentId();
+    if (!conventionId) {
+      this.errorMessage.set('Convention non créée: enregistre d\'abord la convention avant d\'ajouter des documents.');
+      return;
+    }
+
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    // Upload chaque fichier immédiatement
+    // Upload chaque fichier directement dans le dossier final de la convention
     addedFiles.forEach(fileItem => {
-      if (fileItem.file) {
-        this.fileUploadService.uploadTempFile(fileItem.file).subscribe({
-          next: (response: TempFileResponse) => {
-            // Stocker l'ID temporaire dans le service
-            this.conventionService.addTempFileId(response.tempId);
-
-            // Créer un FileItem avec l'URL temporaire
+      const file = fileItem.file;
+      if (file) {
+        this.fileUploadService.uploadConventionFile(conventionId, file).subscribe({
+          next: (response) => {
             const newFile: FileItem = {
-              id: response.tempId,
-              name: response.originalName,
-              size: response.fileSize,
-              type: response.mimeType,
-              url: '', // Sera complété après le téléchargement
-              file: fileItem.file,
-              isTemp: true
+              id: response.id,
+              name: response.name,
+              size: response.size,
+              type: response.type,
+              url: URL.createObjectURL(file),
+              file,
+              isTemp: false
             };
 
             this.files = [...this.files, newFile];
@@ -144,11 +147,6 @@ export class Fichiers implements OnInit, AfterViewInit, OnDestroy {
 
   onFileRemoved(removedFile: FileItem) {
     this.files = this.files.filter(f => f.id !== removedFile.id);
-
-    // Retirer l'ID temporaire du service
-    if (removedFile.isTemp) {
-      this.conventionService.removeTempFileId(removedFile.id);
-    }
 
     // Revoke blob URL if it's a blob
     if (removedFile.url.startsWith('blob:')) {

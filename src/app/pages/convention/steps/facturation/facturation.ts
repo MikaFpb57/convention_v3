@@ -158,10 +158,7 @@ export class Facturation implements OnInit {
         adresseFacturation: suggestion.name,
         codePostalFacturation: suggestion.postcode || '',
         villeFacturation: suggestion.city || ''
-      }, { emitEvent: false }); // emitEvent: false pour éviter de déclencher l'autocomplete ville
-
-      // Mettre à jour manuellement le service car emitEvent: false
-      this.conventionService.updateFacturation(this.facturationForm.value);
+      }, { emitEvent: true });
     }
   }
 

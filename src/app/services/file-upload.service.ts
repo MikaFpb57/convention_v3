@@ -12,6 +12,15 @@ export interface TempFileResponse {
   expiresAt: string;
 }
 
+export interface ConventionFileResponse {
+  id: string;
+  name: string;
+  originalName?: string;
+  size: number;
+  type: string;
+  url: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -41,6 +50,17 @@ export class FileUploadService {
     return this.http.post<TempFileResponse>(`${this.baseUrl}/upload-temp`, formData, { headers });
   }
 
+  uploadConventionFile(conventionId: string, file: File): Observable<ConventionFileResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+
+    return this.http.post<ConventionFileResponse>(`${this.baseUrl}/conv/${conventionId}/upload`, formData, { headers });
+  }
+
   linkFilesToConvention(conventionId: string, tempIds: string[]): Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -55,7 +75,7 @@ export class FileUploadService {
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
 
-    return this.http.get(`${this.baseUrl}/temp/${tempId}`, { 
+    return this.http.get(`${this.baseUrl}/temp/${tempId}`, {
       headers,
       responseType: 'blob'
     });

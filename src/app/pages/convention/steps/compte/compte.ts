@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal, Output, EventEmitter, ChangeDetector
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConventionService as ConventionStateService } from '../../../../services/convention.service';
+import { ConventionService as ConventionApiService } from '../../../../services/convention';
 import { SireneService } from '../../../../services/sirene.service';
 import { EntrepriseApiService, EntrepriseSuggestion } from '../../../../services/entreprise-api.service';
 import { GeoApiService, AddressSuggestion, Commune } from '../../../../services/geo-api.service';
@@ -22,18 +23,21 @@ import { bindReadOnlyForm } from '../../../../utils/form-readonly';
 export class Compte implements OnInit {
   private fb = inject(FormBuilder);
   private stateService = inject(ConventionStateService);
+  private conventionApiService = inject(ConventionApiService);
   private sireneService = inject(SireneService);
   private entrepriseApiService = inject(EntrepriseApiService);
   private geoApiService = inject(GeoApiService);
   private logger = inject(LoggerService);
   private cdr = inject(ChangeDetectorRef);
   private elementRef = inject(ElementRef);
+  private lastLoadedLogoConventionId: string | null = null;
 
   constructor() {
     effect(() => {
       const data = this.stateService.getCompte();
       if (data) {
         this.compteForm.patchValue(data, { emitEvent: false });
+        this.loadLogoPreviewIfNeeded();
         if (!this.skipEffectFetch && data.codePostal && /^\d{5}$/.test(data.codePostal)) {
           this.fetchVillesByCodePostal(data.codePostal, data.ville);
         }
@@ -70,6 +74,7 @@ export class Compte implements OnInit {
   isLoadingVilles = signal(false);
   private skipCpVilleReset = false;
   private skipEffectFetch = false;
+  private suppressAddressResetOnce = false;
 
   rayonActionOptions = [
     { value: 'departement', label: 'Départemental' },
@@ -115,6 +120,57 @@ export class Compte implements OnInit {
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  private loadLogoPreviewIfNeeded() {
+    const existingLogo = this.compteForm.get('logo')?.value;
+    if (existingLogo) {
+      return;
+    }
+
+    if (!this.stateService.isEditMode()) {
+      return;
+    }
+
+    const conventionId = this.stateService.currentId();
+    if (!conventionId || this.lastLoadedLogoConventionId === conventionId) {
+      return;
+    }
+
+    this.lastLoadedLogoConventionId = conventionId;
+
+    this.conventionApiService.getConventionFiles(conventionId).subscribe({
+      next: (response: any) => {
+        const files = Array.isArray(response?.files) ? response.files : [];
+        const logoFile = files.find((f: any) => typeof f?.name === 'string' && /^logo_partenaire\./i.test(f.name));
+
+        if (!logoFile?.name) {
+          return;
+        }
+
+        this.conventionApiService.downloadFile(conventionId, logoFile.name).subscribe({
+          next: (blob: Blob) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              const logoDataUrl = typeof reader.result === 'string' ? reader.result : '';
+              if (!logoDataUrl) {
+                return;
+              }
+              this.compteForm.patchValue({ logo: logoDataUrl }, { emitEvent: false });
+              this.stateService.updateCompte(this.compteForm.value);
+              this.cdr.detectChanges();
+            };
+            reader.readAsDataURL(blob);
+          },
+          error: (err) => {
+            this.logger.logWebApiError('Erreur chargement fichier logo convention', err);
+          }
+        });
+      },
+      error: (err) => {
+        this.logger.logWebApiError('Erreur récupération liste fichiers convention', err);
+      }
+    });
   }
 
   removeLogo() {
@@ -273,20 +329,15 @@ export class Compte implements OnInit {
   }
 
   onSearchAdresse(query: string) {
-    if (query.length < 3) {
+    if (this.suppressAddressResetOnce) {
+      this.suppressAddressResetOnce = false;
       this.adresseOptions.set([]);
       return;
     }
 
-    const codePostal = this.compteForm.get('codePostal')?.value ?? '';
-    const ville = this.compteForm.get('ville')?.value ?? '';
-    if (codePostal || ville) {
-      this.skipCpVilleReset = true;
-      this.compteForm.patchValue({ codePostal: '', ville: '' }, { emitEvent: false });
-      this.villesDisponibles.set([]);
-      this.villeOptions.set([]);
-      this.stateService.updateCompte(this.compteForm.value);
-      this.skipCpVilleReset = false;
+    if (query.length < 3) {
+      this.adresseOptions.set([]);
+      return;
     }
 
     this.isLoadingAdresse.set(true);
@@ -314,12 +365,13 @@ export class Compte implements OnInit {
       .find(s => s.label === option.value);
 
     if (suggestion) {
+      this.suppressAddressResetOnce = true;
       this.skipCpVilleReset = true;
-      this.patchCompteFields({
+      this.compteForm.patchValue({
         adresse: suggestion.name,
         codePostal: suggestion.postcode || '',
         ville: suggestion.city || ''
-      });
+      }, { emitEvent: true });
 
       if (suggestion.postcode && /^\d{5}$/.test(suggestion.postcode)) {
         this.fetchVillesByCodePostal(suggestion.postcode, suggestion.city || undefined);
