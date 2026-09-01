@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal, AfterViewInit, OnDestroy } from '@an
 import { CommonModule } from '@angular/common';
 import { ConventionService as ConventionStateService } from '../../../../services/convention.service';
 import { ConventionService as ConventionApiService } from '../../../../services/convention';
+import { FileUploadService, TempFileResponse } from '../../../../services/file-upload.service';
 import { UIComponents } from '../../../../components/ui-components';
 import { CompFileUploadComponent } from '../../../../components/comp-file-upload/comp-file-upload.component';
 import { FileItem } from '../../../../models/file-item.model';
@@ -18,6 +19,7 @@ import { FilePreviewService } from '../../../../services/file-preview.service';
 export class Fichiers implements OnInit, AfterViewInit, OnDestroy {
   conventionService = inject(ConventionStateService);
   private apiService = inject(ConventionApiService);
+  private fileUploadService = inject(FileUploadService);
   private previewService = inject(FilePreviewService);
 
   isLoading = signal(false);
@@ -105,19 +107,55 @@ export class Fichiers implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onFilesAdded(addedFiles: FileItem[]) {
-    this.files = [...this.files, ...addedFiles];
-    // Don't update service to avoid triggering effect
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
+    // Upload chaque fichier immédiatement
+    addedFiles.forEach(fileItem => {
+      if (fileItem.file) {
+        this.fileUploadService.uploadTempFile(fileItem.file).subscribe({
+          next: (response: TempFileResponse) => {
+            // Stocker l'ID temporaire dans le service
+            this.conventionService.addTempFileId(response.tempId);
+
+            // Créer un FileItem avec l'URL temporaire
+            const newFile: FileItem = {
+              id: response.tempId,
+              name: response.originalName,
+              size: response.fileSize,
+              type: response.mimeType,
+              url: '', // Sera complété après le téléchargement
+              file: fileItem.file,
+              isTemp: true
+            };
+
+            this.files = [...this.files, newFile];
+            this.isLoading.set(false);
+          },
+          error: (err) => {
+            console.error('Erreur lors de l\'upload du fichier:', err);
+            this.errorMessage.set('Erreur lors de l\'upload du fichier');
+            this.isLoading.set(false);
+          }
+        });
+      }
+    });
   }
 
   onFileRemoved(removedFile: FileItem) {
     this.files = this.files.filter(f => f.id !== removedFile.id);
+
+    // Retirer l'ID temporaire du service
+    if (removedFile.isTemp) {
+      this.conventionService.removeTempFileId(removedFile.id);
+    }
+
     // Revoke blob URL if it's a blob
     if (removedFile.url.startsWith('blob:')) {
       URL.revokeObjectURL(removedFile.url);
     } else {
       this.previewService.revokeUrl(removedFile);
     }
-    // Don't update service to avoid triggering effect
   }
 
   ngOnDestroy() {

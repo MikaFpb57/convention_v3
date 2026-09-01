@@ -5,4 +5,5 @@ export interface FileItem {
   type: string;     // mime type
   size: number;     // bytes
   name: string;
+  isTemp?: boolean; // true si fichier temporaire non lié
 }

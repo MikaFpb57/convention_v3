@@ -1,6 +1,7 @@
 import { Injectable, signal, effect } from '@angular/core';
 import { ConventionData, CompteData, ContactsData, FacturationData, InfosData, ProceduresData, SignatureData } from '../models/convention.interface';
 import { ConventionService as ConventionApiService } from './convention';
+import { FileUploadService } from './file-upload.service';
 
 @Injectable({
     providedIn: 'root'
@@ -18,7 +19,10 @@ export class ConventionService {
     readonly currentId = signal<string | null>(null);
     readonly hasUnsavedChanges = signal<boolean>(false);
 
-    constructor(private apiService: ConventionApiService) {
+    // Stockage temporaire des IDs de fichiers à lier
+    private tempFileIds: string[] = [];
+
+    constructor(private apiService: ConventionApiService, private fileUploadService: FileUploadService) {
         // Load from localStorage on init
         const savedData = localStorage.getItem(this.STORAGE_KEY);
         if (savedData) {
@@ -99,17 +103,63 @@ export class ConventionService {
             console.log('[ConventionService] Envoi au backend - ID:', id);
             console.log('[ConventionService] Payload JSON:', JSON.stringify(payload, null, 2));
 
-            this.apiService.updateConvention(id, payload).subscribe({
-                next: () => {
-                    console.log('[ConventionService] Sauvegarde réussie');
-                    this.clearEditCache(id);
-                    this.conventionSignal.set(this.cloneData(data));
-                    this.originalData.set(this.cloneData(data));
-                    this.hasUnsavedChanges.set(false);
+            // D'abord, lier les fichiers temporaires si présents
+            this.linkTempFilesToConvention(id).then(() => {
+                // Ensuite sauvegarder la convention
+                this.apiService.updateConvention(id, payload).subscribe({
+                    next: () => {
+                        console.log('[ConventionService] Sauvegarde réussie');
+                        this.clearEditCache(id);
+                        this.conventionSignal.set(this.cloneData(data));
+                        this.originalData.set(this.cloneData(data));
+                        this.hasUnsavedChanges.set(false);
+                        this.clearTempFileIds(); // Nettoyer les IDs temporaires après sauvegarde
+                        resolve();
+                    },
+                    error: (err) => {
+                        console.error('[ConventionService] Erreur sauvegarde:', err);
+                        reject(err);
+                    }
+                });
+            }).catch(err => {
+                console.error('[ConventionService] Erreur liaison fichiers:', err);
+                // Continuer la sauvegarde même si la liaison échoue
+                this.apiService.updateConvention(id, payload).subscribe({
+                    next: () => {
+                        console.log('[ConventionService] Sauvegarde réussie (sans liaison fichiers)');
+                        this.clearEditCache(id);
+                        this.conventionSignal.set(this.cloneData(data));
+                        this.originalData.set(this.cloneData(data));
+                        this.hasUnsavedChanges.set(false);
+                        this.clearTempFileIds();
+                        resolve();
+                    },
+                    error: (err) => {
+                        console.error('[ConventionService] Erreur sauvegarde:', err);
+                        reject(err);
+                    }
+                });
+            });
+        });
+    }
+
+    // Lier les fichiers temporaires à la convention
+    private linkTempFilesToConvention(id: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (this.tempFileIds.length === 0) {
+                resolve();
+                return;
+            }
+
+            console.log('[ConventionService] Liaison des fichiers temporaires:', this.tempFileIds);
+
+            this.fileUploadService.linkFilesToConvention(id, this.tempFileIds).subscribe({
+                next: (response) => {
+                    console.log('[ConventionService] Fichiers liés avec succès:', response);
                     resolve();
                 },
                 error: (err) => {
-                    console.error('[ConventionService] Erreur sauvegarde:', err);
+                    console.error('[ConventionService] Erreur liaison fichiers:', err);
                     reject(err);
                 }
             });
@@ -359,6 +409,23 @@ export class ConventionService {
 
     getFiles(): any[] | undefined {
         return this.conventionSignal().files?.files;
+    }
+
+    // Gestion des fichiers temporaires
+    addTempFileId(tempId: string) {
+        this.tempFileIds.push(tempId);
+    }
+
+    removeTempFileId(tempId: string) {
+        this.tempFileIds = this.tempFileIds.filter(id => id !== tempId);
+    }
+
+    getTempFileIds(): string[] {
+        return this.tempFileIds;
+    }
+
+    clearTempFileIds() {
+        this.tempFileIds = [];
     }
 
     updateSignature(data: SignatureData) {
