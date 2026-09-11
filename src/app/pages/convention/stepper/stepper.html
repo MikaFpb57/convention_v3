@@ -38,6 +38,7 @@
 
 
 
+    @if (!isLoading() && !loadError()) {
     <!-- Speed Dial Navigation -->
 
     <div data-dial-init class="fixed end-6 top-20 group z-50">
@@ -211,6 +212,14 @@
         </section>
 
     </div>
+
+    @if (!isReadOnly()) {
+    <div class="fixed bottom-4 right-6 z-40">
+        <comp-button label="Sauvegarder et quitter" variant="primary" type="button" (click)="onUnsavedSave()"></comp-button>
+    </div>
+    }
+
+    }
 
 
 

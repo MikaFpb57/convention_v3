@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
@@ -15,7 +15,7 @@ import { bindReadOnlyForm } from '../../../../utils/form-readonly';
   templateUrl: './signature.html',
   styleUrl: './signature.css',
 })
-export class SignatureStep {
+export class SignatureStep implements OnInit {
   private fb = inject(FormBuilder);
   private conventionService = inject(ConventionService);
   private apiService = inject(ConventionApiService);
@@ -55,23 +55,20 @@ export class SignatureStep {
 
   constructor() {
     bindReadOnlyForm(this.signatureForm, () => this.conventionService.isReadOnly());
-    effect(() => {
-      const data = this.conventionService.getSignature();
-      if (data) {
-        const current = this.signatureForm.getRawValue();
-        if (this.isSameSignatureState(current, data)) {
-          return;
-        }
-        this.signatureForm.patchValue(data, { emitEvent: false });
-      }
-    });
-
     this.signatureForm.valueChanges.pipe(
       debounceTime(200)
     ).subscribe(value => {
       const { otpCode, ...signatureState } = value;
       this.conventionService.updateSignature(signatureState as SignatureData);
     });
+  }
+
+  ngOnInit(): void {
+    const data = this.conventionService.getSignature();
+    if (!data) return;
+    const current = this.signatureForm.getRawValue();
+    if (this.isSameSignatureState(current, data)) return;
+    this.signatureForm.patchValue(data, { emitEvent: false });
   }
 
   get validityDays(): number {
@@ -117,15 +114,6 @@ export class SignatureStep {
     const isResend = !!this.getControl('signatureRequestId').value;
 
     this.isLoading.set(true);
-
-    // Sauvegarder automatiquement la convention avant d'envoyer le code
-    try {
-      await this.conventionService.saveToDatabase(currentId);
-    } catch (saveError) {
-      this.errorMessage.set('Impossible de sauvegarder la convention. Veuillez réessayer.');
-      this.isLoading.set(false);
-      return;
-    }
 
     this.apiService.requestEmailSignature({
       conventionId: currentId,

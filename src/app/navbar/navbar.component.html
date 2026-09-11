@@ -77,7 +77,7 @@
         </a>
       </li>
       <li>
-        <a routerLink="/convention"
+        <a href="#" (click)="openNewConventionModal($event)"
           class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
           <i class="fa-solid fa-file-circle-plus"></i>
           <span class="flex-1 ms-3 whitespace-nowrap">Nouveau</span>
@@ -111,3 +111,90 @@
     </ul>
   </div>
 </aside>
+
+@if (isNewModalOpen) {
+<div class="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 p-4" (click)="closeNewConventionModal()">
+  <div class="w-full max-w-4xl rounded-lg border border-default bg-neutral-primary-soft shadow-xl" (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between border-b border-default p-4">
+      <h2 class="text-lg font-semibold text-heading">Nouvelle convention partenaire</h2>
+      <button type="button" (click)="closeNewConventionModal()" class="rounded p-2 text-body hover:bg-neutral-secondary-medium">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <form [formGroup]="newConventionForm" (ngSubmit)="submitNewConvention()" class="p-4 space-y-4">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div>
+          <label class="mb-1 block text-sm font-medium text-heading">SIRET *</label>
+          <div class="flex gap-2">
+            <input type="text" formControlName="siret" maxlength="14" class="w-full rounded-md border border-default-medium bg-neutral-secondary-medium p-2 text-heading" placeholder="12345678901234">
+            <button type="button" (click)="lookupSiret()" [disabled]="isLoadingSiret" class="rounded-md border border-default-medium px-3 py-2 text-sm text-heading hover:bg-neutral-tertiary-medium disabled:opacity-60">
+              @if (isLoadingSiret) {Recherche...} @else {Rechercher}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-heading">Numero de TVA Intracommunautaire *</label>
+          <input type="text" formControlName="tva" class="w-full rounded-md border border-default-medium bg-neutral-secondary-medium p-2 text-heading">
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-heading">Nom de la societe *</label>
+          <input type="text" formControlName="entite" class="w-full rounded-md border border-default-medium bg-neutral-secondary-medium p-2 text-heading">
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-heading">Adresse *</label>
+          <input type="text" formControlName="adresse" class="w-full rounded-md border border-default-medium bg-neutral-secondary-medium p-2 text-heading">
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-heading">Code postal *</label>
+          <input type="text" formControlName="code_postal" maxlength="5" class="w-full rounded-md border border-default-medium bg-neutral-secondary-medium p-2 text-heading">
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-heading">Ville *</label>
+          <input type="text" formControlName="ville" class="w-full rounded-md border border-default-medium bg-neutral-secondary-medium p-2 text-heading">
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-heading">Code NAF</label>
+          <input type="text" formControlName="activite_principale" class="w-full rounded-md border border-default-medium bg-neutral-secondary-medium p-2 text-heading">
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-heading">Activite principale</label>
+          <input type="text" formControlName="libelle_activite" class="w-full rounded-md border border-default-medium bg-neutral-secondary-medium p-2 text-heading">
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-heading">Rayon d'action</label>
+          <select formControlName="rayon_action" class="w-full rounded-md border border-default-medium bg-neutral-secondary-medium p-2 text-heading">
+            <option value="departement">Departemental</option>
+            <option value="region">Regional</option>
+            <option value="france">National</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-heading">Filiales</label>
+          <input type="number" formControlName="filiales" min="0" class="w-full rounded-md border border-default-medium bg-neutral-secondary-medium p-2 text-heading">
+        </div>
+      </div>
+
+      @if (newModalError) {
+      <div class="rounded-md border border-danger-subtle bg-danger-soft p-2 text-sm text-fg-danger-strong">{{ newModalError }}</div>
+      }
+
+      <div class="flex justify-end gap-2 border-t border-default pt-4">
+        <button type="button" (click)="closeNewConventionModal()" class="rounded-md border border-default-medium px-4 py-2 text-sm text-heading hover:bg-neutral-tertiary-medium">Annuler</button>
+        <button type="submit" [disabled]="isCreating" class="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-strong disabled:opacity-60">
+          @if (isCreating) {Creation...} @else {Creer la convention}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+}

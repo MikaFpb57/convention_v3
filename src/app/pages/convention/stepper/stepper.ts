@@ -36,9 +36,9 @@ import { ConventionService as ConventionApiService } from '../../../services/con
 
 import { ConventionService as ConventionStateService } from '../../../services/convention.service';
 
-import { Fiche, ConventionInfo } from '../../../models/convention.model';
+import { ConventionInfo } from '../../../models/convention.model';
 
-import { mapFicheToConventionData, mapConventionInfoToConventionData } from '../../../utils/fiche-mapper';
+import { mapConventionInfoToConventionData } from '../../../utils/fiche-mapper';
 
 import { CanComponentDeactivate } from '../../../guards/unsaved-changes.guard';
 
@@ -161,29 +161,6 @@ export class Stepper implements OnInit, AfterViewInit, CanComponentDeactivate {
 
 
   private loadConvention(id: string) {
-
-    const navState = this.router.getCurrentNavigation()?.extras?.state ?? history.state;
-
-    const stateFiche = navState?.['fiche'] as Fiche | undefined;
-
-    const previewFiche = stateFiche?.ID === id ? stateFiche : undefined;
-
-
-
-    if (previewFiche) {
-
-      const previewData = mapFicheToConventionData(previewFiche);
-
-      this.stateService.startEditMode(id, previewData, previewFiche.etape);
-
-    } else {
-
-      this.stateService.startEditMode(id);
-
-    }
-
-
-
     this.isLoading.set(true);
 
     this.loadError.set(null);
@@ -198,13 +175,15 @@ export class Stepper implements OnInit, AfterViewInit, CanComponentDeactivate {
 
           const info = response.Informations[0];
 
+          const mapped = mapConventionInfoToConventionData(info);
+
           // Utiliser libelle_etape directement depuis le backend
 
           const etapeTexte = info.libelle_etape || info.etape;
 
-          this.stateService.setEditMode(id, mapConventionInfoToConventionData(info), etapeTexte);
+          this.stateService.setEditMode(id, mapped, etapeTexte);
 
-        } else if (!previewFiche) {
+        } else {
 
           this.loadError.set('Convention introuvable.');
 
@@ -216,11 +195,7 @@ export class Stepper implements OnInit, AfterViewInit, CanComponentDeactivate {
 
       error: () => {
 
-        if (!previewFiche) {
-
-          this.loadError.set('Impossible de charger la convention. Veuillez réessayer.');
-
-        }
+        this.loadError.set('Impossible de charger la convention. Veuillez réessayer.');
 
         this.isLoading.set(false);
 
@@ -345,7 +320,6 @@ export class Stepper implements OnInit, AfterViewInit, CanComponentDeactivate {
 
 
     try {
-
       await this.stateService.saveToDatabase(id);
 
       console.log('[Stepper] Save successful, closing modal and allowing navigation');

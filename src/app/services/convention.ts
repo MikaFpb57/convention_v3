@@ -150,6 +150,24 @@ export interface GeneratePdfResponse {
 
 }
 
+export interface CreateConventionPayload {
+  siret: string;
+  tva: string;
+  entite: string;
+  adresse: string;
+  code_postal: string;
+  ville: string;
+  activite_principale: string;
+  libelle_activite: string;
+  rayon_action: string;
+  filiales: number;
+}
+
+export interface CreateConventionResponse {
+  id: string;
+  message: string;
+}
+
 
 
 @Injectable({
@@ -214,6 +232,10 @@ export class ConventionService {
 
     return this.http.put<ConventionApiResponse>(`${this.API_URL}/update`, data, { params });
 
+  }
+
+  createConvention(payload: CreateConventionPayload): Observable<CreateConventionResponse> {
+    return this.http.post<CreateConventionResponse>(`${this.API_URL}/create`, payload);
   }
 
 

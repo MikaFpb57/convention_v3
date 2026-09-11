@@ -59,6 +59,10 @@ function toFlag(val: unknown): 0 | 1 {
     return 0;
 }
 
+function idsFromFlagMap(flagMap: Array<[number, unknown]>): number[] {
+    return flagMap.filter(([, value]) => toFlag(value) === 1).map(([id]) => id);
+}
+
 function mapContact(fiche: FicheRecord, prefix: string): ContactData {
     return {
         nom: pick(fiche, `${prefix}_nom`, `${prefix}nom`) ?? '',
@@ -199,11 +203,30 @@ export function mapConventionInfoToConventionData(info: ConventionInfo): Convent
     };
 
     const procedures = {
-        typePriseEnCharge: [],
-        auDepartConducteur: [],
-        surFacture: [],
-        proceduresParticulieres: '',
-        visiblePartenaire: true
+        typePriseEnCharge: idsFromFlagMap([
+            [1, info.tacite],
+            [2, info.bddimat],
+            [3, info.accordtel],
+            [4, info.accordmail],
+            [5, info.valdevis_0],
+            [6, info.valdevis_12],
+            [7, info.valdevis_24]
+        ]),
+        auDepartConducteur: idsFromFlagMap([
+            [1, info.dspc],
+            [2, info.fac_depart],
+            [3, info.accdspc],
+            [4, info.accbc],
+            [5, info.acccv],
+            [6, info.acccg]
+        ]),
+        surFacture: idsFromFlagMap([
+            [1, info.ifnadh],
+            [2, info.ifnbdc],
+            [3, info.ifnoco]
+        ]),
+        proceduresParticulieres: info.note_fpb_html ?? '',
+        visiblePartenaire: toFlag(info.affichage_obs) === 1
     };
 
     const contacts: ContactsData = {

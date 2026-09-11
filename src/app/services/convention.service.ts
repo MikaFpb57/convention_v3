@@ -7,7 +7,6 @@ import { FileUploadService } from './file-upload.service';
     providedIn: 'root'
 })
 export class ConventionService {
-    private readonly EDIT_CACHE_PREFIX = 'convention_edit_cache_';
     private conventionSignal = signal<ConventionData>({});
     private originalData = signal<ConventionData | null>(null);
 
@@ -31,59 +30,20 @@ export class ConventionService {
         });
     }
 
-    // ✅ Edit Cache Methods
-    private getEditCacheKey(id: string): string {
-        return `${this.EDIT_CACHE_PREFIX}${id}`;
-    }
-
-    saveEditCache(id: string, data: ConventionData): void {
-        const cacheKey = this.getEditCacheKey(id);
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-    }
-
-    getEditCache(id: string): ConventionData | null {
-        const cacheKey = this.getEditCacheKey(id);
-        const cached = localStorage.getItem(cacheKey);
-        if (cached) {
-            try {
-                return JSON.parse(cached);
-            } catch (e) {
-                console.error('Error parsing edit cache', e);
-                return null;
-            }
-        }
-        return null;
-    }
-
-    clearEditCache(id: string): void {
-        const cacheKey = this.getEditCacheKey(id);
-        localStorage.removeItem(cacheKey);
-    }
-
     private cloneData(data: ConventionData): ConventionData {
         return JSON.parse(JSON.stringify(data));
     }
 
-    private persistEditCacheIfNeeded(data: ConventionData): void {
-        if (!this.isEditMode()) return;
-        const id = this.currentId();
-        if (!id) return;
-        this.saveEditCache(id, data);
-    }
-
     private updateConventionState(producer: (current: ConventionData) => ConventionData): void {
         this.conventionSignal.update(current => {
-            const next = producer(current);
-            this.persistEditCacheIfNeeded(next);
-            return next;
+            return producer(current);
         });
     }
 
     // ✅ Save to Database
     saveToDatabase(id: string): Promise<void> {
         return new Promise((resolve, reject) => {
-            const cachedData = this.getEditCache(id);
-            const data = cachedData ?? this.conventionSignal();
+            const data = this.conventionSignal();
             const payload = this.mapToApiFormat(data);
 
             console.log('[ConventionService] Envoi au backend - ID:', id);
@@ -95,7 +55,6 @@ export class ConventionService {
                 this.apiService.updateConvention(id, payload).subscribe({
                     next: () => {
                         console.log('[ConventionService] Sauvegarde réussie');
-                        this.clearEditCache(id);
                         this.conventionSignal.set(this.cloneData(data));
                         this.originalData.set(this.cloneData(data));
                         this.hasUnsavedChanges.set(false);
@@ -113,7 +72,6 @@ export class ConventionService {
                 this.apiService.updateConvention(id, payload).subscribe({
                     next: () => {
                         console.log('[ConventionService] Sauvegarde réussie (sans liaison fichiers)');
-                        this.clearEditCache(id);
                         this.conventionSignal.set(this.cloneData(data));
                         this.originalData.set(this.cloneData(data));
                         this.hasUnsavedChanges.set(false);
@@ -266,15 +224,8 @@ export class ConventionService {
         this.etape.set(etape ?? null);
         this.isReadOnly.set(this.isConsultationEtape(etape));
 
-        // Try to load from edit cache first
-        const cached = this.getEditCache(id);
-        if (cached) {
-            this.conventionSignal.set(cached);
-            this.originalData.set(this.cloneData(preview ?? cached));
-        } else {
-            this.conventionSignal.set(preview ?? {});
-            this.originalData.set(this.cloneData(preview ?? {}));
-        }
+        this.conventionSignal.set(preview ?? {});
+        this.originalData.set(this.cloneData(preview ?? {}));
         this.hasUnsavedChanges.set(false);
     }
 
@@ -284,15 +235,8 @@ export class ConventionService {
         this.etape.set(etape ?? null);
         this.isReadOnly.set(this.isConsultationEtape(etape));
 
-        // Try to load from edit cache first
-        const cached = this.getEditCache(id);
-        if (cached) {
-            this.conventionSignal.set(cached);
-            this.originalData.set(this.cloneData(data));
-        } else {
-            this.conventionSignal.set(data);
-            this.originalData.set(this.cloneData(data));
-        }
+        this.conventionSignal.set(data);
+        this.originalData.set(this.cloneData(data));
         this.hasUnsavedChanges.set(false);
     }
 
@@ -421,10 +365,6 @@ export class ConventionService {
         const original = this.originalData();
         if (original) {
             this.conventionSignal.set(this.cloneData(original));
-        }
-        const id = this.currentId();
-        if (id) {
-            this.clearEditCache(id);
         }
         this.hasUnsavedChanges.set(false);
     }
