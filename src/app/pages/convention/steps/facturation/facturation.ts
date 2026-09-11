@@ -36,10 +36,15 @@ export class Facturation implements OnInit {
   isLoadingVilles = signal(false);
 
   // Signals pour les listes Matrix
-  delaiPaiementOptions = signal<MatrixValue[]>([]);
-  modePaiementOptions = signal<MatrixValue[]>([]);
-  delaiReglementOptions = signal<MatrixValue[]>([]);
   freqTransmissionOptions = signal<MatrixValue[]>([]);
+
+  // Valeurs fixes attendues par la génération du PDF (colonne delai_reglement)
+  delaiReglementOptions = signal<{ value: string; label: string }[]>([
+    { value: '30jfdm', label: '30 jours fin de mois' },
+    { value: '30jo', label: '30 jours' },
+    { value: '45jfdm', label: '45 jours fin de mois' },
+    { value: 'compt', label: 'Comptant' }
+  ]);
 
   gestionOptions = [
     { value: 'majmail', label: '0% centralisé - Envoi par mail par le centre', demat: 0 },
@@ -58,8 +63,6 @@ export class Facturation implements OnInit {
     codePostalFacturation: [''],
     villeFacturation: [''],
     emailFacturation: ['', Validators.email],
-    delaiPaiement: [''],
-    modePaiement: [''],
     delaiReglement: [''],
     freqTransmission: ['']
   });
@@ -86,9 +89,6 @@ export class Facturation implements OnInit {
 
   ngOnInit() {
     // Charger les listes Matrix
-    this.loadDelaiPaiementOptions();
-    this.loadModePaiementOptions();
-    this.loadDelaiReglementOptions();
     this.loadFreqTransmissionOptions();
 
     // Save changes to service (and thus localStorage) automatically
@@ -168,51 +168,6 @@ export class Facturation implements OnInit {
         villeFacturation: suggestion.city || ''
       }, { emitEvent: true });
     }
-  }
-
-  /**
-   * Charge les options de délai de paiement depuis l'API
-   */
-  loadDelaiPaiementOptions() {
-    this.conventionApiService.getListeMatrix('delaipaie').subscribe({
-      next: (response) => {
-        this.delaiPaiementOptions.set(response.values);
-      },
-      error: (err: any) => {
-        console.error('Erreur lors du chargement des délais de paiement:', err);
-        this.delaiPaiementOptions.set([]);
-      }
-    });
-  }
-
-  /**
-   * Charge les options de mode de paiement depuis l'API
-   */
-  loadModePaiementOptions() {
-    this.conventionApiService.getListeMatrix('mode_paie').subscribe({
-      next: (response) => {
-        this.modePaiementOptions.set(response.values);
-      },
-      error: (err: any) => {
-        console.error('Erreur lors du chargement des modes de paiement:', err);
-        this.modePaiementOptions.set([]);
-      }
-    });
-  }
-
-  /**
-   * Charge les options de délai de règlement depuis l'API
-   */
-  loadDelaiReglementOptions() {
-    this.conventionApiService.getListeMatrix('mode_paie').subscribe({
-      next: (response) => {
-        this.delaiReglementOptions.set(response.values);
-      },
-      error: (err: any) => {
-        console.error('Erreur lors du chargement des délais de règlement:', err);
-        this.delaiReglementOptions.set([]);
-      }
-    });
   }
 
   /**

@@ -96,40 +96,15 @@
       [errorMessage]="getControl('emailFacturation').touched && getControl('emailFacturation').invalid ? 'Email invalide.' : null">
     </comp-input>
 
-    <!-- Délai / Mode de paiement -->
-    <div class="grid gap-4 mb-3 md:grid-cols-2">
-      <div>
-        <label for="delaiPaiement" class="block text-sm font-medium text-heading mb-1">Délai de paiement</label>
-        <select formControlName="delaiPaiement" id="delaiPaiement" name="delaiPaiement"
-          class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
-          <option value="" disabled selected>-- Choisir le délai --</option>
-          @for (option of delaiPaiementOptions(); track option.id_type) {
-          <option [value]="option.id_type">{{ option.libelle_type }}</option>
-          }
-        </select>
-      </div>
-
-      <div>
-        <label for="modePaiement" class="block text-sm font-medium text-heading mb-1">Mode de paiement</label>
-        <select formControlName="modePaiement" id="modePaiement" name="modePaiement"
-          class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
-          <option value="" disabled selected>-- Choisir le mode --</option>
-          @for (option of modePaiementOptions(); track option.id_type) {
-          <option [value]="option.id_type">{{ option.libelle_type }}</option>
-          }
-        </select>
-      </div>
-    </div>
-
-    <!-- Délais de règlement / Fréquence de transmission -->
+    <!-- Mode de règlement / Fréquence de transmission -->
     <div class="grid gap-4 mb-3 md:grid-cols-2">
       <div>
         <label for="delaiReglement" class="block text-sm font-medium text-heading mb-1">Mode de règlement</label>
         <select formControlName="delaiReglement" id="delaiReglement" name="delaiReglement"
           class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
           <option value="" disabled selected>-- Choisir le mode --</option>
-          @for (option of delaiReglementOptions(); track option.id_type) {
-          <option [value]="option.id_type">{{ option.libelle_type }}</option>
+          @for (option of delaiReglementOptions(); track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
           }
         </select>
       </div>

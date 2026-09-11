@@ -57,13 +57,20 @@ export class CompPdfThirdPageComponent {
   get u_bool_demat() {
     return this.utils.toOuiNon(this.facturationData.demat)
   }
-  
+
   get u_format_mode_gest() {
     return this.utils.formatModeGest(this.facturationData.mode_gest);
   }
 
   get u_format_delaipaie(){
-    return this.utils.format('delaipaie',this.facturationData.delaiPaiement);
+    const labels: Record<string, string> = {
+      '30jfdm': '30 jours fin de mois',
+      '30jo': '30 jours',
+      '45jfdm': '45 jours fin de mois',
+      'compt': 'Comptant'
+    };
+    const value = this.facturationData.delaiReglement;
+    return value ? (labels[value] ?? value) : '';
   }
 
   get u_format_freq_envoi(){

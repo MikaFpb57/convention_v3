@@ -114,8 +114,6 @@ export function mapFicheToConventionData(fiche: Fiche): ConventionData {
         codePostalFacturation: pick(f, 'code_postal_facturation', 'cp_facturation'),
         villeFacturation: pick(f, 'ville_facturation'),
         emailFacturation: pick(f, 'email_facturation', 'email_fact'),
-        delaiPaiement: pick(f, 'delai_paie', 'delai_paiement', 'delaiPaiement'),
-        modePaiement: pick(f, 'mode_paie', 'mode_paiement', 'modePaiement'),
         delaiReglement: pick(f, 'delai_reglement', 'delaiReglement'),
         freqTransmission: pick(f, 'freq_envoi', 'freq_transmission', 'freqTransmission')
     };
@@ -179,8 +177,6 @@ export function mapConventionInfoToConventionData(info: ConventionInfo): Convent
         codePostalFacturation: info.code_postal_fac_1,
         villeFacturation: info.ville_fac_1,
         emailFacturation: info.email_demat,
-        delaiPaiement: info.delai_reglement?.toString(),
-        modePaiement: '',
         delaiReglement: info.delai_reglement?.toString(),
         freqTransmission: info.freq_transmission
     };

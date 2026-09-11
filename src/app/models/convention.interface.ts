@@ -112,10 +112,6 @@ export interface FacturationData {
 
   emailFacturation?: string;
 
-  delaiPaiement?: string;
-
-  modePaiement?: string;
-
   delaiReglement?: string;
 
   freqTransmission?: string;

@@ -192,7 +192,10 @@ export class ConventionService {
                 ifnbdc: surFacture.includes(2) ? 1 : 0,
                 ifnoco: surFacture.includes(3) ? 1 : 0
             },
-            notes: data.notes ?? null,
+            notes: {
+                note_fpb_html: procedures.proceduresParticulieres ?? '',
+                affichage_obs: procedures.visiblePartenaire ? 1 : 0
+            },
             cartes: data.cartes ?? null,
             files: data.files?.files ?? [],
             signature: data.signature ?? null

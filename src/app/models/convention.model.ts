@@ -82,7 +82,7 @@ export interface ConventionInfo {
   adresse_fac_2: string;
   code_postal_fac_2: string;
   ville_fac_2: string;
-  delai_reglement: number;
+  delai_reglement: string;
   freq_transmission: string;
   factva: string;
   facttc: string;
