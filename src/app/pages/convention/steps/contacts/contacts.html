@@ -112,8 +112,25 @@
                                 <div class="grid grid-cols-2 gap-4 mt-2">
                                     <comp-input formControlName="codePostal" label="Code Postal"
                                         [id]="type + '_p_cp'"></comp-input>
-                                    <comp-input formControlName="ville" label="Ville"
-                                        [id]="type + '_p_ville'"></comp-input>
+                                    <div>
+                                        <label [for]="type + '_p_ville'" class="block text-sm font-medium text-heading mb-1">
+                                            Ville
+                                            @if (isLoadingVillesFor(type, 'primary')) {
+                                            <span class="text-xs text-body ml-1 font-normal">(Chargement...)</span>
+                                            }
+                                        </label>
+                                        @if (villesDisponiblesFor(type, 'primary').length > 1) {
+                                        <select formControlName="ville" [id]="type + '_p_ville'"
+                                            class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
+                                            <option value="" disabled selected>-- Choisir la ville --</option>
+                                            @for (commune of villesDisponiblesFor(type, 'primary'); track commune.nom) {
+                                            <option [value]="commune.nom">{{ commune.nom }}</option>
+                                            }
+                                        </select>
+                                        } @else {
+                                        <comp-input formControlName="ville" [id]="type + '_p_ville'"></comp-input>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -153,8 +170,25 @@
                                 <div class="grid grid-cols-2 gap-4 mt-2">
                                     <comp-input formControlName="codePostal" label="Code Postal"
                                         [id]="type + '_b_cp'"></comp-input>
-                                    <comp-input formControlName="ville" label="Ville"
-                                        [id]="type + '_b_ville'"></comp-input>
+                                    <div>
+                                        <label [for]="type + '_b_ville'" class="block text-sm font-medium text-heading mb-1">
+                                            Ville
+                                            @if (isLoadingVillesFor(type, 'backup')) {
+                                            <span class="text-xs text-body ml-1 font-normal">(Chargement...)</span>
+                                            }
+                                        </label>
+                                        @if (villesDisponiblesFor(type, 'backup').length > 1) {
+                                        <select formControlName="ville" [id]="type + '_b_ville'"
+                                            class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
+                                            <option value="" disabled selected>-- Choisir la ville --</option>
+                                            @for (commune of villesDisponiblesFor(type, 'backup'); track commune.nom) {
+                                            <option [value]="commune.nom">{{ commune.nom }}</option>
+                                            }
+                                        </select>
+                                        } @else {
+                                        <comp-input formControlName="ville" [id]="type + '_b_ville'"></comp-input>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>

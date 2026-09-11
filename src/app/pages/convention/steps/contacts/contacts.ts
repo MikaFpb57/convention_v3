@@ -1,12 +1,16 @@
 import { Component, inject, OnInit, signal, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConventionService } from '../../../../services/convention.service';
 import { CommonModule } from '@angular/common';
 import { UIComponents } from '../../../../components/ui-components';
 import { ContactsData } from '../../../../models/convention.interface';
+import { GeoApiService, Commune } from '../../../../services/geo-api.service';
 import { initFlowbite } from 'flowbite';
 import { bindReadOnlyForm } from '../../../../utils/form-readonly';
+
+const CONTACT_TYPES = ['commercial', 'relance', 'priseEnCharge', 'comptabilite'] as const;
+const CONTACT_TARGETS = ['primary', 'backup'] as const;
 
 @Component({
   selector: 'app-contacts',
@@ -18,10 +22,15 @@ import { bindReadOnlyForm } from '../../../../utils/form-readonly';
 export class Contacts implements OnInit, AfterViewInit {
   private fb = inject(FormBuilder);
   private conventionService = inject(ConventionService);
+  private geoApiService = inject(GeoApiService);
 
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
   isReadOnly = this.conventionService.isReadOnly;
+
+  // Villes trouvées par code postal, par contact (clé: "type.target")
+  private villesDisponibles = signal<Record<string, Commune[]>>({});
+  private isLoadingVilles = signal<Record<string, boolean>>({});
 
   contactsForm: FormGroup = this.fb.group({
     commercial: this.createContactPair(),
@@ -46,6 +55,54 @@ export class Contacts implements OnInit, AfterViewInit {
     ).subscribe(value => {
       this.conventionService.updateContacts(value as ContactsData);
     });
+
+    this.watchCodePostalChanges();
+  }
+
+  private watchCodePostalChanges() {
+    for (const type of CONTACT_TYPES) {
+      for (const target of CONTACT_TARGETS) {
+        const key = `${type}.${target}`;
+        this.contactsForm.get(`${key}.codePostal`)?.valueChanges.pipe(
+          debounceTime(300),
+          distinctUntilChanged()
+        ).subscribe((codePostal: string) => {
+          if (codePostal && /^\d{5}$/.test(codePostal)) {
+            this.fetchVillesForContact(key, codePostal);
+          } else {
+            this.villesDisponibles.update(m => ({ ...m, [key]: [] }));
+          }
+        });
+      }
+    }
+  }
+
+  private fetchVillesForContact(key: string, codePostal: string) {
+    this.isLoadingVilles.update(m => ({ ...m, [key]: true }));
+    this.geoApiService.getCommunesByCodePostal(codePostal).subscribe({
+      next: (communes: Commune[]) => {
+        this.villesDisponibles.update(m => ({ ...m, [key]: communes }));
+        this.isLoadingVilles.update(m => ({ ...m, [key]: false }));
+
+        // Ne pré-remplit la ville que si elle n'est pas déjà renseignée
+        const villeControl = this.contactsForm.get(`${key}.ville`);
+        if (communes.length === 1 && !villeControl?.value) {
+          villeControl?.setValue(communes[0].nom);
+        }
+      },
+      error: () => {
+        this.villesDisponibles.update(m => ({ ...m, [key]: [] }));
+        this.isLoadingVilles.update(m => ({ ...m, [key]: false }));
+      }
+    });
+  }
+
+  villesDisponiblesFor(type: string, target: 'primary' | 'backup'): Commune[] {
+    return this.villesDisponibles()[`${type}.${target}`] ?? [];
+  }
+
+  isLoadingVillesFor(type: string, target: 'primary' | 'backup'): boolean {
+    return this.isLoadingVilles()[`${type}.${target}`] ?? false;
   }
 
   ngAfterViewInit() {
