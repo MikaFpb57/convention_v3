@@ -230,88 +230,88 @@ export function mapConventionInfoToConventionData(info: ConventionInfo): Convent
             primary: {
                 nom: info.commercial_nom ?? '',
                 prenom: info.commercial_prenom ?? '',
-                fonction: '',
+                fonction: info.commercial_fonction ?? '',
                 email: info.commercial_mail ?? '',
                 telephone: info.commercial_tel ?? '',
-                adresse: '',
-                codePostal: '',
-                ville: ''
+                adresse: info.commercial_adresse ?? '',
+                codePostal: info.commercial_code_postal ?? '',
+                ville: info.commercial_ville ?? ''
             },
             backup: {
-                nom: '',
-                prenom: '',
-                fonction: '',
-                email: info.commercial_mail_2 ?? '',
-                telephone: info.commercial_port ?? '',
-                adresse: '',
-                codePostal: '',
-                ville: ''
+                nom: info.commercial_bkp_nom ?? '',
+                prenom: info.commercial_bkp_prenom ?? '',
+                fonction: info.commercial_bkp_fonction ?? '',
+                email: info.commercial_bkp_mail ?? '',
+                telephone: info.commercial_bkp_tel ?? '',
+                adresse: info.commercial_bkp_adresse ?? '',
+                codePostal: info.commercial_bkp_code_postal ?? '',
+                ville: info.commercial_bkp_ville ?? ''
             }
         },
         relance: {
             primary: {
                 nom: info.relance_nom ?? '',
                 prenom: info.relance_prenom ?? '',
-                fonction: '',
+                fonction: info.relance_fonction ?? '',
                 email: info.relance_mail ?? '',
                 telephone: info.relance_tel ?? '',
-                adresse: '',
-                codePostal: '',
-                ville: ''
+                adresse: info.relance_adresse ?? '',
+                codePostal: info.relance_code_postal ?? '',
+                ville: info.relance_ville ?? ''
             },
             backup: {
-                nom: '',
-                prenom: '',
-                fonction: '',
-                email: info.relance_mail_2 ?? '',
-                telephone: info.relance_port ?? '',
-                adresse: '',
-                codePostal: '',
-                ville: ''
+                nom: info.relance_bkp_nom ?? '',
+                prenom: info.relance_bkp_prenom ?? '',
+                fonction: info.relance_bkp_fonction ?? '',
+                email: info.relance_bkp_mail ?? '',
+                telephone: info.relance_bkp_tel ?? '',
+                adresse: info.relance_bkp_adresse ?? '',
+                codePostal: info.relance_bkp_code_postal ?? '',
+                ville: info.relance_bkp_ville ?? ''
             }
         },
         priseEnCharge: {
             primary: {
                 nom: info.pec_nom ?? '',
                 prenom: info.pec_prenom ?? '',
-                fonction: '',
+                fonction: info.pec_fonction ?? '',
                 email: info.pec_mail ?? '',
                 telephone: info.pec_tel ?? '',
-                adresse: '',
-                codePostal: '',
-                ville: ''
+                adresse: info.pec_adresse ?? '',
+                codePostal: info.pec_code_postal ?? '',
+                ville: info.pec_ville ?? ''
             },
             backup: {
-                nom: '',
-                prenom: '',
-                fonction: '',
-                email: info.pec_mail_2 ?? '',
-                telephone: info.pec_port ?? '',
-                adresse: '',
-                codePostal: '',
-                ville: ''
+                nom: info.pec_bkp_nom ?? '',
+                prenom: info.pec_bkp_prenom ?? '',
+                fonction: info.pec_bkp_fonction ?? '',
+                email: info.pec_bkp_mail ?? '',
+                telephone: info.pec_bkp_tel ?? '',
+                adresse: info.pec_bkp_adresse ?? '',
+                codePostal: info.pec_bkp_code_postal ?? '',
+                ville: info.pec_bkp_ville ?? ''
             }
         },
         comptabilite: {
             primary: {
                 nom: info.compta_nom ?? '',
                 prenom: info.compta_prenom ?? '',
-                fonction: '',
+                fonction: info.compta_fonction ?? '',
                 email: info.compta_mail ?? '',
                 telephone: info.compta_tel ?? '',
-                adresse: '',
-                codePostal: '',
-                ville: ''
+                adresse: info.compta_adresse ?? '',
+                codePostal: info.compta_code_postal ?? '',
+                ville: info.compta_ville ?? ''
             },
             backup: {
-                nom: '',
-                prenom: '',
-                fonction: '',
-                email: info.compta_mail_2 ?? '',
-                telephone: info.compta_port ?? '',
-                adresse: '',
-                codePostal: '',
-                ville: ''
+                nom: info.compta_bkp_nom ?? '',
+                prenom: info.compta_bkp_prenom ?? '',
+                fonction: info.compta_bkp_fonction ?? '',
+                email: info.compta_bkp_mail ?? '',
+                telephone: info.compta_bkp_tel ?? '',
+                adresse: info.compta_bkp_adresse ?? '',
+                codePostal: info.compta_bkp_code_postal ?? '',
+                ville: info.compta_bkp_ville ?? ''
             }
         }
     };
@@ -398,3 +398,4 @@ export function mapTarifResponse(dto: TarifResponseDto): TarifResponse {
         tarifsSpec: mapTarifsSpec(dto.tarifs_spec)
     };
 }
+
