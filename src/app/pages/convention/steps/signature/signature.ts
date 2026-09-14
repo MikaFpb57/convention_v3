@@ -77,8 +77,8 @@ export class SignatureStep implements OnInit {
 
   get statusText(): string {
     const status = this.signatureForm.get('statut')?.value;
-    if (status === 'verified') return 'Vérifiée';
-    if (status === 'pending_email') return 'En attente de signature partenaire';
+    if (status === 'verified') return 'Signé';
+    if (status === 'pending_email') return 'En attente';
     return 'Brouillon';
   }
 
