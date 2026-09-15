@@ -317,14 +317,22 @@ export function mapConventionInfoToConventionData(info: ConventionInfo): Convent
     };
 
     const signatureImage = info.signtaure_partenaire ?? info.signature_partenaire ?? '';
+    const signedAt = info.date_sign_part ?? '';
+    const statut: 'draft' | 'pending_email' | 'verified' = signedAt
+        ? 'verified'
+        : (info.request_status === 'pending_email' ? 'pending_email' : 'draft');
     const signature = {
         nom: info.sign_partenaire_nom ?? '',
         prenom: info.sign_partenaire_prenom ?? '',
         fonction: info.sign_partenaire_fonction ?? '',
         emailSignataire: '',
-        certifie: Boolean(signatureImage),
+        certifie: Boolean(signatureImage) || Boolean(signedAt),
         signatureImage,
-        signedAt: info.date_sign_part ?? ''
+        statut,
+        requestSentAt: info.request_sent_at ?? '',
+        expiresAt: info.request_expires_at ?? '',
+        otpVerifiedAt: info.request_verified_at ?? '',
+        signedAt
     };
 
     return { compte, facturation, infos, procedures, contacts, signature };

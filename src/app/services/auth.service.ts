@@ -19,6 +19,23 @@ export class AuthService {
     return this.http.post(this.apiUrl, { username, password }, { headers });
   }
 
+  register(data: { nom: string; prenom: string; email: string; fonction?: string; password: string }): Observable<any> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post(`${this.userApiUrl}/register`, data, { headers });
+  }
+
+  getMe(): Observable<any> {
+    return this.http.get(`${this.userApiUrl}/me`);
+  }
+
+  updateProfile(data: { nom: string; prenom: string; email: string; fonction?: string }): Observable<any> {
+    return this.http.put(`${this.userApiUrl}/me`, data);
+  }
+
+  saveSignature(signature: string): Observable<any> {
+    return this.http.put(`${this.userApiUrl}/me/signature`, { signature });
+  }
+
   changePassword(currentPassword: string, newPassword: string): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.put(

@@ -50,7 +50,7 @@
 
 				@if (signatureForm.value.expiresAt) {
 
-					<span> - expire le {{ signatureForm.value.expiresAt }}</span>
+					<span> - expire le {{ formatFrDate(signatureForm.value.expiresAt) }}</span>
 
 				}
 
@@ -168,19 +168,29 @@
 
 
 
+			@if (signatureForm.value.statut === 'verified') {
+				<div class="mb-5 p-3 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-900 text-sm">
+					<i class="fa-solid fa-circle-check mr-1"></i>
+					Signé par <span class="font-semibold">{{ signatureForm.value.prenom }} {{ signatureForm.value.nom }}</span>
+					le <span class="font-semibold">{{ formatFrDate(signatureForm.value.signedAt) }}</span>
+				</div>
+			}
+
+
+
 			<div class="mt-5 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
 
 				<p class="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Piste d'audit</p>
 
 				<ul class="text-xs text-gray-600 dark:text-gray-300 space-y-1">
 
-					<li>Demande envoyée: {{ signatureForm.value.requestSentAt || 'Non envoyée' }}</li>
+<li>Demande envoyée: {{ formatFrDate(signatureForm.value.requestSentAt) || 'Non envoyée' }}</li>
 
-					<li>Expiration: {{ signatureForm.value.expiresAt || 'Non définie' }}</li>
+				<li>Expiration: {{ formatFrDate(signatureForm.value.expiresAt) || 'Non définie' }}</li>
 
-					<li>Code vérifié: {{ signatureForm.value.otpVerifiedAt || 'Non vérifié' }}</li>
+				<li>Code vérifié: {{ formatFrDate(signatureForm.value.otpVerifiedAt) || 'Non vérifié' }}</li>
 
-					<li>Signature finalisée: {{ signatureForm.value.signedAt || 'Non finalisée' }}</li>
+				<li>Signature finalisée: {{ formatFrDate(signatureForm.value.signedAt) || 'Non finalisée' }}</li>
 
 				</ul>
 

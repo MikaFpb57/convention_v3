@@ -190,4 +190,12 @@ export interface ConventionInfo {
   sign_partenaire_prenom?: string;
   sign_partenaire_fonction?: string;
   date_sign_part?: string;
+  sign_fpb_nom?: string;
+  sign_fpb_prenom?: string;
+  sign_fpb_fonction?: string;
+  date_sign_fpb?: string;
+  request_sent_at?: string;
+  request_expires_at?: string;
+  request_verified_at?: string;
+  request_status?: string;
 }

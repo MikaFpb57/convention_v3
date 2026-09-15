@@ -19,25 +19,25 @@
       <div class="spinner"></div>
     </div>
 
-    <div *ngIf="!isLoading" class="login-form">
+    <div *ngIf="!isLoading && !isRegisterMode" class="login-form">
       <div class="form-group">
         <label for="username" class="form-label">Identifiant</label>
-        <input 
-          id="username" 
-          type="text" 
-          placeholder="Mon ID" 
-          [(ngModel)]="username" 
+        <input
+          id="username"
+          type="text"
+          placeholder="Mon ID"
+          [(ngModel)]="username"
           class="form-input"
         >
       </div>
 
       <div class="form-group">
         <label for="password" class="form-label">Mot de passe</label>
-        <input 
-          id="password" 
-          type="password" 
-          placeholder="Mot de passe" 
-          [(ngModel)]="password" 
+        <input
+          id="password"
+          type="password"
+          placeholder="Mot de passe"
+          [(ngModel)]="password"
           class="form-input"
         >
       </div>
@@ -45,21 +45,74 @@
       <div *ngIf="successMessage" class="alert alert-success">
         {{ successMessage }}
       </div>
-      
+
       <div *ngIf="errorMessage" class="alert alert-error">
         {{ errorMessage }}
       </div>
 
-      <button 
-        (click)="login()" 
+      <button
+        (click)="login()"
         class="login-button"
         [disabled]="isLoading"
       >
         <span *ngIf="!isLoading">Connexion</span>
         <span *ngIf="isLoading">Connexion...</span>
       </button>
+
+      <p class="text-center text-sm mt-3">
+        <a href="#" (click)="toggleRegisterMode(); $event.preventDefault()">Créer un compte</a>
+      </p>
     </div>
-    
+
+    <div *ngIf="!isLoading && isRegisterMode" class="login-form">
+      <div class="form-group">
+        <label for="registerNom" class="form-label">Nom</label>
+        <input id="registerNom" type="text" placeholder="Nom" [(ngModel)]="registerNom" class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label for="registerPrenom" class="form-label">Prénom</label>
+        <input id="registerPrenom" type="text" placeholder="Prénom" [(ngModel)]="registerPrenom" class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label for="registerEmail" class="form-label">Email</label>
+        <input id="registerEmail" type="email" placeholder="Email" [(ngModel)]="registerEmail" class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label for="registerFonction" class="form-label">Fonction</label>
+        <input id="registerFonction" type="text" placeholder="Fonction" [(ngModel)]="registerFonction" class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label for="registerPassword" class="form-label">Mot de passe</label>
+        <input id="registerPassword" type="password" placeholder="14 caractères min., lettre + chiffre + caractère spécial" [(ngModel)]="registerPassword" class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label for="registerPasswordConfirm" class="form-label">Confirmer le mot de passe</label>
+        <input id="registerPasswordConfirm" type="password" placeholder="Confirmer le mot de passe" [(ngModel)]="registerPasswordConfirm" class="form-input">
+      </div>
+
+      <div *ngIf="registerError" class="alert alert-error">
+        {{ registerError }}
+      </div>
+
+      <button
+        (click)="register()"
+        class="login-button"
+        [disabled]="isRegistering"
+      >
+        <span *ngIf="!isRegistering">Créer mon compte</span>
+        <span *ngIf="isRegistering">Création...</span>
+      </button>
+
+      <p class="text-center text-sm mt-3">
+        <a href="#" (click)="toggleRegisterMode(); $event.preventDefault()">J'ai déjà un compte, me connecter</a>
+      </p>
+    </div>
+
     <div class="version-info">
       <small>Version {{ appVersion }}</small>
     </div>

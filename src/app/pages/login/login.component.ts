@@ -21,6 +21,18 @@ export class LoginComponent implements OnInit {
   isLoading: boolean = false;
   appVersion: string = pkg.version;
 
+  // Inscription
+  isRegisterMode = false;
+  registerNom = '';
+  registerPrenom = '';
+  registerEmail = '';
+  registerFonction = '';
+  registerPassword = '';
+  registerPasswordConfirm = '';
+  registerError: string | null = null;
+  isRegistering = false;
+  private readonly PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{14,}$/;
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -74,5 +86,52 @@ export class LoginComponent implements OnInit {
     } else {
       return `Erreur inattendue (${error.status}), veuillez réessayer.`;
     }
+  }
+
+  toggleRegisterMode() {
+    this.isRegisterMode = !this.isRegisterMode;
+    this.registerError = null;
+    this.errorMessage = '';
+    this.successMessage = null;
+  }
+
+  register() {
+    this.registerError = null;
+
+    if (!this.registerNom || !this.registerPrenom || !this.registerEmail || !this.registerPassword) {
+      this.registerError = 'Merci de renseigner nom, prénom, email et mot de passe.';
+      return;
+    }
+
+    if (this.registerPassword !== this.registerPasswordConfirm) {
+      this.registerError = 'Les mots de passe ne correspondent pas.';
+      return;
+    }
+
+    if (!this.PASSWORD_REGEX.test(this.registerPassword)) {
+      this.registerError = 'Le mot de passe doit contenir au moins 14 caractères, une lettre, un chiffre et un caractère spécial.';
+      return;
+    }
+
+    this.isRegistering = true;
+    this.authService.register({
+      nom: this.registerNom,
+      prenom: this.registerPrenom,
+      email: this.registerEmail,
+      fonction: this.registerFonction,
+      password: this.registerPassword
+    }).subscribe({
+      next: (response) => {
+        const token = response.token;
+        const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+        this.authService.setToken(token, this.registerEmail.trim().toLowerCase(), tokenPayload.role);
+        this.isRegistering = false;
+        this.router.navigate(['/gestion']);
+      },
+      error: (error) => {
+        this.isRegistering = false;
+        this.registerError = error?.error?.message || this.getErrorMessage(error);
+      }
+    });
   }
 }

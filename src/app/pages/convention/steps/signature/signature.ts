@@ -82,6 +82,20 @@ export class SignatureStep implements OnInit {
     return 'Brouillon';
   }
 
+  formatFrDate(value: string | null | undefined): string {
+    if (!value) return '';
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return value;
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }).format(date);
+  }
+
   getControl(fieldName: string): FormControl {
     const control = this.signatureForm.get(fieldName);
     if (!control) {
@@ -181,8 +195,10 @@ export class SignatureStep implements OnInit {
           certifie: true
         });
         this.conventionService.markAsSigned();
-        this.successMessage.set(response.message ?? 'Code validé. Signature partenaire vérifiée.');
+        this.successMessage.set(response.message ?? 'Code validé. Signature partenaire vérifiée. Actualisation de la page...');
         this.isLoading.set(false);
+        // Recharge la page pour afficher le PDF définitif (onglet Documents) et la piste d'audit à jour
+        setTimeout(() => window.location.reload(), 1500);
       },
       error: () => {
         this.errorMessage.set('Code invalide ou expiré. Demande un nouveau code si nécessaire.');
