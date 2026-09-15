@@ -14,6 +14,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
+            "baseHref": "/PROD/Convention_v3/app/",
             "polyfills": [
               "zone.js"
             ],
