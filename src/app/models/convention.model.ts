@@ -40,6 +40,25 @@ export interface ConventionDetail {
   Informations: ConventionInfo[];
 }
 
+export interface ContactRow {
+  convention_id: string;
+  convention_nom: string;
+  type: string;
+  role: string;
+  nom: string;
+  prenom: string;
+  fonction: string;
+  telephone: string;
+  email: string;
+}
+
+export interface ContactsApiResponse {
+  utilisateur: string;
+  siege: boolean;
+  total: number;
+  contacts: ContactRow[];
+}
+
 export interface ConventionInfo {
   siret: string;
   entite: string;

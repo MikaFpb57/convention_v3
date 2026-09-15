@@ -19,6 +19,10 @@ export class CompBadgeComponent {
     'Contacts': 'bg-indigo-100 text-indigo-800',
     'En attente': 'bg-red-100 text-red-800',
     'Signé': 'bg-emerald-100 text-emerald-800',
+    'Commercial': 'bg-blue-100 text-blue-800',
+    'Relance': 'bg-orange-100 text-orange-800',
+    'Prise en charge': 'bg-teal-100 text-teal-800',
+    'Comptabilité': 'bg-pink-100 text-pink-800',
   };
 
   get classes(): string {

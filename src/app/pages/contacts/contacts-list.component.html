@@ -1,0 +1,129 @@
+<div class="p-4 sm:ml-64 mt-14">
+    <div class="p-4 border-1 border-default border-dashed rounded-base">
+        @if (isLoading) {
+        <comp-loader></comp-loader>
+        } @else if (error) {
+        <comp-alert-error [message]="error"></comp-alert-error>
+        } @else {
+        <div>
+            <h5 class="mb-1 text-1xl font-bold text-heading md:text-2xl lg:text-3xl">
+                <span class="text-transparent bg-clip-text text-gradient-sg">Contacts</span> {{ utilisateur || 'Utilisateur' }}
+            </h5>
+            <p class="mb-2 text-sm font-normal text-body lg:text-sm">Liste des contacts saisis dans les conventions partenaires</p>
+            <div class="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
+                <div class="p-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-48">
+                            <select [(ngModel)]="typeFilter" (ngModelChange)="currentPage = 1"
+                                class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand block w-full p-2 shadow-xs h-9">
+                                <option value="">Tous les types</option>
+                                @for (type of typesDisponibles; track type) {
+                                <option [value]="type">{{ type }}</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="relative w-72">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                    width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
+                                        d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+                                </svg>
+                            </div>
+                            <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="currentPage = 1"
+                                class="block w-full ps-9 pr-3 py-2 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand shadow-xs placeholder:text-body"
+                                placeholder="Rechercher (id, convention, nom, email)...">
+                        </div>
+                    </div>
+                </div>
+                <table class="w-full text-xs sm:text-sm text-left rtl:text-right text-body mb-2">
+                    <thead class="text-xs sm:text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
+                        <tr>
+                            <th scope="col" class="px-2 py-1 sm:px-6 sm:py-3 cursor-pointer hover:text-heading"
+                                (click)="changeSort('convention_id')">
+                                ID
+                                @if (sortField === 'convention_id') {
+                                <span class="ml-1">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                }
+                            </th>
+                            <th scope="col" class="px-2 py-1 sm:px-6 sm:py-3 cursor-pointer hover:text-heading"
+                                (click)="changeSort('convention_nom')">
+                                Convention
+                                @if (sortField === 'convention_nom') {
+                                <span class="ml-1">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                }
+                            </th>
+                            <th scope="col" class="px-2 py-1 sm:px-6 sm:py-3 cursor-pointer hover:text-heading"
+                                (click)="changeSort('type')">
+                                Type
+                                @if (sortField === 'type') {
+                                <span class="ml-1">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                }
+                            </th>
+                            <th scope="col" class="px-2 py-1 sm:px-6 sm:py-3 hidden sm:table-cell">
+                                Rôle
+                            </th>
+                            <th scope="col" class="px-2 py-1 sm:px-6 sm:py-3 cursor-pointer hover:text-heading"
+                                (click)="changeSort('nom')">
+                                Nom
+                                @if (sortField === 'nom') {
+                                <span class="ml-1">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                                }
+                            </th>
+                            <th scope="col" class="px-2 py-1 sm:px-6 sm:py-3 hidden sm:table-cell">
+                                Fonction
+                            </th>
+                            <th scope="col" class="px-2 py-1 sm:px-6 sm:py-3 hidden sm:table-cell">
+                                Téléphone
+                            </th>
+                            <th scope="col" class="px-2 py-1 sm:px-6 sm:py-3 hidden sm:table-cell">
+                                Email
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (contact of filteredContacts | slice: (currentPage - 1) * itemsPerPage : currentPage * itemsPerPage; track contact.convention_id + contact.type + contact.role) {
+                        <tr class="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium">
+                            <td class="px-2 py-1 sm:px-6 sm:py-4 font-mono text-sm">
+                                {{ contact.convention_id }}
+                            </td>
+                            <td class="px-2 py-1 sm:px-6 sm:py-4 font-medium text-heading">
+                                {{ contact.convention_nom }}
+                            </td>
+                            <td class="px-2 py-1 sm:px-6 sm:py-4">
+                                <comp-badge [value]="contact.type"></comp-badge>
+                            </td>
+                            <td class="px-2 py-1 sm:px-6 sm:py-4 hidden sm:table-cell">
+                                {{ contact.role }}
+                            </td>
+                            <td class="px-2 py-1 sm:px-6 sm:py-4">
+                                {{ contact.nom }} {{ contact.prenom }}
+                            </td>
+                            <td class="px-2 py-1 sm:px-6 sm:py-4 hidden sm:table-cell">
+                                {{ contact.fonction }}
+                            </td>
+                            <td class="px-2 py-1 sm:px-6 sm:py-4 hidden sm:table-cell">
+                                {{ contact.telephone }}
+                            </td>
+                            <td class="px-2 py-1 sm:px-6 sm:py-4 hidden sm:table-cell">
+                                {{ contact.email }}
+                            </td>
+                        </tr>
+                        } @empty {
+                        <tr>
+                            <td colspan="8" class="px-6 py-4 text-center text-body">
+                                Aucun contact disponible
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                <comp-pagination [currentPage]="currentPage" [totalPages]="totalPages"
+                    [totalItems]="filteredContacts.length" [itemsPerPage]="itemsPerPage"
+                    (pageChange)="changePage($event)">
+                </comp-pagination>
+            </div>
+        </div>
+        }
+    </div>
+</div>

@@ -4,7 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
-import { ConventionApiResponse, ConventionDetail } from '../models/convention.model';
+import { ConventionApiResponse, ConventionDetail, ContactsApiResponse } from '../models/convention.model';
 
 import { API_CONFIG } from '../config/api.config';
 
@@ -195,6 +195,20 @@ export class ConventionService {
   getAllConventions(): Observable<ConventionApiResponse> {
 
     return this.http.get<ConventionApiResponse>(`${this.API_URL}/all`);
+
+  }
+
+
+
+  /**
+
+   * Récupère tous les contacts (commercial, relance, PEC, compta) du gestionnaire connecté
+
+   */
+
+  getAllContacts(): Observable<ContactsApiResponse> {
+
+    return this.http.get<ContactsApiResponse>(`${this.API_URL}/contacts`);
 
   }
 

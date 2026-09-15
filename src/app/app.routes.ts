@@ -5,6 +5,7 @@ import { authGuard } from './guards/auth.guard';
 import { UnsavedChangesGuard } from './guards/unsaved-changes.guard';
 
 import { GestionComponent } from './gestion/gestion.component';
+import { ContactsListComponent } from './pages/contacts/contacts-list.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -12,6 +13,11 @@ export const routes: Routes = [
     {
         path: 'gestion',
         component: GestionComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'contacts',
+        component: ContactsListComponent,
         canActivate: [authGuard]
     },
     {
