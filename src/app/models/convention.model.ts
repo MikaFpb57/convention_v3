@@ -59,6 +59,26 @@ export interface ContactsApiResponse {
   contacts: ContactRow[];
 }
 
+export interface ConventionDocumentsSummary {
+  id: string;
+  nom: string;
+  count: number;
+}
+
+export interface DocumentsApiResponse {
+  utilisateur: string;
+  siege: boolean;
+  total: number;
+  documents: ConventionDocumentsSummary[];
+}
+
+export interface ConventionFile {
+  name: string;
+  size: number;
+  updatedAt: string;
+  url: string;
+}
+
 export interface ConventionInfo {
   siret: string;
   entite: string;

@@ -1,0 +1,108 @@
+<div class="p-4 sm:ml-64 mt-14">
+    <div class="p-4 border-1 border-default border-dashed rounded-base">
+        @if (isLoading) {
+        <comp-loader></comp-loader>
+        } @else if (error) {
+        <comp-alert-error [message]="error"></comp-alert-error>
+        } @else {
+        <div>
+            <h5 class="mb-1 text-1xl font-bold text-heading md:text-2xl lg:text-3xl">
+                <span class="text-transparent bg-clip-text text-gradient-sg">Documents</span> {{ utilisateur || 'Utilisateur' }}
+            </h5>
+            <p class="mb-2 text-sm font-normal text-body lg:text-sm">Comptes partenaires et documents associés</p>
+            <div class="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
+                <div class="p-4 flex items-center justify-between">
+                    <div class="relative w-72">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
+                                    d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+                            </svg>
+                        </div>
+                        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="currentPage = 1"
+                            class="block w-full ps-9 pr-3 py-2 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-md focus:ring-brand focus:border-brand shadow-xs placeholder:text-body"
+                            placeholder="Rechercher (id, nom du compte)...">
+                    </div>
+                </div>
+                <table class="w-full text-xs sm:text-sm text-left rtl:text-right text-body mb-2">
+                    <thead class="text-xs sm:text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
+                        <tr>
+                            <th scope="col" class="px-2 py-1 sm:px-6 sm:py-3"></th>
+                            <th scope="col" class="px-2 py-1 sm:px-6 sm:py-3">ID</th>
+                            <th scope="col" class="px-2 py-1 sm:px-6 sm:py-3">Nom du compte</th>
+                            <th scope="col" class="px-2 py-1 sm:px-6 sm:py-3">Documents</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (convention of filteredConventions | slice: (currentPage - 1) * itemsPerPage : currentPage * itemsPerPage; track convention.id) {
+                        <tr class="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium cursor-pointer"
+                            (click)="toggleExpand(convention)">
+                            <td class="px-2 py-1 sm:px-6 sm:py-4 w-6">
+                                <i class="fa-solid" [class.fa-chevron-right]="expandedId !== convention.id"
+                                    [class.fa-chevron-down]="expandedId === convention.id"></i>
+                            </td>
+                            <td class="px-2 py-1 sm:px-6 sm:py-4 font-mono text-sm">{{ convention.id }}</td>
+                            <td class="px-2 py-1 sm:px-6 sm:py-4 font-medium text-heading">{{ convention.nom }}</td>
+                            <td class="px-2 py-1 sm:px-6 sm:py-4">
+                                <span class="px-2 py-1 rounded-full text-xs font-medium bg-brand-softer text-fg-brand">
+                                    {{ convention.count }}
+                                </span>
+                            </td>
+                        </tr>
+                        @if (expandedId === convention.id) {
+                        <tr>
+                            <td colspan="4" class="px-2 py-2 sm:px-6 bg-neutral-secondary-medium">
+                                @if (isLoadingFiles && !filesByConvention[convention.id]) {
+                                <comp-loader></comp-loader>
+                                } @else if (!filesByConvention[convention.id]?.length) {
+                                <div class="text-center text-body py-2">Aucun document</div>
+                                } @else {
+                                <ul class="divide-y divide-default-medium">
+                                    @for (file of filesByConvention[convention.id]; track file.name) {
+                                    <li class="flex items-center justify-between py-2 px-2">
+                                        <button type="button" (click)="openPreview(convention.id, file); $event.stopPropagation()"
+                                            class="flex items-center gap-2 text-left hover:text-fg-brand">
+                                            <i class="fa-regular fa-file"></i>
+                                            <span>{{ file.name }}</span>
+                                            <span class="text-xs text-body">({{ formatSize(file.size) }})</span>
+                                        </button>
+                                        <button type="button" (click)="downloadDocument(convention.id, file); $event.stopPropagation()"
+                                            class="text-body hover:text-fg-brand px-2" title="Télécharger">
+                                            <i class="fa-solid fa-download"></i>
+                                        </button>
+                                    </li>
+                                    }
+                                </ul>
+                                }
+                            </td>
+                        </tr>
+                        }
+                        } @empty {
+                        <tr>
+                            <td colspan="4" class="px-6 py-4 text-center text-body">
+                                Aucun compte partenaire disponible
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                <comp-pagination [currentPage]="currentPage" [totalPages]="totalPages"
+                    [totalItems]="filteredConventions.length" [itemsPerPage]="itemsPerPage"
+                    (pageChange)="changePage($event)">
+                </comp-pagination>
+            </div>
+        </div>
+        }
+    </div>
+</div>
+
+@if (isLoadingPreview) {
+<div class="fixed inset-0 z-[70] flex items-center justify-center bg-black/50">
+    <comp-loader></comp-loader>
+</div>
+}
+
+@if (previewItem) {
+<comp-file-preview [file]="previewItem" (close)="closePreview()"></comp-file-preview>
+}

@@ -4,7 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
-import { ConventionApiResponse, ConventionDetail, ContactsApiResponse } from '../models/convention.model';
+import { ConventionApiResponse, ConventionDetail, ContactsApiResponse, DocumentsApiResponse } from '../models/convention.model';
 
 import { API_CONFIG } from '../config/api.config';
 
@@ -209,6 +209,20 @@ export class ConventionService {
   getAllContacts(): Observable<ContactsApiResponse> {
 
     return this.http.get<ContactsApiResponse>(`${this.API_URL}/contacts`);
+
+  }
+
+
+
+  /**
+
+   * Récupère la liste des conventions du gestionnaire connecté avec leur nombre de documents
+
+   */
+
+  getAllDocuments(): Observable<DocumentsApiResponse> {
+
+    return this.http.get<DocumentsApiResponse>(`${this.API_URL}/documents`);
 
   }
 
