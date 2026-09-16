@@ -19,6 +19,7 @@ export interface ConventionFileResponse {
   size: number;
   type: string;
   url: string;
+  officePreviewUrl?: string;
 }
 
 @Injectable({

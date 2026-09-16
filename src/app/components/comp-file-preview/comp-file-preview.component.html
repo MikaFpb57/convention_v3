@@ -3,7 +3,7 @@
 
   <div class="fp-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
     <button class="fp-close" (click)="close.emit()">✕</button>
-    @if (file.type.startsWith('image/')) {
+    @if (isImage) {
       <img [src]="file.url" class="fp-img" alt="{{ file.name }}" />
     } @else if (file.type === 'application/pdf') {
       <iframe [src]="safeUrl" class="fp-frame"></iframe>

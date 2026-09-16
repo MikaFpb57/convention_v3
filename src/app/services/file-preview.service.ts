@@ -22,6 +22,9 @@ export class FilePreviewService {
       if (item.url && item.url.startsWith('blob:')) {
         URL.revokeObjectURL(item.url);
       }
+      if (item.officePreviewUrl?.startsWith('blob:')) {
+        URL.revokeObjectURL(item.officePreviewUrl);
+      }
     } catch (e) {
       // ignore
     }

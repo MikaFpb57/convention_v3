@@ -32,9 +32,12 @@ export class CompFileThumbnailComponent {
 
     this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.item.url);
 
-    // Only use Office viewer for remote URLs (not blob URLs)
-    if (this.isOffice && !this.item.url.startsWith('blob:')) {
-      const full = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(this.item.url)}`;
+    const officeSourceUrl = this.item.officePreviewUrl
+      || (this.item.url && !this.item.url.startsWith('blob:') ? this.item.url : null);
+    if (this.isOffice && officeSourceUrl) {
+      const full = officeSourceUrl.startsWith('blob:')
+        ? officeSourceUrl
+        : `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(officeSourceUrl)}`;
       this.officeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(full);
     } else {
       this.officeUrl = null;

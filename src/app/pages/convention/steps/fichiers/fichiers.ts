@@ -76,18 +76,33 @@ export class Fichiers implements OnInit, AfterViewInit, OnDestroy {
       this.apiService.downloadFile(id, file.name).subscribe({
         next: (blob: Blob) => {
           const blobUrl = URL.createObjectURL(blob);
-          fileItems.push({
+          const fileItem: FileItem = {
             id: file.id,
             name: file.name,
             size: file.size,
-            type: file.type,
+            type: file.type || blob.type || this.previewService.guessTypeFromName(file.name),
             url: blobUrl
-          });
+          };
 
-          loadedCount++;
-          if (loadedCount === totalFiles) {
-            this.files = fileItems;
-            this.isLoading.set(false);
+          const completeFile = () => {
+            fileItems.push(fileItem);
+            loadedCount++;
+            if (loadedCount === totalFiles) {
+              this.files = fileItems;
+              this.isLoading.set(false);
+            }
+          };
+
+          if (/\.xlsx?$/i.test(file.name)) {
+            this.apiService.getFilePreview(id, file.name).subscribe({
+              next: previewBlob => {
+                fileItem.officePreviewUrl = URL.createObjectURL(previewBlob);
+                completeFile();
+              },
+              error: completeFile
+            });
+          } else {
+            completeFile();
           }
         },
         error: (err) => {
@@ -132,8 +147,22 @@ export class Fichiers implements OnInit, AfterViewInit, OnDestroy {
               isTemp: false
             };
 
-            this.files = [...this.files, newFile];
-            this.isLoading.set(false);
+            const completeUpload = () => {
+              this.files = [...this.files, newFile];
+              this.isLoading.set(false);
+            };
+
+            if (/\.xlsx?$/i.test(response.name)) {
+              this.apiService.getFilePreview(conventionId, response.name).subscribe({
+                next: previewBlob => {
+                  newFile.officePreviewUrl = URL.createObjectURL(previewBlob);
+                  completeUpload();
+                },
+                error: completeUpload
+              });
+            } else {
+              completeUpload();
+            }
           },
           error: (err) => {
             console.error('Erreur lors de l\'upload du fichier:', err);
@@ -148,20 +177,10 @@ export class Fichiers implements OnInit, AfterViewInit, OnDestroy {
   onFileRemoved(removedFile: FileItem) {
     this.files = this.files.filter(f => f.id !== removedFile.id);
 
-    // Revoke blob URL if it's a blob
-    if (removedFile.url.startsWith('blob:')) {
-      URL.revokeObjectURL(removedFile.url);
-    } else {
-      this.previewService.revokeUrl(removedFile);
-    }
+    this.previewService.revokeUrl(removedFile);
   }
 
   ngOnDestroy() {
-    // Revoke all blob URLs when component is destroyed
-    this.files.forEach(file => {
-      if (file.url.startsWith('blob:')) {
-        URL.revokeObjectURL(file.url);
-      }
-    });
+    this.files.forEach(file => this.previewService.revokeUrl(file));
   }
 }

@@ -28,9 +28,12 @@ export class CompFilePreviewComponent {
 
     this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.file.url);
 
-    // Only use Office viewer for remote URLs (not blob URLs)
-    if (this.isOffice && !this.file.url.startsWith('blob:')) {
-      const full = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(this.file.url)}`;
+    const officeSourceUrl = this.file.officePreviewUrl
+      || (this.file.url && !this.file.url.startsWith('blob:') ? this.file.url : null);
+    if (this.isOffice && officeSourceUrl) {
+      const full = officeSourceUrl.startsWith('blob:')
+        ? officeSourceUrl
+        : `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(officeSourceUrl)}`;
       this.officeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(full);
     } else {
       this.officeUrl = null;

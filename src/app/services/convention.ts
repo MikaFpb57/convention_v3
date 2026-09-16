@@ -394,6 +394,16 @@ export class ConventionService {
 
   }
 
+  getFilePreview(id: string, filename: string): Observable<Blob> {
+
+    return this.http.get(`${this.API_URL}/${id}/files/${filename}/preview`, {
+
+      responseType: 'blob'
+
+    });
+
+  }
+
 
 
   requestEmailSignature(payload: SignatureRequestPayload): Observable<SignatureRequestResponse> {
