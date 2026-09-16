@@ -143,7 +143,7 @@ export class CompPdfResultComponent implements OnChanges {
       },
       type: 'text',
       title: 'GRILLE DE TARIFICATION',
-      backgroundImage: "/assets/img/tariff_background.png"
+      backgroundImage: "assets/img/tariff_background.png"
     });
 
     pages.push({
@@ -155,7 +155,7 @@ export class CompPdfResultComponent implements OnChanges {
       },
       type: 'text',
       title: 'GRILLE DE TARIFICATION',
-      backgroundImage: "/assets/img/tariff_background.png"
+      backgroundImage: "assets/img/tariff_background.png"
     });
 
     pages.push({
@@ -167,10 +167,10 @@ export class CompPdfResultComponent implements OnChanges {
       },
       type: 'text',
       title: 'GRILLE DE TARIFICATION',
-      backgroundImage: "/assets/img/tariff_background.png"
+      backgroundImage: "assets/img/tariff_background.png"
     });
 
-    
+
     // documentVM.pages.forEach((pageVM, index) => {
     //   pages.push({
     //     component: CompPdfTariffPageComponent, // ✅ UN SEUL composant
