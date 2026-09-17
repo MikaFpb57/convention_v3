@@ -43,7 +43,7 @@ export class CompPdfResultComponent implements OnChanges {
 
   // ✅ CGV image unique
   private readonly cgv: string[] = [
-    "/assets/img/cgv_unique.jpg",
+    "assets/img/cgv_unique.jpg",
   ];
   constructor(
     private readonly assurService: AssurService,

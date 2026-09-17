@@ -27,7 +27,7 @@ export class TariffDataBuilderService {
             "header": {
                 "title": "Grille de tarification",
                 "subtitleSource": "groupe",
-                "pictos": "/assets/img/pictos.png",
+                "pictos": "assets/img/pictos.png",
                 "variant": "main"
             },
             "sections": [
@@ -240,7 +240,7 @@ export class TariffDataBuilderService {
             "header": {
                 "title": "Grille de tarification (Annexe)",
                 "subtitleSource": "groupe",
-                "pictos": "/assets/img/pictos2.png",
+                "pictos": "assets/img/pictos2.png",
                 "variant": "annexe"
             },
             "sections": [
@@ -379,7 +379,7 @@ export class TariffDataBuilderService {
             "header": {
                 "title": "Grille de tarification (Annexe)",
                 "subtitleSource": "groupe",
-                "pictos": "/assets/img/pictos2.png",
+                "pictos": "assets/img/pictos2.png",
                 "variant": "annexe"
             },
             "sections": [
