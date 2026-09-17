@@ -129,6 +129,15 @@ export class SignatureStep implements OnInit {
 
     this.isLoading.set(true);
 
+    // Sauvegarde globale avant l'envoi pour que le PDF généré reflète les dernières modifications (parc automobile, etc.)
+    try {
+      await this.conventionService.saveToDatabase(currentId);
+    } catch {
+      this.errorMessage.set('Impossible d\'enregistrer les dernières modifications avant l\'envoi. Réessaie.');
+      this.isLoading.set(false);
+      return;
+    }
+
     this.apiService.requestEmailSignature({
       conventionId: currentId,
       nom: this.getControl('nom').value,

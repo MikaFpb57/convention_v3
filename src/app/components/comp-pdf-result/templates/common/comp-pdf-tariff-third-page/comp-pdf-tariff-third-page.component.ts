@@ -22,4 +22,12 @@ export class CompPdfTariffThirdPageComponent {
     return this.utils.formatTarif(this.infosData.tarif);
   }
 
+  // catégories du parc automobile ayant au moins un véhicule
+  get hasTp(): boolean {
+    return (this.infosData.nb_tp ?? 0) > 0;
+  }
+  get hasDeplacement(): boolean {
+    return ((this.infosData.nb_tp ?? 0) + (this.infosData.nb_agri ?? 0) + (this.infosData.nb_bus ?? 0)) > 0;
+  }
+
 }

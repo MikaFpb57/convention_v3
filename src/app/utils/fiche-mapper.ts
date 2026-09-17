@@ -85,7 +85,8 @@ function mapContactPair(fiche: FicheRecord, prefix: string, backupPrefix?: strin
 }
 
 export function isConsultationOnly(etape?: string | null): boolean {
-    return etape === 'Signé' || etape === 'En attente';
+    // "En attente" (code envoyé, non vérifié) doit rester éditable pour permettre la saisie/vérification du code OTP.
+    return etape === 'Signé';
 }
 
 export function mapFicheToConventionData(fiche: Fiche): ConventionData {
@@ -332,6 +333,7 @@ export function mapConventionInfoToConventionData(info: ConventionInfo): Convent
         requestSentAt: info.request_sent_at ?? '',
         expiresAt: info.request_expires_at ?? '',
         otpVerifiedAt: info.request_verified_at ?? '',
+        signatureRequestId: info.request_id ?? '',
         signedAt
     };
 

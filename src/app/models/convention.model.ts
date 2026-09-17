@@ -237,4 +237,5 @@ export interface ConventionInfo {
   request_expires_at?: string;
   request_verified_at?: string;
   request_status?: string;
+  request_id?: string;
 }

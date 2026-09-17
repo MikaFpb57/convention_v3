@@ -2,11 +2,14 @@
   <div class="tariff-header text-right mb-[1.5em]">
     <h1 class="uppercase font-bold text-blue-900 text-[1.6em]">Grille de tarification (Annexe)</h1>
     <h3 class="uppercase font-bold text-blue-900 text-[1.3em]">{{u_tr_tarif}}</h3>
-    <div class="w-full relative mt-[0.5em]">
-      <img alt="icons" src="assets/img/pictos2.png" class="absolute end-0 h-[2.5em]" />
+    <div class="w-full flex justify-end gap-[0.4em] mt-[0.5em]">
+      @if (hasCa) { <img alt="Camping car" src="assets/img/ca.png" class="h-[2.5em]" /> }
+      @if (hasAgri) { <img alt="Agricole" src="assets/img/ag.png" class="h-[2.5em]" /> }
+      @if (hasBus) { <img alt="Transport" src="assets/img/tc.png" class="h-[2.5em]" /> }
     </div>
   </div>
   <!-- CAMPING CARS -->
+  @if (hasCa) {
   <section class="mt-[3em]">
     <h2 class="uppercase text-blue-900 border-l-[0.5em] pl-[0.6em] text-[1.3em] font-bold border-red-600">
       Campings cars intégraux, voiturettes & véhicules sans permis
@@ -71,8 +74,10 @@
       <strong>Port et Emballage :</strong> frais facturés en cas d’achat concessionnaire.
     </p>
   </section>
+  }
 
   <!-- AGRICOLE -->
+  @if (hasAgri) {
   <section class="mt-[1.5em]">
     <h2 class="uppercase text-blue-900 border-l-[0.5em] pl-[0.6em] text-[1.3em] font-bold border-red-600">
       Tarif et remises engins agricoles
@@ -130,8 +135,10 @@
 
     </ul>
   </section>
+  }
 
   <!-- Nota -->
+  @if (hasAgri) {
   <section class="mt-[1.5em]">
     <div class="relative border border-red-500 rounded-[6px] p-[1em] pt-[1.5em]">
       <span
@@ -146,8 +153,10 @@
       </p>
     </div>
   </section>
+  }
 
   <!-- TRANSPORT -->
+  @if (hasBus) {
   <section class="mt-[1.5em]">
     <h2 class="uppercase text-blue-900 border-l-[0.5em] pl-[0.6em] text-[1.3em] font-bold border-red-600">
       Tarif et remises transport en commun
@@ -213,8 +222,10 @@
 
     </ul>
   </section>
+  }
 
   <!-- Nota -->
+  @if (hasBus) {
   <section class="mt-[1.5em]">
     <div class="relative border border-red-500 rounded-[6px] p-[1em] pt-[1.5em]">
       <span
@@ -229,5 +240,6 @@
       </p>
     </div>
   </section>
+  }
 
 </div>

@@ -4,8 +4,12 @@
   <div class="tariff-header text-right">
     <h1 class="uppercase font-bold text-blue-900 text-[1.6em]">Grille de tarification</h1>
     <h3 class="uppercase font-bold text-blue-900 text-[1.3em]">{{baseTarifs.groupe}}</h3>
-    <div class="w-full relative mt-[0.5em]">
-      <img alt="icons" src="assets/img/pictos.png" class="absolute end-0 h-[2em]" />
+    <div class="w-full flex justify-end gap-[0.4em] mt-[0.5em]">
+      @if (hasVl) { <img alt="VL/VU" src="assets/img/vu.png" class="h-[2em]" /> }
+      @if (hasPl) { <img alt="PL" src="assets/img/pl.png" class="h-[2em]" /> }
+      @if (hasTp) { <img alt="TP" src="assets/img/tp.png" class="h-[2em]" /> }
+      @if (hasAgri) { <img alt="Agricole" src="assets/img/ag.png" class="h-[2em]" /> }
+      @if (hasBus) { <img alt="Transport" src="assets/img/tc.png" class="h-[2em]" /> }
     </div>
   </div>
 
@@ -29,6 +33,7 @@
   </section>
 
   <!-- Main d'oeuvre VL -->
+  @if (hasVl) {
   <section class="mt-[1.5em]">
     <h2 class="uppercase text-blue-900 border-l-[0.5em] pl-[0.6em] text-[1.3em] font-bold border-red-600">Tarif horaire
       de main d'œuvre VL</h2>
@@ -84,8 +89,10 @@
       </ul>
     </div>
   </section>
+  }
 
   <!-- Main d'oeuvre PL -->
+  @if (hasHeavy) {
   <section class="mt-[1.5em]">
     <h2 class="uppercase text-blue-900 border-l-[0.5em] pl-[0.6em] text-[1.3em] font-bold border-red-600">Main d'œuvre
       PL / Agricole / TP / Transport</h2>
@@ -122,6 +129,7 @@
       </ul>
     </div>
   </section>
+  }
 
   <!-- Pièces -->
   <section class="mt-[1.5em]">

@@ -2,11 +2,12 @@
   <div class="tariff-header text-right mb-[1.5em]">
     <h1 class="uppercase font-bold text-blue-900 text-[1.6em]">Grille de tarification (Annexe)</h1>
     <h3 class="uppercase font-bold text-blue-900 text-[1.3em]">{{u_tr_tarif}}</h3>
-    <div class="w-full relative mt-[0.5em]">
-      <img alt="icons" src="assets/img/pictos2.png" class="absolute end-0 h-[2.5em]"/>
+    <div class="w-full flex justify-end gap-[0.4em] mt-[0.5em]">
+      @if (hasTp) { <img alt="TP" src="assets/img/tp.png" class="h-[2.5em]" /> }
     </div>
   </div>
   <!-- TP -->
+  @if (hasTp) {
   <section class="mt-[3em]">
     <h2 class="uppercase text-blue-900 border-l-[0.5em] pl-[0.6em] text-[1.3em] font-bold border-red-600">
       Tarif et remises engins de travaux publics
@@ -64,8 +65,10 @@
 
     </ul>
   </section>
+  }
 
   <!-- Déplacements -->
+  @if (hasDeplacement) {
   <section class="mt-[1.5em]">
     <h2 class="uppercase text-blue-900 border-l-[0.5em] pl-[0.6em] text-[1.3em] font-bold border-red-600">
       Déplacements transport en commun, agricole, TP et produits spéciaux
@@ -83,6 +86,7 @@
       </span>
     </div>
   </section>
+  }
 
   <!-- Phares -->
   <section class="mt-[1.5em]">

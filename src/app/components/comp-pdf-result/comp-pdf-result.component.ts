@@ -139,31 +139,37 @@ export class CompPdfResultComponent implements OnChanges {
       inputs: {
         id: 'page-7',
         position: 8,
-        data: tariff
+        data: tariff,
+        conventionData: data
       },
       type: 'text',
       title: 'GRILLE DE TARIFICATION',
       backgroundImage: "assets/img/tariff_background.png"
     });
 
-    pages.push({
-      component: CompPdfTariffSecondPageComponent,
-      inputs: {
-        id: 'page-8',
-        position: 9,
-        data: tariff
-      },
-      type: 'text',
-      title: 'GRILLE DE TARIFICATION',
-      backgroundImage: "assets/img/tariff_background.png"
-    });
+    // ✅ Page annexe 2 : inutile si aucune des catégories qu'elle couvre n'est renseignée
+    const infos = data?.infos;
+    const hasAnnexe2Content = ((infos?.nb_ca ?? 0) > 0) || ((infos?.nb_agri ?? 0) > 0) || ((infos?.nb_bus ?? 0) > 0);
+    if (hasAnnexe2Content) {
+      pages.push({
+        component: CompPdfTariffSecondPageComponent,
+        inputs: {
+          id: 'page-8',
+          position: 9,
+          data
+        },
+        type: 'text',
+        title: 'GRILLE DE TARIFICATION',
+        backgroundImage: "assets/img/tariff_background.png"
+      });
+    }
 
     pages.push({
       component: CompPdfTariffThirdPageComponent,
       inputs: {
         id: 'page-9',
         position: 10,
-        data: tariff
+        data
       },
       type: 'text',
       title: 'GRILLE DE TARIFICATION',

@@ -244,7 +244,8 @@ export class ConventionService {
     }
 
     isConsultationEtape(etape?: string | null): boolean {
-        return etape === 'Signé' || etape === 'En attente';
+        // "En attente" (code envoyé, non vérifié) doit rester éditable pour permettre la saisie/vérification du code OTP.
+        return etape === 'Signé';
     }
 
     resetNewMode() {
