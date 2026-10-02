@@ -57,6 +57,29 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.username = this.authService.getUsername();
+    if (!this.authService.getToken()) {
+      return;
+    }
+
+    this.authService.getMe().subscribe({
+      next: (data) => {
+        this.profile = {
+          nom: data.nom || '',
+          prenom: data.prenom || '',
+          email: data.email || data.login || '',
+          fonction: data.fonction || ''
+        };
+      }
+    });
+  }
+
+  get displayName(): string {
+    return [this.profile.prenom, this.profile.nom].filter(Boolean).join(' ') || this.username || 'Utilisateur';
+  }
+
+  get userInitials(): string {
+    const initials = `${this.profile.prenom?.[0] || ''}${this.profile.nom?.[0] || ''}`;
+    return initials.toUpperCase() || this.username?.slice(0, 2).toUpperCase() || 'U';
   }
 
   @HostListener('document:click', ['$event'])

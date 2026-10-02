@@ -71,12 +71,6 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
         return EMPTY;
       }
 
-      if (error.status === 403 && !!token) {
-        // Si le backend bloque un compte authentifié, on force la déconnexion.
-        authService.logoutWithReason('account_disabled');
-        return EMPTY;
-      }
-
       if (error.status === 401) {
         if (token) {
           authService.logout();
